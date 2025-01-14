@@ -66,17 +66,21 @@ const LoginPage: React.FC = () => {
             Pizza
           </span>
         </h1>
-        <p className='text-xs sm:text-sm text-gray-600 mb-1 text-center'>
-          Nhà hàng Pizza - Long Thạnh Mỹ, Quận 9, Tp Thủ Đức
+
+        <p
+          className='text-base sm:text-6xl font-semibold mb-4 sm:mb-6 text-center'
+          style={{ fontFamily: 'Inspiration' }}
+        >
+          Chào bạn !!!
         </p>
-        <p className='text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-center'>Chào bạn !!!</p>
-        <p className='text-xs sm:text-sm mb-4 sm:mb-6 text-gray-700 text-center'>
-          Please enter your name so that the restaurant can serve you faster and more accurately
+        <p className='text-xs sm:text-lg text-gray-600 mb-1 text-center'>Nhà hàng Pizza - Long Thạnh Mỹ, Tp Thủ Đức</p>
+        <p className='text-xs sm:text-lg mb-4 sm:mb-6 text-gray-700 text-center'>
+          Vui lòng nhập tên của bạn để nhà hàng có thể phục vụ bạn nhanh hơn và chính xác hơn
         </p>
         <input
-          className='w-full px-3 py-2 mb-3 sm:mb-4 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-orange-500'
+          className='w-full px-3 py-2 mb-3 sm:mb-4 sm:text-base border border-gray-300 rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-orange-500'
           type='text'
-          placeholder='Enter your name'
+          placeholder='Nhập tên của bạn'
           value={name}
           onChange={(e) => setName(e.target.value)}
           style={{
@@ -85,9 +89,9 @@ const LoginPage: React.FC = () => {
           }}
         />
         <input
-          className='w-full px-3 py-2 mb-4 sm:mb-6 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-orange-500'
+          className='w-full px-3 py-2 mb-4 sm:mb-6 sm:text-base border border-gray-300 rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-orange-500'
           type='tel'
-          placeholder='Enter your phone number'
+          placeholder='Nhập số điện thoại của bạn'
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           style={{
@@ -96,7 +100,7 @@ const LoginPage: React.FC = () => {
           }}
         />
         <button
-          className='w-full max-w-sm px-4 py-2 bg-orange-500 text-white rounded-md text-lg font-medium hover:bg-orange-600'
+          className='w-full max-full px-4 py-2 bg-orange-500 text-white rounded-md text-lg font-medium hover:bg-orange-600'
           onClick={handleContinue}
         >
           Continue
