@@ -66,21 +66,16 @@ const LoginPage: React.FC = () => {
             Pizza
           </span>
         </h1>
-
-        <p
-          className='text-base sm:text-6xl font-semibold mb-4 sm:mb-6 text-center'
-          style={{ fontFamily: 'Inspiration' }}
-        >
-          Chào bạn !!!
+        <p className='text-xs sm:text-lg text-gray-600 mb-1 text-center'>
+          Pizza Restaurant - Long Thanh My, Thu Duc City
         </p>
-        <p className='text-xs sm:text-lg text-gray-600 mb-1 text-center'>Nhà hàng Pizza - Long Thạnh Mỹ, Tp Thủ Đức</p>
         <p className='text-xs sm:text-lg mb-4 sm:mb-6 text-gray-700 text-center'>
-          Vui lòng nhập tên của bạn để nhà hàng có thể phục vụ bạn nhanh hơn và chính xác hơn
+          Please enter your name so the restaurant can serve you faster and more accurately.
         </p>
         <input
           className='w-full px-3 py-2 mb-3 sm:mb-4 sm:text-base border border-gray-300 rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-orange-500'
           type='text'
-          placeholder='Nhập tên của bạn'
+          placeholder='Enter your name'
           value={name}
           onChange={(e) => setName(e.target.value)}
           style={{
@@ -91,7 +86,8 @@ const LoginPage: React.FC = () => {
         <input
           className='w-full px-3 py-2 mb-4 sm:mb-6 sm:text-base border border-gray-300 rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-orange-500'
           type='tel'
-          placeholder='Nhập số điện thoại của bạn'
+          placeholder='Enter your phone number
+'
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           style={{
