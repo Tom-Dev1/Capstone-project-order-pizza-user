@@ -1,9 +1,8 @@
-import LoginPage from "./pages/loginPage";
+
+import RouterIndex from "./routers/RoutersIndex";
 function App() {
   return (
-    <div>
-    <LoginPage />
-    </div>
+    <RouterIndex />
   )
 }
 

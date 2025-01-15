@@ -1,3 +1,5 @@
-import Button from "./Button";
+import ButtonComponent from "./ButtonComponent";
+import InputComponent from "./InputComponent";
+import LocationAnimation from "./LocationAnimation";
 
-export default Button
+export { ButtonComponent, InputComponent, LocationAnimation }

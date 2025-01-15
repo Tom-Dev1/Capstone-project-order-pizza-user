@@ -1,38 +1,28 @@
 import React, { useState } from 'react'
+import { Form } from 'antd';
+import { ButtonComponent, InputComponent, LocationAnimation } from '../components';
 
-interface ButtonProps {
-  label: string
-  onClick: () => void
-}
-
-const Button: React.FC<ButtonProps> = ({ label, onClick }) => {
-  return (
-    <button
-      className='w-full max-w-sm px-4 py-2 bg-orange-500 text-white rounded-md text-lg font-medium hover:bg-orange-600'
-      onClick={onClick}
-    >
-      {label}
-    </button>
-  )
-}
 
 const LoginPage: React.FC = () => {
-  const [name, setName] = useState<string>('')
-  const [phone, setPhone] = useState<string>('')
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleContinue = () => {
-    if (!name || !phone) {
-      alert('Please fill out both fields before continuing.')
-      return
+  const [form] = Form.useForm();
+  const handleContinue = async () => {
+    setIsLoading(true);
+    try {
+      console.log(form);
+      const values = await form.validateFields();
+      console.log('Form values:', values);
+
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
     }
-    console.log('Name:', name)
-    console.log('Phone:', phone)
-    alert('Thank you! Your information has been submitted.')
-  }
+  };
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4 sm:px-6 font-sans'>
-      <div className='bg-white shadow-md rounded-lg p-4 sm:p-6 max-w-sm sm:max-w-md w-full'>
+    <div className='flex justify-center items-center h-screen'>
+      <div className=' px-4  max-w-sm w-full'>
         <h1
           className='text-center'
           style={{
@@ -66,28 +56,44 @@ const LoginPage: React.FC = () => {
             Pizza
           </span>
         </h1>
-        <p className='text-xs sm:text-sm text-gray-600 mb-1 text-center'>
-          Nhà hàng Pizza - Long Thạnh Mỹ, Quận 9, Tp Thủ Đức, Tp Hồ Chí Minh
-        </p>
-        <p className='text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-center'>Chào bạn !!!</p>
-        <p className='text-xs sm:text-sm mb-4 sm:mb-6 text-gray-700 text-center'>
+
+        <div className='text-sm text-gray-600 mb-2  flex items-center'>
+          <LocationAnimation /><p className='font-semibold'>Nhà hàng Pizza - Long Thạnh Mỹ, Quận 9, Tp Thủ Đức, Tp Hồ Chí Minh -
+            Chào bạn !!!</p></div>
+        <p className='text-sm sm:text-sm mb-4 sm:mb-6 text-gray-700 '>
           Please enter your name so that the restaurant can serve you faster and more accurately
         </p>
-        <input
-          className='w-full px-3 py-2 mb-3 sm:mb-4 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-orange-500'
-          type='text'
-          placeholder='Enter your name'
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          className='w-full px-3 py-2 mb-4 sm:mb-6 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-orange-500'
-          type='tel'
-          placeholder='Enter your phone number'
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
-        <Button label='Continue' onClick={handleContinue} />
+        <Form
+          layout='vertical'
+          disabled={isLoading}
+          size='large'
+          form={form}
+          onFinish={handleContinue}
+        >
+
+          <InputComponent
+            name={'name'}
+            type='name'
+            placeholder='Enter your name'
+            rules={[
+              { required: true, message: 'Name is required!' },
+              { max: 50, message: 'Name cannot exceed 50 characters!' },
+            ]}
+
+          />
+          <InputComponent
+            name={'phone'}
+            type='phone'
+            placeholder='Enter your phone number'
+            rules={[
+              { required: true, message: 'Please input your phone number!' },
+              {
+                pattern: /^[0-9]{10}$/,
+                message: 'Phone number must be exactly 10 digits!',
+              },
+            ]} />
+          <ButtonComponent label='Continue' onClick={handleContinue} loading={isLoading} />
+        </Form>
       </div>
     </div>
   )
