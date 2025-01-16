@@ -60,7 +60,7 @@ const EditNameComponent: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.5 }}
-                    className="fixed inset-0 flex items-center justify-center"
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50"
                 >
                     <div className="w-full h-screen px-[12px] py-[16px] bg-white">
                         <div className="flex items-center" onClick={() => setIsVisible(false)}>
