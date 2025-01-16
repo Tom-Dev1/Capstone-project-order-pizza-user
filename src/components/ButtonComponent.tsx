@@ -3,6 +3,7 @@ import { Button, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 
 interface ButtonProps {
+
   label: string;
   onClick: () => void;
   loading?: boolean;
@@ -13,22 +14,11 @@ const ButtonComponent: React.FC<ButtonProps> = ({ label, onClick, loading = fals
 
   return (
     <Button
-      className="w-full  py-5 bg-orange-400 text-black rounded-md text-lg font-medium hover:bg-orange-600"
+      className="w-full mt-2 py-5 bg-orange-400 text-white rounded-md border-orange-400 text-lg font-medium"
       onClick={onClick}
-      disabled={loading} // Disable the button when loading
+      disabled={loading}
     >
-      {loading ?
-        <>
-
-          <Spin indicator={loadingIcon} />
-
-
-
-        </>
-
-
-
-        : label}
+      {loading ? <Spin indicator={loadingIcon} /> : label}
 
     </Button>
   );

@@ -1,28 +1,34 @@
 import React, { useState } from 'react'
 import { Form } from 'antd';
-import { ButtonComponent, InputComponent, LocationAnimation } from '../components';
-
+import { useNavigate } from 'react-router-dom';
+import { ButtonComponent, InputComponent } from '@/components';
+import { setItem } from '@/constants';
+import LocationAnimation from '@/components/Animations/LocationAnimation';
 
 const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const [form] = Form.useForm();
+
+
   const handleContinue = async () => {
+
     setIsLoading(true);
     try {
       console.log(form);
       const values = await form.validateFields();
       console.log('Form values:', values);
-
+      setItem('User', values)
+      navigate('/action');
     } catch (error) {
       setIsLoading(false);
       console.log(error);
     }
   };
-
   return (
-    <div className='flex justify-center items-center h-screen'>
-      <div className=' px-4  max-w-sm w-full'>
+    <div className='flex justify-center h-screen'>
+      <div className=' px-[12px] py-[16px]  max-w-sm w-full'>
         <h1
           className='text-center'
           style={{
@@ -56,7 +62,6 @@ const LoginPage: React.FC = () => {
             Pizza
           </span>
         </h1>
-
         <div className='text-sm text-gray-600 mb-2  flex items-center'>
           <LocationAnimation /><p className='font-semibold'>Nhà hàng Pizza - Long Thạnh Mỹ, Quận 9, Tp Thủ Đức, Tp Hồ Chí Minh -
             Chào bạn !!!</p></div>
@@ -70,7 +75,6 @@ const LoginPage: React.FC = () => {
           form={form}
           onFinish={handleContinue}
         >
-
           <InputComponent
             name={'name'}
             type='name'
@@ -79,7 +83,6 @@ const LoginPage: React.FC = () => {
               { required: true, message: 'Name is required!' },
               { max: 50, message: 'Name cannot exceed 50 characters!' },
             ]}
-
           />
           <InputComponent
             name={'phone'}
@@ -92,7 +95,7 @@ const LoginPage: React.FC = () => {
                 message: 'Phone number must be exactly 10 digits!',
               },
             ]} />
-          <ButtonComponent label='Continue' onClick={handleContinue} loading={isLoading} />
+          <ButtonComponent label='Tiếp tục' onClick={handleContinue} loading={isLoading} />
         </Form>
       </div>
     </div>

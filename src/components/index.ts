@@ -1,5 +1,8 @@
 import ButtonComponent from "./ButtonComponent";
 import InputComponent from "./InputComponent";
-import LocationAnimation from "./LocationAnimation";
+import EditNameComponent from "./EditNameComponent"
 
-export { ButtonComponent, InputComponent, LocationAnimation }
+
+
+
+export { ButtonComponent, InputComponent, EditNameComponent }

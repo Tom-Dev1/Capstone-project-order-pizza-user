@@ -1,12 +1,12 @@
 import { useLottie } from 'lottie-react';
-import animationData from '../assets/icons/Location.json';
+import animationData from '../../assets/icons/Sun.json';
 
 const style = {
-    height: 46,
-    width: 38,
+    height: 28,
+    width: 28,
 };
 
-const LocationAnimation = () => {
+const SunAnimation = () => {
     const options = {
         animationData,
         loop: true,
@@ -18,4 +18,4 @@ const LocationAnimation = () => {
     return <div>{View}</div>;
 };
 
-export default LocationAnimation;
+export default SunAnimation;
