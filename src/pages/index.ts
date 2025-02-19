@@ -1,4 +1,4 @@
-import LoginPage from "./loginPage";
+import LoginPage from "./WellComePage";
 import ViewActionPage from "./ViewActionPage";
-
-export { LoginPage, ViewActionPage }
+import OrderHome from "./OrderHome";
+export { LoginPage, ViewActionPage, OrderHome }

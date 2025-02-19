@@ -1,6 +1,6 @@
 import ButtonComponent from "./ButtonComponent";
 import InputComponent from "./InputComponent";
-import EditNameComponent from "./EditNameComponent"
+import EditNameComponent from "./modals/EditNameComponent";
 
 
 

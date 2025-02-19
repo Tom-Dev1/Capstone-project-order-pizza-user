@@ -4,10 +4,9 @@ import { getItem, setItem } from "@/constants";
 import { motion } from 'framer-motion';
 import { FaChevronLeft } from "react-icons/fa";
 import { Form } from "antd";
-import InputComponent from "./InputComponent";
-import ButtonComponent from "./ButtonComponent";
 import { getGreeting, getIcon, getTimeOfDay } from "@/constants/GetDate";
-import GiftAnimation from "./Animations/GiftAnimation";
+import InputComponent from "../InputComponent";
+import ButtonComponent from "../ButtonComponent";
 
 const EditNameComponent: React.FC = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -20,11 +19,10 @@ const EditNameComponent: React.FC = () => {
     const [form] = Form.useForm();
 
     useEffect(() => {
-        const user = getItem<{ name: string; phone: number }>('User');
+        const user = getItem<{ name: string }>('User');
         if (user) {
             form.setFieldsValue({
                 name: user.name || '',
-                phone: user.phone || '',
             });
             setName(user.name || '');
         }
@@ -73,7 +71,6 @@ const EditNameComponent: React.FC = () => {
                                 layout="vertical"
                                 disabled={isLoading}
                                 size="large"
-
                                 onFinish={handleContinue}
                             >
                                 <InputComponent
@@ -85,28 +82,7 @@ const EditNameComponent: React.FC = () => {
                                         { max: 50, message: 'Name cannot exceed 50 characters!' },
                                     ]}
                                 />
-                                <InputComponent
-                                    name="phone"
-                                    type="tel"
-                                    placeholder="Enter your phone number"
-                                    rules={[
-                                        { required: true, message: 'Please input your phone number!' },
-                                        {
-                                            pattern: /^[0-9]{10}$/,
-                                            message: 'Phone number must be exactly 10 digits!',
-                                        },
-                                    ]}
-                                />
                             </Form>
-
-                            <div className="w-full h-24 flex items-center border-orange-100 rounded-2xl mt-8 p-3 bg-orange-100">
-                                <div className="mb-4">
-                                    <GiftAnimation />
-                                </div>
-                                <p className="text-sm sm:text-sm  sm:mb-6 text-gray-700 ml-3">
-                                    Cập nhật số điện thoại chính xác để tích điểm và nhận ưu đãi dành cho hội viên của nhà hàng
-                                </p>
-                            </div>
                             {/* language */}
                             <div className="mt-36">
                                 <ButtonComponent label="Cập nhật" onClick={handleContinue} loading={isLoading} />

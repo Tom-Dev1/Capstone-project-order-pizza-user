@@ -84,17 +84,7 @@ const LoginPage: React.FC = () => {
               { max: 50, message: 'Name cannot exceed 50 characters!' },
             ]}
           />
-          <InputComponent
-            name={'phone'}
-            type='phone'
-            placeholder='Enter your phone number'
-            rules={[
-              { required: true, message: 'Please input your phone number!' },
-              {
-                pattern: /^[0-9]{10}$/,
-                message: 'Phone number must be exactly 10 digits!',
-              },
-            ]} />
+
           <ButtonComponent label='Tiếp tục' onClick={handleContinue} loading={isLoading} />
         </Form>
       </div>

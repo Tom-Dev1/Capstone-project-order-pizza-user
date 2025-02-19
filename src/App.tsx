@@ -1,9 +1,14 @@
 
+import { Toaster } from "react-hot-toast";
 import RouterIndex from "./routers/RoutersIndex";
+
 function App() {
   return (
-    <RouterIndex />
+    <div>
+      <RouterIndex />
+      <Toaster />
+    </div>
+
   )
 }
-
 export default App
