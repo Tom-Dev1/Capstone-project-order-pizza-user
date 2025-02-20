@@ -25,7 +25,7 @@ export default function StaffModal({ isOpen, onClose, onSubmit }: CallStaffModal
                 },
             })
             onClose()
-            setReason("") // Reset the input after submission
+            setReason("") // Reset the input / after submission
         }
     }
 

@@ -196,7 +196,7 @@ export default function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackMod
                         {/* Submit Button */}
                         <div className="p-6 border-t">
                             <button
-                                className="w-full bg-orange-500 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                className="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
                                 onClick={handleSubmit}
                             >
                                 Gửi đánh giá
