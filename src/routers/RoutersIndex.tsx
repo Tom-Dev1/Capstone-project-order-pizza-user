@@ -1,12 +1,12 @@
 import { lazy, Suspense } from "react"
 import { Route, Routes } from "react-router-dom"
-import ActionLayout from "@/pages/ActionLayout"
-import NotFound from "@/pages/NotFound"
+import ActionLayout from "@/pages/Layouts/ActionLayout"
+import NotFound from "@/pages/Layouts/NotFound"
 
 const ViewActionPage = lazy(() => import("../pages/ViewActionPage"))
-const OrderHome = lazy(() => import("../pages/OrderHome"))
-const Drinks = lazy(() => import("@/pages/Drinks"))
-const Orders = lazy(() => import("@/pages/Orders"))
+const OrderHome = lazy(() => import("../pages/Foods/OrderHome"))
+const Drinks = lazy(() => import("@/pages/Drinks/Drinks"))
+const Orders = lazy(() => import("@/pages/Orders/Orders"))
 const WelcomePage = lazy(() => import("@/pages/WellComePage"))
 
 const RouterIndex = () => {

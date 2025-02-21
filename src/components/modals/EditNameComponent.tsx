@@ -5,8 +5,8 @@ import { motion } from 'framer-motion';
 import { FaChevronLeft } from "react-icons/fa";
 import { Form } from "antd";
 import { getGreeting, getIcon, getTimeOfDay } from "@/constants/GetDate";
-import InputComponent from "../InputComponent";
-import ButtonComponent from "../ButtonComponent";
+import InputComponent from "../ui/InputComponent";
+import ButtonComponent from "../ui/ButtonComponent";
 
 const EditNameComponent: React.FC = () => {
     const [isVisible, setIsVisible] = useState(false);

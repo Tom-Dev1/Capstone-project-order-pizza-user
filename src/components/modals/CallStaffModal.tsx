@@ -18,7 +18,7 @@ const CallStaffButton = () => {
 
     return (
         <>
-            <div className="bg-[rgb(231,251,243)] h-24 w-full rounded-lg p-2 cursor-pointer" onClick={openModal}>
+            <div className="bg-[rgb(231,244,251)] h-24 w-full rounded-lg p-2 cursor-pointer" onClick={openModal}>
                 <div className="mt-1 flex justify-center items-center">
                     <Waiter />
                 </div>

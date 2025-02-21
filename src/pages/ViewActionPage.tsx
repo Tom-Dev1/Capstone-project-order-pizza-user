@@ -10,7 +10,7 @@ import RatingModal from "@/components/modals/RatingModal"
 
 const ViewActionPage: React.FC = () => {
     return (
-        <div className="max-w-2xl mx-auto min-h-screen px-4 py-6 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
             <header className="flex items-start space-x-3 mb-4">
                 <LocationAnimation />
                 <div>

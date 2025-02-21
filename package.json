@@ -14,10 +14,14 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.2",
+    "@radix-ui/react-slot": "^1.1.2",
+    "@radix-ui/themes": "^3.2.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
     "antd": "^5.24.0",
     "axios": "^1.7.9",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "framer-motion": "^11.18.0",
     "lottie-react": "^2.4.0",
     "lucide-react": "^0.475.0",
@@ -29,7 +33,9 @@
     "react-native-safe-area-context": "^5.2.0",
     "react-native-screens": "^4.7.0",
     "react-router-dom": "^7.1.1",
-    "react-select": "^5.10.0"
+    "react-select": "^5.10.0",
+    "tailwind-merge": "^3.0.1",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

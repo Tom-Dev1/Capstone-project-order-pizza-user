@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import toast from "react-hot-toast"
+import { Button } from "../ui/button"
+import { X } from "lucide-react"
 
 interface CallStaffModalProps {
     isOpen: boolean
@@ -49,20 +51,10 @@ export default function StaffModal({ isOpen, onClose, onSubmit }: CallStaffModal
                         <div className="px-6 py-4 border-b flex items-center justify-between">
                             <div className=" w-[20px]"></div>
                             <h2 className="text-lg font-semibold">Gọi nhân viên</h2>
-                            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-5 w-5"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <path d="M18 6 6 18M6 6l12 12" />
-                                </svg>
-                            </button>
+                            <Button variant="ghost" size="icon" onClick={onClose}>
+                                <X className="h-5 w-5" />
+                                <span className="sr-only">Close</span>
+                            </Button>
                         </div>
 
                         {/* Content */}

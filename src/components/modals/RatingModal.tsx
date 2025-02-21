@@ -22,7 +22,7 @@ const RatingModal = () => {
 
     return (
         <>
-            <div className="bg-[rgb(255,247,231)] h-24 w-full rounded-lg p-2 cursor-pointer" onClick={openModal}>
+            <div className="bg-blue-100 h-24 w-full rounded-lg p-2 cursor-pointer" onClick={openModal}>
                 <div className="mt-1 flex justify-center items-center">
                     <Star />
                 </div>

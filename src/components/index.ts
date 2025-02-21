@@ -1,5 +1,5 @@
-import ButtonComponent from "./ButtonComponent";
-import InputComponent from "./InputComponent";
+import ButtonComponent from "./ui/ButtonComponent";
+import InputComponent from "./ui/InputComponent";
 import EditNameComponent from "./modals/EditNameComponent";
 
 
