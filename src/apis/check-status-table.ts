@@ -1,9 +1,9 @@
-import TableDataModels from "@/models/tables.models"
+import TableDataModels from "@/types/tables"
 import ApiResponse from "./apiUtils"
 import { getTableById } from "./tables.api"
 
 
 
 export const checkStatus = async (): Promise<ApiResponse<TableDataModels>> => {
-    return getTableById("e0f203ee-082d-4bd1-aa53-d3dab4e2e5e9")
+    return getTableById("f789a7fe-1c6d-4dd3-8390-3ac823f06983")
 }

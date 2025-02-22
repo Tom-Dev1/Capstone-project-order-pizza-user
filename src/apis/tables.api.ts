@@ -1,4 +1,4 @@
-import TableDataModel from "@/models/tables.models"
+import TableDataModel from "@/types/tables"
 import ApiResponse, { get } from "./apiUtils"
 
 

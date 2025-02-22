@@ -1,4 +1,4 @@
-import { ProductsResult } from "@/models/product.models"
+import { ProductsResult } from "@/types/product"
 import ApiResponse, { get } from "./apiUtils"
 
 export const getAllProductFood = async (): Promise<ApiResponse<ProductsResult>> => {

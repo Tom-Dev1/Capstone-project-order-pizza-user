@@ -4,7 +4,7 @@ import ActionLayout from "@/pages/Layouts/ActionLayout"
 import NotFound from "@/pages/Layouts/NotFound"
 
 const ViewActionPage = lazy(() => import("../pages/ViewActionPage"))
-const OrderHome = lazy(() => import("../pages/Foods/OrderHome"))
+const FoodsHome = lazy(() => import("../pages/Foods/FoodsHome"))
 const Drinks = lazy(() => import("@/pages/Drinks/Drinks"))
 const Orders = lazy(() => import("@/pages/Orders/Orders"))
 const WelcomePage = lazy(() => import("@/pages/WellComePage"))
@@ -20,7 +20,7 @@ const RouterIndex = () => {
         <Route path="/get-started" element={<WelcomePage />} />
         <Route path="/action" element={<ViewActionPage />} />
         <Route path="/action" element={<ActionLayout />}>
-          <Route path="foods" element={<OrderHome />} />
+          <Route path="foods" element={<FoodsHome />} />
           <Route path="drinks" element={<Drinks />} />
           <Route path="orders" element={<Orders />} />
         </Route>

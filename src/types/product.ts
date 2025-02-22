@@ -1,5 +1,5 @@
-import { CategoryModel } from "./category.models";
-import ProductOptionModels from "./product-option.models";
+import { CategoryModel } from "./category";
+import ProductOptionModels from "./product-option";
 
 export interface ProductModels {
     id: string;
