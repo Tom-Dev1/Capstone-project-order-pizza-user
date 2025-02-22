@@ -3,7 +3,6 @@
 import type React from "react"
 import { useState, useCallback } from "react"
 import { useDispatch } from "react-redux"
-import { ShoppingCart } from "lucide-react"
 import type { ProductModels } from "@/types/product"
 import { addToCart } from "@/redux/stores/cartSlice"
 import ProductModal from "./modals/OptionsModal"
