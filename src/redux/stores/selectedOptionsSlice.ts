@@ -27,13 +27,11 @@ const selectedOptionsSlice = createSlice({
         clearSelectedOptions: (state, action: PayloadAction<string>) => {
             delete state[action.payload]
         },
-        clearAllSelectedOptions: (state) => {
-            return {}
-        },
+
     },
 })
 
-export const { setSelectedOptions, clearSelectedOptions, clearAllSelectedOptions } = selectedOptionsSlice.actions
+export const { setSelectedOptions, clearSelectedOptions, } = selectedOptionsSlice.actions
 
 export const selectSelectedOptions = (state: RootState, productId: string) =>
     state.selectedOptions[productId] || { basePrice: 0, options: [] }

@@ -9,7 +9,6 @@ interface OrderItemProps {
     item: CartItem
     onRemove: (uniqueId: string) => void
 }
-
 export const OrderItem: React.FC<OrderItemProps> = ({ item, onRemove }) => {
     const note = useSelector((state: RootState) => selectNote(state, item.id))
     const optionsText = item.selectedOptions.map((option) => `${option.name}: ${option.additionalPrice}`).join(", ")

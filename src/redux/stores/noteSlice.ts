@@ -18,13 +18,10 @@ const notesSlice = createSlice({
         clearNote: (state, action: PayloadAction<string>) => {
             delete state[action.payload]
         },
-        clearAllNotes: (state) => {
-            return {}
-        },
     },
 })
 
-export const { setNote, clearNote, clearAllNotes } = notesSlice.actions
+export const { setNote, clearNote, } = notesSlice.actions
 
 export const selectNote = (state: RootState, productId: string) => state.notes[productId] || ""
 
