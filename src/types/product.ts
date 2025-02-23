@@ -1,7 +1,7 @@
 import { CategoryModel } from "./category";
-import ProductOptionModels from "./product-option";
+import { ProductOption } from "./product-option";
 
-export interface ProductModels {
+export interface ProductModel {
     id: string;
     name: string;
     price: number;
@@ -9,11 +9,18 @@ export interface ProductModels {
     description: string;
     categoryId: string;
     productType: number;
-    category: CategoryModel | null;
-    productOption: ProductOptionModels | null;
+    category: CategoryModel
+    productOptions: ProductOption[]
 }
 
+
 export interface ProductsResult {
-    items: ProductModels[];
-    totalCount: number;
+    items: ProductModel[]
+    totalCount: number
+}
+export default interface ApiResponse<T> {
+    success: boolean
+    result: T
+    message: string
+    statusCode: number
 }

@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "./store"
+import OptionItem from "@/types/option"
 
 export interface CartItem {
     id: string
@@ -7,6 +8,8 @@ export interface CartItem {
     price: number
     quantity: number
     image?: string
+    selectedOptions: OptionItem[]
+    uniqueId: string
 }
 
 interface CartState {
@@ -21,31 +24,40 @@ const cartSlice = createSlice({
     name: "cart",
     initialState,
     reducers: {
-        addToCart: (state, action: PayloadAction<CartItem>) => {
-            const existingItem = state.items.find((item) => item.id === action.payload.id)
-            if (existingItem) {
-                existingItem.quantity += 1
+        addToCart: (state, action: PayloadAction<Omit<CartItem, "uniqueId">>) => {
+            const newItem = {
+                ...action.payload,
+                uniqueId: `${action.payload.id}-${JSON.stringify(action.payload.selectedOptions)}`,
+            }
+            const existingItemIndex = state.items.findIndex((item) => item.uniqueId === newItem.uniqueId)
+            if (existingItemIndex !== -1) {
+                state.items[existingItemIndex].quantity += 1
             } else {
-                state.items.push({ ...action.payload, quantity: 1 })
+                state.items.push({ ...newItem, quantity: 1 })
             }
         },
         removeFromCart: (state, action: PayloadAction<string>) => {
-            state.items = state.items.filter((item) => item.id !== action.payload)
+            state.items = state.items.filter((item) => item.uniqueId !== action.payload)
         },
-        updateQuantity: (state, action: PayloadAction<{ id: string; quantity: number }>) => {
-            const item = state.items.find((item) => item.id === action.payload.id)
-            if (item) {
-                item.quantity = action.payload.quantity
+        updateQuantity: (state, action: PayloadAction<{ uniqueId: string; quantity: number }>) => {
+            const itemIndex = state.items.findIndex((item) => item.uniqueId === action.payload.uniqueId)
+            if (itemIndex !== -1) {
+                state.items[itemIndex].quantity = action.payload.quantity
             }
+        },
+        clearCart: (state) => {
+            state.items = []
         },
     },
 })
 
-export const { addToCart, removeFromCart, updateQuantity } = cartSlice.actions
+export const { addToCart, removeFromCart, updateQuantity, clearCart } = cartSlice.actions
 
 export const selectCartItems = (state: RootState) => state.cart.items
 export const selectCartItemsCount = (state: RootState) =>
     state.cart.items.reduce((total, item) => total + item.quantity, 0)
+export const selectCartTotal = (state: RootState) =>
+    state.cart.items.reduce((total, item) => total + item.price * item.quantity, 0)
 
 export default cartSlice.reducer
 

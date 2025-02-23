@@ -4,7 +4,7 @@ import ActionLayout from "@/pages/Layouts/ActionLayout"
 import NotFound from "@/pages/Layouts/NotFound"
 
 const ViewActionPage = lazy(() => import("../pages/ViewActionPage"))
-const FoodsHome = lazy(() => import("../pages/Foods/FoodsHome"))
+const FoodsHome = lazy(() => import("@/pages/Foods/FoodsHome"))
 const Drinks = lazy(() => import("@/pages/Drinks/Drinks"))
 const Orders = lazy(() => import("@/pages/Orders/Orders"))
 const WelcomePage = lazy(() => import("@/pages/WellComePage"))

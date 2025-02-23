@@ -1,38 +1,17 @@
-
 import { useAppSelector } from "@/hooks/useAppSelector"
-import { selectCartItems, addToCart, removeFromCart, updateQuantity } from "@/redux/stores/cartSlice"
+import { selectCartItems, removeFromCart, selectCartTotal } from "@/redux/stores/cartSlice"
 import { useAppDispatch } from "@/hooks/useAppDispatch"
 import { ShoppingCart } from "lucide-react"
 import { OrderItem } from "./OrderItem"
 
 const Orders = () => {
     const cartItems = useAppSelector(selectCartItems)
+    const totalPrice = useAppSelector(selectCartTotal)
     const dispatch = useAppDispatch()
 
-    const handleIncrease = (id: string) => {
-        const item = cartItems.find((item) => item.id === id)
-        if (item) {
-            dispatch(addToCart(item))
-        }
+    const handleRemove = (uniqueId: string) => {
+        dispatch(removeFromCart(uniqueId))
     }
-
-    const handleDecrease = (id: string) => {
-        const item = cartItems.find((item) => item.id === id)
-        if (item) {
-            if (item.quantity > 1) {
-                dispatch(updateQuantity({ id, quantity: item.quantity - 1 }))
-            } else {
-                dispatch(removeFromCart(id))
-            }
-        }
-    }
-
-    const handleRemove = (id: string) => {
-        dispatch(removeFromCart(id))
-    }
-
-    const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
-
     return (
         <div className="px-4 py-4 bg-slate-50">
             {cartItems.length === 0 ? (
@@ -50,13 +29,7 @@ const Orders = () => {
                 <>
                     <div className="space-y-4 mb-4">
                         {cartItems.map((item) => (
-                            <OrderItem
-                                key={item.id}
-                                item={item}
-                                onIncrease={handleIncrease}
-                                onDecrease={handleDecrease}
-                                onRemove={handleRemove}
-                            />
+                            <OrderItem key={item.uniqueId} item={item} onRemove={handleRemove} />
                         ))}
                     </div>
                     <div className="mt-6 border-t pt-4 sticky bottom-0 bg-white">
@@ -75,3 +48,4 @@ const Orders = () => {
 }
 
 export default Orders
+

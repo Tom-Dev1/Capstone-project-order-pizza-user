@@ -5,5 +5,5 @@ import { getTableById } from "./tables.api"
 
 
 export const checkStatus = async (): Promise<ApiResponse<TableDataModels>> => {
-    return getTableById("f789a7fe-1c6d-4dd3-8390-3ac823f06983")
+    return getTableById("3f4c2e1e-4271-4584-83b0-82647504ca66")
 }

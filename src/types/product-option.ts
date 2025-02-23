@@ -1,10 +1,8 @@
-import ProductOptionItems from "./option-items";
+import { Option } from "./option";
 
-export default interface ProductOptionModels {
-    id: string,
-    name: string,
-    description: string,
-    optionItems: ProductOptionItems[]
+export interface ProductOption {
+    id: string;
+    productId: string;
+    optionId: string;
+    option: Option
 }
-
-

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import type { CategoryModel } from "@/types/category"
 import CategoryService from "@/services/category-service"
 
-const DRINK_CATEGORY_ID = "fb66e60f-a554-433a-898b-f31512b7fed4"
+const DRINK_CATEGORY_ID = "36acef28-b139-4e30-b4d6-5abe375f7c0b"
 
 const useCategories = () => {
   const [foodCategory, setFoodCategory] = useState<CategoryModel[]>([])
