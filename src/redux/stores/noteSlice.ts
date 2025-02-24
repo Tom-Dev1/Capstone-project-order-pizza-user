@@ -1,29 +1,30 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "./store"
 
-interface NotesState {
+interface NoteState {
     [productId: string]: string
 }
 
-const initialState: NotesState = {}
+const initialState: NoteState = {}
 
-const notesSlice = createSlice({
-    name: "notes",
+const noteSlice = createSlice({
+    name: "note",
     initialState,
     reducers: {
         setNote: (state, action: PayloadAction<{ productId: string; note: string }>) => {
             const { productId, note } = action.payload
             state[productId] = note
         },
-        clearNote: (state, action: PayloadAction<string>) => {
+        removeNote: (state, action: PayloadAction<string>) => {
             delete state[action.payload]
         },
     },
 })
 
-export const { setNote, clearNote, } = notesSlice.actions
+export const { setNote, removeNote } = noteSlice.actions
 
-export const selectNote = (state: RootState, productId: string) => state.notes[productId] || ""
+export const selectNote = (state: RootState, productId: string) => state.notes[productId]
+export const selectAllNotes = (state: RootState) => state.notes
 
-export default notesSlice.reducer
+export default noteSlice.reducer
 

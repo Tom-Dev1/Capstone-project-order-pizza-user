@@ -3,29 +3,44 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { X, ShoppingCart } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import type { ProductModel } from "@/types/product"
-import type { RootState } from "@/redux/stores/store"
-import OptionItem from "@/types/option"
+import { X, Minus, Plus, ShoppingCart, Edit2 } from "lucide-react"
+import { addToCart, updateCartItem, selectCartItem } from "@/redux/stores/cartSlice"
 import { selectNote, setNote } from "@/redux/stores/noteSlice"
+import { setSelectedOptions, selectTotalPrice } from "@/redux/stores/selectedOptionsSlice"
+import type { RootState } from "@/redux/stores/store"
+import type { ProductModel } from "@/types/product"
+import type OptionItem from "@/types/option"
 
 interface ProductModalProps {
   product: ProductModel
   isOpen: boolean
   onClose: () => void
-  onAddToCart: (product: ProductModel, selectedOptions: OptionItem[]) => void
 }
 
-const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, onAddToCart }) => {
+const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose }) => {
   const dispatch = useDispatch()
+  const cartItem = useSelector((state: RootState) => selectCartItem(state, product.id))
   const [localSelectedOptions, setLocalSelectedOptions] = useState<OptionItem[]>([])
   const note = useSelector((state: RootState) => selectNote(state, product.id))
-  const [localNote, setLocalNote] = useState(note)
+  const [localNote, setLocalNote] = useState(note || "")
+  const [quantity, setQuantity] = useState(1)
+  const [isEditing, setIsEditing] = useState(false)
+  const totalPrice = useSelector((state: RootState) => selectTotalPrice(state, product.id))
 
   useEffect(() => {
-    setLocalNote(note)
-  }, [note])
+    if (cartItem) {
+      setIsEditing(true)
+      setQuantity(cartItem.quantity)
+      setLocalNote(note || "")
+      setLocalSelectedOptions(cartItem.selectedOptions)
+    } else {
+      setIsEditing(false)
+      setQuantity(1)
+      setLocalNote("")
+      setLocalSelectedOptions([])
+    }
+  }, [cartItem, note])
 
   const handleOptionChange = (option: OptionItem) => {
     setLocalSelectedOptions((prev) => {
@@ -39,9 +54,24 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
     })
   }
 
-  const handleAddToCart = () => {
-    dispatch(setNote({ productId: product.id, note: localNote }))
-    onAddToCart(product, localSelectedOptions)
+  const handleAddOrUpdateCart = () => {
+    if (localNote) {
+      dispatch(setNote({ productId: product.id, note: localNote }))
+    }
+
+    dispatch(
+      setSelectedOptions({
+        productId: product.id,
+        basePrice: product.price,
+        options: localSelectedOptions,
+      }),
+    )
+
+    if (isEditing) {
+      dispatch(updateCartItem({ productId: product.id, selectedOptions: localSelectedOptions, quantity }))
+    } else {
+      dispatch(addToCart({ product, selectedOptions: localSelectedOptions, quantity }))
+    }
     onClose()
   }
 
@@ -56,7 +86,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]"
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           onClick={onClose}
         >
           <motion.div
@@ -75,7 +105,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
             </div>
             <div className="px-6 py-4">
               <img
-                src={product.image || "https://pizza4ps.com/wp-content/uploads/2023/08/BYO_Cold-Cuts_S-2-scaled.jpg"}
+                src={product.image || "/placeholder.svg?height=200&width=400"}
                 alt={product.name}
                 className="w-full h-48 object-cover rounded-md mb-4"
               />
@@ -94,8 +124,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
                             key={item.id}
                             onClick={() => handleOptionChange(item)}
                             className={`px-3 py-1 rounded-full text-sm transition-colors duration-200 ${isOptionSelected(item)
-                              ? "bg-blue-500 text-white"
-                              : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                                ? "bg-blue-500 text-white"
+                                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                               }`}
                           >
                             {item.name} (+${item.additionalPrice.toFixed(2)})
@@ -112,22 +142,41 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose, o
                 <textarea
                   value={localNote}
                   onChange={(e) => setLocalNote(e.target.value)}
-                  placeholder="Add a note for this item"
+                  placeholder="Add a note for this item (optional)"
                   className="w-full p-2 border rounded-md"
                   rows={3}
                 />
               </div>
 
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-lg font-semibold">Quantity:</span>
+                <div className="flex items-center">
+                  <button
+                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                    className="bg-gray-200 text-gray-600 p-2 rounded-l-md hover:bg-gray-300"
+                  >
+                    <Minus size={20} />
+                  </button>
+                  <span className="bg-gray-100 px-4 py-2">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity((prev) => prev + 1)}
+                    className="bg-gray-200 text-gray-600 p-2 rounded-r-md hover:bg-gray-300"
+                  >
+                    <Plus size={20} />
+                  </button>
+                </div>
+              </div>
+
               <div className="flex justify-between items-center mt-4">
-                <span className="text-lg font-bold">Total: ${product.price.toFixed(2)}</span>
+                <span className="text-lg font-bold">Total: ${(totalPrice * quantity).toFixed(2)}</span>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={handleAddToCart}
-                  className="bg-blue-800 text-white px-4 py-2 rounded-full flex items-center"
+                  onClick={handleAddOrUpdateCart}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-full flex items-center"
                 >
-                  <ShoppingCart size={20} className="mr-2" />
-                  Add to Cart
+                  {isEditing ? <Edit2 size={20} className="mr-2" /> : <ShoppingCart size={20} className="mr-2" />}
+                  {isEditing ? "Update Cart" : "Add to Cart"}
                 </motion.button>
               </div>
             </div>

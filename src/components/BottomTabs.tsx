@@ -3,8 +3,8 @@
 import React, { useMemo } from "react"
 import { NavLink } from "react-router-dom"
 import { Pizza, Coffee, ShoppingBag } from "lucide-react"
-import { useAppSelector } from "@/hooks/useAppSelector"
 import { selectCartItemsCount } from "@/redux/stores/cartSlice"
+import { useSelector } from "react-redux"
 
 interface NavItemProps {
     to: string
@@ -38,7 +38,7 @@ const NavItem: React.FC<NavItemProps> = React.memo(({ to, Icon, label, showBadge
 NavItem.displayName = "NavItem"
 
 const BottomTabs: React.FC = () => {
-    const cartItemsCount = useAppSelector(selectCartItemsCount)
+    const cartItemsCount = useSelector(selectCartItemsCount)
 
     const navItems = useMemo(
         () => [

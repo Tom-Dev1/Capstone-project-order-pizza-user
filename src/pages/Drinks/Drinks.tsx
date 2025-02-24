@@ -16,7 +16,6 @@ const Drinks = () => {
             setCategories(drinkCategory);
         }
     }, [drinkCategory]);
-
     return (
         <div className=" flex flex-col mx-auto">
             <div className=" px-4">

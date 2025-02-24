@@ -8,3 +8,8 @@ export default interface TableDataModels {
     currentOrder: any | null
     zone: any | null
 }
+
+export interface TableResult {
+    items: TableDataModels[]
+    totalCount: number
+}

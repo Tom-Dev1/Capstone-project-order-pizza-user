@@ -1,8 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "./store"
-import OptionItem from "@/types/option"
-
-
+import type OptionItem from "@/types/option"
 
 interface SelectedOptionsState {
     [productId: string]: {
@@ -27,14 +25,15 @@ const selectedOptionsSlice = createSlice({
         clearSelectedOptions: (state, action: PayloadAction<string>) => {
             delete state[action.payload]
         },
-
     },
 })
 
-export const { setSelectedOptions, clearSelectedOptions, } = selectedOptionsSlice.actions
+export const { setSelectedOptions, clearSelectedOptions } = selectedOptionsSlice.actions
 
 export const selectSelectedOptions = (state: RootState, productId: string) =>
     state.selectedOptions[productId] || { basePrice: 0, options: [] }
+
+export const selectAllSelectedOptions = (state: RootState) => state.selectedOptions
 
 export const selectTotalPrice = (state: RootState, productId: string) => {
     const product = state.selectedOptions[productId]

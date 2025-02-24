@@ -9,7 +9,7 @@ const Drinks = lazy(() => import("@/pages/Drinks/Drinks"))
 const Orders = lazy(() => import("@/pages/Orders/Orders"))
 const WelcomePage = lazy(() => import("@/pages/WellComePage"))
 const ClosedPage = lazy(() => import("@/pages/ClosedPage"))
-const CheckStatusAndRedirect = lazy(() => import("@/pages/status-check"))
+const CheckStatusAndRedirect = lazy(() => import("@/hooks/status-check"))
 const Loading = lazy(() => import("@/pages/Layouts/LoadingFallBack"))
 const RouterIndex = () => {
   return (

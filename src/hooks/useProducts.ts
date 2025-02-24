@@ -4,9 +4,9 @@ import ProductService from "@/services/product-service"
 
 const useProducts = () => {
     const [products, setProducts] = useState<ProductModel[]>([])
+
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
-
 
     const fetchAllProducts = useCallback(async () => {
         setLoading(true)

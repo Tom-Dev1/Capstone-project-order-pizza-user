@@ -8,6 +8,9 @@ const FoodsHome: React.FC = () => {
     const { foodCategory } = useCategories()
     const { products } = useProducts()
 
+
+
+
     const categoriesWithProducts = useMemo(() => {
         return foodCategory.map((category) => ({
             ...category,

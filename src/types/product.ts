@@ -18,9 +18,3 @@ export interface ProductsResult {
     items: ProductModel[]
     totalCount: number
 }
-export default interface ApiResponse<T> {
-    success: boolean
-    result: T
-    message: string
-    statusCode: number
-}
