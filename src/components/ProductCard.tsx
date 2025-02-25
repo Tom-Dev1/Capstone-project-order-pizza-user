@@ -49,7 +49,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
     <>
       <div className="bg-white rounded-lg p-4 w-full shadow-md">
         <img
-          src={product.image || "/placeholder.svg?height=128&width=256"}
+          src={product.image || "https://pizza4ps.com/wp-content/uploads/2024/04/BYO_Garlic-Shrimp-Pizza-1.jpg"}
           alt={product.name}
           className="w-full h-32 object-cover rounded-md mb-2"
         />
@@ -57,13 +57,13 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
         <p className="text-gray-600 text-sm line-clamp-2 mb-2">{product.description}</p>
 
         <motion.div
-          className={`flex justify-between items-center p-2 rounded-xl mt-2 cursor-pointer ${cartItem ? "bg-blue-100 border-2 border-blue-500" : "bg-white border-2 border-blue-300"
+          className={` flex justify-center items-center p-2 rounded-xl mt-2 cursor-pointer ${cartItem ? "bg-blue-300 border-2 border-blue-600" : "bg-white border-2 border-blue-300"
             }`}
           animate={{ scale: isClicked ? 0.95 : 1 }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
           onClick={handleOpenModal}
         >
-          <span className="text-base font-semibold">${product.price.toFixed(2)}</span>
+          <span className="text-lg font-semibold">${product.price}</span>
 
         </motion.div>
       </div>

@@ -1,14 +1,23 @@
 import type React from "react"
 import { useSelector, useDispatch } from "react-redux"
-import { selectCartItems, removeFromCart, selectCartTotal } from "@/redux/stores/cartSlice"
-import { ShoppingCart } from "lucide-react"
+import { selectCartItems, removeFromCart } from "@/redux/stores/cartSlice"
+import { ShoppingCart } from 'lucide-react'
 import { OrderItem } from "./OrderItem"
 import CheckoutProcessButton from "./CheckoutProcessButton"
+import { selectTotalPrice } from "@/redux/stores/selectedOptionsSlice"
+import type { RootState } from "@/redux/stores/store"
 
 const Orders: React.FC = () => {
     const cartItems = useSelector(selectCartItems)
-    const totalPrice = useSelector(selectCartTotal)
     const dispatch = useDispatch()
+
+    // Calculate the total price correctly
+    const totalPrice = useSelector((state: RootState) =>
+        cartItems.reduce((total, item) => {
+            const itemTotalPrice = selectTotalPrice(state, item.id)
+            return total + (itemTotalPrice * item.quantity)
+        }, 0)
+    )
 
     const handleRemove = (productId: string) => {
         dispatch(removeFromCart(productId))
@@ -39,7 +48,7 @@ const Orders: React.FC = () => {
                         <div className="border-t pt-4 sticky bottom-0 bg-white p-4 rounded-lg shadow-md">
                             <div className="flex justify-between items-center mb-4">
                                 <span className="text-lg font-semibold">Total:</span>
-                                <span className="text-2xl font-bold">${totalPrice.toFixed(2)}</span>
+                                <span className="text-2xl font-bold">${totalPrice}</span>
                             </div>
                             <CheckoutProcessButton />
                         </div>
@@ -51,4 +60,3 @@ const Orders: React.FC = () => {
 }
 
 export default Orders
-

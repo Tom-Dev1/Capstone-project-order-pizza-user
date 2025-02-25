@@ -1,7 +1,6 @@
-"use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Minus, Plus, ShoppingCart, Edit2 } from "lucide-react"
@@ -11,13 +10,11 @@ import { setSelectedOptions, selectTotalPrice } from "@/redux/stores/selectedOpt
 import type { RootState } from "@/redux/stores/store"
 import type { ProductModel } from "@/types/product"
 import type OptionItem from "@/types/option"
-
 interface ProductModalProps {
   product: ProductModel
   isOpen: boolean
   onClose: () => void
 }
-
 const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose }) => {
   const dispatch = useDispatch()
   const cartItem = useSelector((state: RootState) => selectCartItem(state, product.id))
@@ -29,43 +26,54 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
   const totalPrice = useSelector((state: RootState) => selectTotalPrice(state, product.id))
 
   useEffect(() => {
-    if (cartItem) {
-      setIsEditing(true)
-      setQuantity(cartItem.quantity)
-      setLocalNote(note || "")
-      setLocalSelectedOptions(cartItem.selectedOptions)
-    } else {
-      setIsEditing(false)
-      setQuantity(1)
-      setLocalNote("")
-      setLocalSelectedOptions([])
+    if (isOpen) {
+      if (cartItem) {
+        setIsEditing(true)
+        setQuantity(cartItem.quantity)
+        setLocalNote(note || "")
+        setLocalSelectedOptions(cartItem.selectedOptions)
+      } else {
+        setIsEditing(false)
+        setQuantity(1)
+        setLocalNote("")
+        setLocalSelectedOptions([])
+      }
+      // Initialize the selected options with the base price when opening the modal
+      dispatch(setSelectedOptions({
+        productId: product.id,
+        basePrice: product.price,
+        options: cartItem ? cartItem.selectedOptions : [],
+      }))
     }
-  }, [cartItem, note])
+  }, [isOpen, cartItem, note, product.id, product.price, dispatch])
 
-  const handleOptionChange = (option: OptionItem) => {
+  const handleOptionChange = useCallback((option: OptionItem) => {
     setLocalSelectedOptions((prev) => {
       const existingOptionIndex = prev.findIndex((opt) => opt.id === option.id)
       if (existingOptionIndex !== -1) {
-        return prev.filter((_, index) => index !== existingOptionIndex)
+        const newOptions = prev.filter((_, index) => index !== existingOptionIndex)
+        dispatch(setSelectedOptions({
+          productId: product.id,
+          basePrice: product.price,
+          options: newOptions,
+        }))
+        return newOptions
       } else {
-        const newOptions = prev.filter((opt) => opt.id !== option.id)
-        return [...newOptions, option]
+        const newOptions = [...prev.filter((opt) => opt.id !== option.id), option]
+        dispatch(setSelectedOptions({
+          productId: product.id,
+          basePrice: product.price,
+          options: newOptions,
+        }))
+        return newOptions
       }
     })
-  }
+  }, [dispatch, product.id, product.price])
 
-  const handleAddOrUpdateCart = () => {
+  const handleAddOrUpdateCart = useCallback(() => {
     if (localNote) {
       dispatch(setNote({ productId: product.id, note: localNote }))
     }
-
-    dispatch(
-      setSelectedOptions({
-        productId: product.id,
-        basePrice: product.price,
-        options: localSelectedOptions,
-      }),
-    )
 
     if (isEditing) {
       dispatch(updateCartItem({ productId: product.id, selectedOptions: localSelectedOptions, quantity }))
@@ -73,11 +81,11 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
       dispatch(addToCart({ product, selectedOptions: localSelectedOptions, quantity }))
     }
     onClose()
-  }
+  }, [dispatch, product, localNote, isEditing, localSelectedOptions, quantity, onClose])
 
-  const isOptionSelected = (item: OptionItem) => {
+  const isOptionSelected = useCallback((item: OptionItem) => {
     return localSelectedOptions.some((opt) => opt.id === item.id)
-  }
+  }, [localSelectedOptions])
 
   return (
     <AnimatePresence>
@@ -86,26 +94,27 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center z-50"
           onClick={onClose}
         >
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 500 }}
-            className="bg-white rounded-lg w-full max-w-md mx-auto overflow-y-auto max-h-[90vh]"
+            transition={{ type: "spring", damping: 50, stiffness: 500 }}
+            className="bg-white mb-[76px] w-full rounded-t-lg overflow-hidden"
+            style={{ height: 'calc(100vh - 200px)' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="sticky top-0 bg-white px-6 py-4 border-b flex items-center justify-between">
+            <div className="sticky top-0 bg-white px-6 py-4 border-b flex items-center justify-between z-10">
               <h2 className="text-xl font-bold">{product.name}</h2>
               <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
                 <X size={24} />
               </button>
             </div>
-            <div className="px-6 py-4">
+            <div className="px-6 py-4 overflow-y-auto pb-16" style={{ height: 'calc(100% - 64px)' }}>
               <img
-                src={product.image || "/placeholder.svg?height=200&width=400"}
+                src={product.image || "https://pizza4ps.com/wp-content/uploads/2024/04/BYO_Garlic-Shrimp-Pizza-1.jpg"}
                 alt={product.name}
                 className="w-full h-48 object-cover rounded-md mb-4"
               />
@@ -124,11 +133,11 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                             key={item.id}
                             onClick={() => handleOptionChange(item)}
                             className={`px-3 py-1 rounded-full text-sm transition-colors duration-200 ${isOptionSelected(item)
-                                ? "bg-blue-500 text-white"
-                                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                              ? "bg-blue-500 text-white"
+                              : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                               }`}
                           >
-                            {item.name} (+${item.additionalPrice.toFixed(2)})
+                            {item.name} (+${item.additionalPrice})
                           </button>
                         ))}
                       </div>
@@ -166,19 +175,18 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                   </button>
                 </div>
               </div>
-
-              <div className="flex justify-between items-center mt-4">
-                <span className="text-lg font-bold">Total: ${(totalPrice * quantity).toFixed(2)}</span>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleAddOrUpdateCart}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-full flex items-center"
-                >
-                  {isEditing ? <Edit2 size={20} className="mr-2" /> : <ShoppingCart size={20} className="mr-2" />}
-                  {isEditing ? "Update Cart" : "Add to Cart"}
-                </motion.button>
-              </div>
+            </div>
+            <div className="sticky bottom-0 bg-white px-6 py-4 border-t flex justify-between items-center">
+              <span className="text-lg font-bold">Total: ${(totalPrice * quantity).toFixed(2)}</span>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleAddOrUpdateCart}
+                className="bg-blue-500 text-white px-4 py-2 rounded-full flex items-center"
+              >
+                {isEditing ? <Edit2 size={20} className="mr-2" /> : <ShoppingCart size={20} className="mr-2" />}
+                {isEditing ? "Update Cart" : "Add to Cart"}
+              </motion.button>
             </div>
           </motion.div>
         </motion.div>

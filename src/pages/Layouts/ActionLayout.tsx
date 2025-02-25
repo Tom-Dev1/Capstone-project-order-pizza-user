@@ -14,8 +14,8 @@ const ActionLayout: React.FC = () => {
 
     useEffect(() => {
         const updateMainContentStyle = () => {
-            const headerHeight = 64
-            const bottomTabsHeight = 56
+            const headerHeight = 70
+            const bottomTabsHeight = 76
             const newStyle = {
                 height: `calc(100vh - ${headerHeight}px - ${bottomTabsHeight}px)`,
                 top: `${headerHeight}px`,

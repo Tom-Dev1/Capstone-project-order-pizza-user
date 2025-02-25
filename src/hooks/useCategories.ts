@@ -15,7 +15,9 @@ const useCategories = () => {
   const fetchAllCategories = useCallback(async () => {
     setLoading(true)
     setError(null)
+
     try {
+      let DRINK_CATEGORY_ID = 'db2de274-5110-4c37-b66f-8d33cbd6ebb4'
       const categoryService = CategoryService.getInstance()
       const response = await categoryService.getAllCategories()
       if (response.success && response.result.items && response.result.items.length > 0) {
