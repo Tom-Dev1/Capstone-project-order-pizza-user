@@ -13,7 +13,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { clearCart } from "@/redux/stores/cartSlice"
 import { getPaymentStatus } from "@/utils/status-order-utils";
 import { PAYMENT_STATUS } from "@/types/order";
-import { Router, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 const CheckoutProcessButton: React.FC = () => {
     const { tableId_gbId, currentOrderId_ } = useTable()
