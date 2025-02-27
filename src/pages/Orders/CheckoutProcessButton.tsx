@@ -21,7 +21,6 @@ const CheckoutProcessButton: React.FC = () => {
     const [orderId, setOrderId] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState<string | null>(null)
-    const [orderStatus, setOrderStatus] = useState<string | null>(null)
 
     const dispatch = useDispatch()
 
