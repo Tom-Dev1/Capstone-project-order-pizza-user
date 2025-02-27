@@ -77,7 +77,7 @@ const CheckoutProcessButton: React.FC = () => {
         } else if (orderStatus === PAYMENT_STATUS.CHECKOUT) {
             console.log("Order is checked out. Performing checkout order logic...");
 
-            navigate("/check-status")
+            navigate("/")
             // Add your logic for checked out orders here
         } else if (orderStatus === PAYMENT_STATUS.UNPAID) {
             console.log("Order is unpaid. Performing unpaid order logic...");
