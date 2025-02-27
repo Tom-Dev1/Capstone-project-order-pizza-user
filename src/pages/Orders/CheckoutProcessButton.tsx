@@ -81,7 +81,28 @@ const CheckoutProcessButton: React.FC = () => {
             // Add your logic for checked out orders here
         } else if (orderStatus === PAYMENT_STATUS.UNPAID) {
             console.log("Order is unpaid. Performing unpaid order logic...");
-            // Add your logic for unpaid orders here
+            if (currentOrderId_ === null) {
+                try {
+                    if (!tableId_gbId) {
+                        throw new Error("No table ID available")
+                    }
+                    const createResponse = await createOrder(JSON.stringify({ tableId: tableId_gbId }))
+
+                    if (!createResponse || !createResponse.success) {
+                        throw new Error(createResponse?.message || "Failed to create a new order")
+                    }
+                    const newOrderId = createResponse.result.result.id
+                    console.log('newOrderId', newOrderId);
+
+                    setOrderId(newOrderId)
+                } catch (err) {
+                    console.error("Error creating order:", err)
+                    setError(err instanceof Error ? err.message : "An unknown error occurred")
+                    return
+                }
+            } else {
+                setOrderId(currentOrderId_)
+            }
         } else {
             console.log("Unknown order status.");
         }
