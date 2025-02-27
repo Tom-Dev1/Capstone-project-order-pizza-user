@@ -25,7 +25,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
   const [quantity, setQuantity] = useState(1)
   const [isEditing, setIsEditing] = useState(false)
   const totalPrice = useSelector((state: RootState) => selectTotalPrice(state, product.id))
-  const [showNoteInput, setShowNoteInput] = useState(false)
+  const [showNoteInput, setShowNoteInput] = useState(true)
 
   useEffect(() => {
     if (isOpen) {
@@ -40,7 +40,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
         setQuantity(1)
         setLocalNote('')
         setLocalSelectedOptions([])
-        setShowNoteInput(false)
+        setShowNoteInput(true)
       }
       dispatch(
         setSelectedOptions({
@@ -127,7 +127,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
               </button>
               <div>
                 <h2 className='text-xl font-bold text-gray-800'>{product.name}</h2>
-                <p className='text-sm text-gray-500'>Customize your order</p>
               </div>
             </div>
 
@@ -186,7 +185,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                     className='flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors'
                   >
                     <MessageCircle size={20} />
-                    <span>Add special instructions</span>
                   </button>
                   {showNoteInput && (
                     <motion.div
@@ -198,7 +196,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                       <textarea
                         value={localNote}
                         onChange={(e) => setLocalNote(e.target.value)}
-                        placeholder='Add any special requests, allergies, or preferences...'
+                        placeholder='Ghi chú cho đơn hàng...'
                         className='w-full p-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 text-sm'
                         rows={3}
                       />
@@ -233,7 +231,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
             {/* Footer */}
             <div className='fixed bottom-0 left-0 right-0 bg-white border-t px-6 py-4 flex items-center justify-between max-w-2xl mx-auto'>
               <div className='flex flex-col'>
-                <span className='text-sm text-gray-600'>Total Price</span>
                 <span className='text-2xl font-bold'>${(totalPrice * quantity).toFixed(2)}</span>
               </div>
               <motion.button
