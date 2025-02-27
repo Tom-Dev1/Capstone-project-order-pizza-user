@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { clearCart } from "@/redux/stores/cartSlice"
 import { getPaymentStatus } from "@/utils/status-order-utils";
 import { PAYMENT_STATUS } from "@/types/order";
+import { Router, useNavigate } from "react-router-dom"
 
 const CheckoutProcessButton: React.FC = () => {
     const { tableId_gbId, currentOrderId_ } = useTable()
@@ -21,7 +22,7 @@ const CheckoutProcessButton: React.FC = () => {
     const [orderId, setOrderId] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState<string | null>(null)
-
+    const navigate = useNavigate();
     const dispatch = useDispatch()
 
     // Get items from Redux store
@@ -76,7 +77,7 @@ const CheckoutProcessButton: React.FC = () => {
         } else if (orderStatus === PAYMENT_STATUS.CHECKOUT) {
             console.log("Order is checked out. Performing checkout order logic...");
 
-            //return page Closing page
+            navigate("/check-status")
             // Add your logic for checked out orders here
         } else if (orderStatus === PAYMENT_STATUS.UNPAID) {
             console.log("Order is unpaid. Performing unpaid order logic...");
