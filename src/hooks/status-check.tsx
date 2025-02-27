@@ -10,7 +10,7 @@ const StatusCheck: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const navigate = useNavigate()
-    const id = `e0ef28e8-5e2a-4c36-bfc8-c5f724e6f8f8`
+    const id = `ed5f4000-8b30-4bb9-8e5c-0188f57eb0d0`
 
     setItem("tableId", id)
 

@@ -9,7 +9,17 @@ export interface AddFoodToOrderRequest {
     orderId: string;
     orderItems: OrderItem[];
 }
-
+export interface Order {
+    id: string;
+    tableCode: string;
+    totalPrice: number;
+    orderCode: string;
+    startTime: string;
+    endTime: string | null;
+    status: string;
+    tableId: string;
+    table: any;
+}
 
 // Response
 export interface CreateOrderResponse {
@@ -27,3 +37,10 @@ export interface AddFoodResponse {
     message: string
     statusCode: number
 }
+export const PAYMENT_STATUS = {
+    PAID: "Paid",
+    CHECKOUT: "CheckedOut",
+    UNPAID: "Unpaid",
+} as const;
+
+export type PaymentStatus = typeof PAYMENT_STATUS[keyof typeof PAYMENT_STATUS];

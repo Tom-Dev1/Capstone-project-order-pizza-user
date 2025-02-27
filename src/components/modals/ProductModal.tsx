@@ -101,9 +101,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 50, stiffness: 500 }}
-            className="bg-white mb-[76px] w-full rounded-t-lg overflow-hidden"
-            style={{ height: 'calc(100vh - 200px)' }}
+            transition={{ type: "spring", damping: 40, stiffness: 500 }}
+            className="bg-white w-full rounded-t-lg overflow-hidden"
+            style={{ height: 'calc(100vh - 200px)', zIndex: 10000 }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="sticky top-0 bg-white px-6 py-4 border-b flex items-center justify-between z-10">

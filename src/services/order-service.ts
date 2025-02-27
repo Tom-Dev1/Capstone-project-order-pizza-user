@@ -1,6 +1,6 @@
 import type ApiResponse from "@/apis/apiUtils"
-import { post } from "@/apis/apiUtils"
-import type { AddFoodResponse, CreateOrderResponse } from "@/types/order"
+import { get, post } from "@/apis/apiUtils"
+import type { AddFoodResponse, CreateOrderResponse, Order } from "@/types/order"
 
 class OrderService {
     private static instance: OrderService
@@ -31,6 +31,14 @@ class OrderService {
             return response
         } catch (error) {
             console.error("Error adding food to existing order:", error)
+            throw error
+        }
+    }
+    public async getOrderById(orderId: string): Promise<ApiResponse<Order>> {
+        try {
+            return await get<Order>(`/orders/${orderId}`)
+        } catch (error) {
+            console.error(`Error fetching order with id ${orderId}:`, error)
             throw error
         }
     }

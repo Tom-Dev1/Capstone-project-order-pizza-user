@@ -11,14 +11,18 @@ import type { RootState } from "@/redux/stores/store"
 import type { OrderItem } from "@/types/order"
 import { motion, AnimatePresence } from "framer-motion"
 import { clearCart } from "@/redux/stores/cartSlice"
+import { getPaymentStatus } from "@/utils/status-order-utils";
+import { PAYMENT_STATUS } from "@/types/order";
 
 const CheckoutProcessButton: React.FC = () => {
     const { tableId_gbId, currentOrderId_ } = useTable()
-    const { createOrder, addFoodToOrder, isLoading, error: serviceError } = useOrderService()
+    const { createOrder, addFoodToOrder, isLoading, order } = useOrderService()
     const [showConfirmModal, setShowConfirmModal] = useState(false)
     const [orderId, setOrderId] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState<string | null>(null)
+    const [orderStatus, setOrderStatus] = useState<string | null>(null)
+
     const dispatch = useDispatch()
 
     // Get items from Redux store
@@ -39,14 +43,26 @@ const CheckoutProcessButton: React.FC = () => {
         }
     }, [currentOrderId_])
 
-    useEffect(() => {
-        if (serviceError) {
-            setError(serviceError.message)
-        }
-    }, [serviceError])
-    console.log(orderId);
+    console.log(order);
+
+    console.log("orderId", orderId);
 
     const handleOpenModal = async () => {
+
+        const orderStatus = getPaymentStatus(order?.[0]?.status);
+        if (orderStatus === PAYMENT_STATUS.PAID) {
+            console.log("Order is paid. Performing paid order logic...");
+            // Add your logic for paid orders here
+        } else if (orderStatus === PAYMENT_STATUS.CHECKOUT) {
+            console.log("Order is checked out. Performing checkout order logic...");
+            // Add your logic for checked out orders here
+        } else if (orderStatus === PAYMENT_STATUS.UNPAID) {
+            console.log("Order is unpaid. Performing unpaid order logic...");
+            // Add your logic for unpaid orders here
+        } else {
+            console.log("Unknown order status.");
+        }
+
         if (currentOrderId_ === null) {
             try {
                 if (!tableId_gbId) {

@@ -32,14 +32,14 @@ const ActionLayout: React.FC = () => {
     }, [])
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-50">
+        <div className="flex flex-col h-screen pt-[70px] bg-gray-50">
             <div className="fixed top-0 left-0 right-0 z-10">
                 {isOrderPage ? <HeaderWithBack title="Đơn hàng" /> : <Header />}
             </div>
-            <main style={mainContentStyle} className="fixed left-0 right-0 overflow-y-auto w-full">
+            <main style={mainContentStyle} className=" left-0 right-0 overflow-y-auto w-full z-11">
                 <Outlet />
             </main>
-            <div className="fixed bottom-0 left-0 right-0 z-10">
+            <div className="fixed bottom-0 left-0 right-0 z-9">
                 <BottomTabs />
             </div>
         </div>

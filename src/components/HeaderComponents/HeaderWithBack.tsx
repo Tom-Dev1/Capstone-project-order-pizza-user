@@ -19,7 +19,7 @@ const HeaderWithBack: React.FC<HeaderWithBackProps> = ({ title, onBack }) => {
     }
 
     return (
-        <header className="w-full border-b bg-white shadow-sm h-16">
+        <header className="w-full border-b bg-white shadow-sm h-[76px]">
             <div className="container mx-auto flex items-center h-full px-4">
                 <button
                     onClick={handleBack}
