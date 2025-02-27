@@ -19,34 +19,6 @@ const FoodsHome: React.FC = () => {
 
   return (
     <div className='min-h-screen bg-gradient-to-b from-white to-orange-50'>
-      {/* Hero Section */}
-      <div className='bg-orange-500 text-white'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16'>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className='max-w-3xl'
-          >
-            <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold mb-4'>Delicious Food Delivered to Your Door</h1>
-            <p className='text-lg md:text-xl opacity-90 mb-8'>
-              Browse our menu and discover your new favorite dish today.
-            </p>
-
-            <div className='relative max-w-xl'>
-              <input
-                type='text'
-                placeholder='Search for dishes...'
-                className='w-full py-3 px-5 pr-12 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-300'
-              />
-              <button className='absolute right-3 top-1/2 transform -translate-y-1/2 text-orange-500'>
-                <Search size={20} />
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
       {/* Categories and Products */}
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10'>
         {/* Category Navigation */}
@@ -78,13 +50,6 @@ const FoodsHome: React.FC = () => {
           </motion.div>
         ))}
       </div>
-
-      {/* Footer */}
-      <footer className='bg-gray-800 text-white py-10'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
-          <p className='text-gray-400'>© 2024 Food Delivery. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   )
 }
