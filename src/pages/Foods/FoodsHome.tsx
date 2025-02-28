@@ -1,98 +1,76 @@
-"use client"
-
-import CategoryTitle from "@/components/CategoryTitle"
-import ProductCard from "@/components/ProductCard"
-import useCategories from "@/hooks/useCategories"
-import useProducts from "@/hooks/useProducts"
-import React, { useMemo, useState, useRef, useEffect } from "react"
-import { motion } from "framer-motion"
+import CategoryTitle from '@/components/CategoryTitle'
+import ProductCard from '@/components/ProductCard'
+import useCategories from '@/hooks/useCategories'
+import useProducts from '@/hooks/useProducts'
+import React, { useMemo } from 'react'
+import { motion } from 'framer-motion'
+import { Search } from 'lucide-react'
 
 const FoodsHome: React.FC = () => {
   const { foodCategory } = useCategories()
   const { products } = useProducts()
-  const [activeCategory, setActiveCategory] = useState<string>("")
-  const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
 
   const categoriesWithProducts = useMemo(() => {
     return foodCategory.map((category) => ({
       ...category,
-      products: products.filter((product) => product.categoryId === category.id),
+      products: products.filter((product) => product.categoryId === category.id)
     }))
   }, [foodCategory, products])
 
-  // Scroll to category when clicking on navigation button
-  const scrollToCategory = (categoryId: string) => {
-    const yOffset = -80 // Adjust this value based on your header height
-    const element = categoryRefs.current[categoryId]
-    if (element) {
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
-      window.scrollTo({ top: y, behavior: "smooth" })
-    }
-  }
-
-  // Set up intersection observer to detect which category is in view
-  useEffect(() => {
-    if (categoriesWithProducts.length === 0) return
-
-    const observerOptions = {
-      root: null,
-      threshold: 0,
-    }
-
-    const observerCallback: IntersectionObserverCallback = (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveCategory(entry.target.id)
-        }
-      })
-    }
-
-    const observer = new IntersectionObserver(observerCallback, observerOptions)
-
-    Object.values(categoryRefs.current).forEach((ref) => {
-      if (ref) observer.observe(ref)
-    })
-
-    if (!activeCategory && categoriesWithProducts.length > 0) {
-      setActiveCategory(categoriesWithProducts[0].id)
-    }
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [categoriesWithProducts, activeCategory])
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-orange-50">
+    <div className='min-h-screen bg-gradient-to-b from-white to-orange-50'>
       {/* Hero Section */}
-      <div className="sticky top-0 z-10 bg-white">
-        <div className="py-3 shadow-sm overflow-hidden">
-          <div className="flex gap-2 overflow-x-auto hide-scrollbar px-4">
+      <div className='bg-orange-500 text-white'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16'>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className='max-w-3xl'
+          >
+            <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold mb-4'>Delicious Food Delivered to Your Door</h1>
+            <p className='text-lg md:text-xl opacity-90 mb-8'>
+              Browse our menu and discover your new favorite dish today.
+            </p>
+
+            <div className='relative max-w-xl'>
+              <input
+                type='text'
+                placeholder='Search for dishes...'
+                className='w-full py-3 px-5 pr-12 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-300'
+              />
+              <button className='absolute right-3 top-1/2 transform -translate-y-1/2 text-orange-500'>
+                <Search size={20} />
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Categories and Products */}
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10'>
+        {/* Category Navigation */}
+        <div className='mb-10 overflow-x-auto pb-2'>
+          <div className='flex gap-2 min-w-max'>
             {categoriesWithProducts.map((category) => (
               <button
                 key={category.id}
-                onClick={() => scrollToCategory(category.id)}
-                className={`px-4 py-2 rounded-full transition-all duration-300 font-medium whitespace-nowrap
-                    ${activeCategory === category.id ? "bg-orange-500 text-white shadow-md" : "bg-white text-gray-800"
-                  }`}
+                className='px-4 py-2 rounded-full bg-white shadow-sm hover:shadow-md transition-shadow text-gray-800 font-medium'
               >
                 {category.name}
               </button>
             ))}
           </div>
         </div>
-      </div>
-      {/* Categories and Products */}
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-1">
+
+        {/* Categories with Products */}
         {categoriesWithProducts.map((category) => (
           <motion.div
             key={category.id}
-            id={category.id}
-            ref={(el) => (categoryRefs.current[category.id] = el)}
-            className="mb-16 scroll-mt-24"
+            className='mb-16'
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.5 }}
           >
             <CategoryTitle categories={[category]} />
@@ -105,4 +83,3 @@ const FoodsHome: React.FC = () => {
 }
 
 export default React.memo(FoodsHome)
-
