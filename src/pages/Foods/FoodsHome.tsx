@@ -4,8 +4,6 @@ import useCategories from '@/hooks/useCategories'
 import useProducts from '@/hooks/useProducts'
 import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Search } from 'lucide-react'
-
 const FoodsHome: React.FC = () => {
   const { foodCategory } = useCategories()
   const { products } = useProducts()
