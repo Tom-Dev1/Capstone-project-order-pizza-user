@@ -37,6 +37,8 @@ class OrderService {
     public async getOrderById(orderId: string): Promise<ApiResponse<Order>> {
         try {
             return await get<Order>(`/orders/${orderId}`)
+
+
         } catch (error) {
             console.error(`Error fetching order with id ${orderId}:`, error)
             throw error

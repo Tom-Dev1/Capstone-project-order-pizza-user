@@ -4,8 +4,10 @@ import type React from "react"
 import { useEffect, useState } from "react"
 import { Outlet, useLocation } from "react-router-dom"
 import BottomTabs from "@/components/BottomTabs"
-import Header from "@/components/HeaderComponents/HeaderComponents"
 import HeaderWithBack from "@/components/HeaderComponents/HeaderWithBack"
+import Header from "@/components/HeaderComponents/HeaderComponents"
+// import Header from "@/components/HeaderComponents/HeaderComponents"
+// import HeaderWithBack from "@/components/HeaderComponents/HeaderWithBack"
 
 const ActionLayout: React.FC = () => {
     const location = useLocation()
@@ -36,7 +38,7 @@ const ActionLayout: React.FC = () => {
             <div className="fixed top-0 left-0 right-0 z-10">
                 {isOrderPage ? <HeaderWithBack title="Đơn hàng" /> : <Header />}
             </div>
-            <main style={mainContentStyle} className=" left-0 right-0 overflow-y-auto w-full z-11">
+            <main style={mainContentStyle} className="left-0 right-0 overflow-y-auto w-full z-11">
                 <Outlet />
             </main>
             <div className="fixed bottom-0 left-0 right-0 z-9">

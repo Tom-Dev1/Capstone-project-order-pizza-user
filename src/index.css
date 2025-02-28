@@ -68,3 +68,36 @@
     @apply bg-background text-foreground;
   }
 }
+
+body.modal-open .header,
+body.modal-open .button-tabs {
+  @apply opacity-50 pointer-events-none transition-opacity duration-200;
+}
+
+@keyframes countdown {
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: 0%;
+  }
+}
+
+.animate-countdown-timer {
+  animation: countdown 1.5s linear forwards;
+}
+
+@layer utilities {
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari and Opera */
+  }
+}

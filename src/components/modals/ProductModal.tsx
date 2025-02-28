@@ -2,13 +2,14 @@ import type React from 'react'
 import { useState, useEffect, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Minus, Plus, ShoppingCart, Edit2, ChevronLeft, MessageCircle } from 'lucide-react'
+import { Minus, Plus, ShoppingCart, Edit2, ChevronLeft, Check } from 'lucide-react'
 import { addToCart, updateCartItem, selectCartItem } from '@/redux/stores/cartSlice'
 import { selectNote, setNote } from '@/redux/stores/noteSlice'
 import { setSelectedOptions, selectTotalPrice } from '@/redux/stores/selectedOptionsSlice'
 import type { RootState } from '@/redux/stores/store'
 import type { ProductModel } from '@/types/product'
 import type OptionItem from '@/types/option'
+import MiniModal from './MiniModal'
 
 interface ProductModalProps {
   product: ProductModel
@@ -25,8 +26,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
   const [quantity, setQuantity] = useState(1)
   const [isEditing, setIsEditing] = useState(false)
   const totalPrice = useSelector((state: RootState) => selectTotalPrice(state, product.id))
-  const [showNoteInput, setShowNoteInput] = useState(false)
-
+  const [showMiniModal, setShowMiniModal] = useState(false)
   useEffect(() => {
     if (isOpen) {
       if (cartItem) {
@@ -34,13 +34,11 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
         setQuantity(cartItem.quantity)
         setLocalNote(note || '')
         setLocalSelectedOptions(cartItem.selectedOptions)
-        setShowNoteInput(!!note)
       } else {
         setIsEditing(false)
         setQuantity(1)
         setLocalNote('')
         setLocalSelectedOptions([])
-        setShowNoteInput(false)
       }
       dispatch(
         setSelectedOptions({
@@ -91,6 +89,10 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
     } else {
       dispatch(addToCart({ product, selectedOptions: localSelectedOptions, quantity }))
     }
+    setShowMiniModal(true)
+    setTimeout(() => {
+      setShowMiniModal(false)
+    }, 2000)
     onClose()
   }, [dispatch, product, localNote, isEditing, localSelectedOptions, quantity, onClose])
 
@@ -116,18 +118,17 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 40, stiffness: 500 }}
-            className='bg-white w-full rounded-t-2xl overflow-hidden max-w-2xl'
-            style={{ height: 'calc(100vh - 100px)', maxHeight: 800 }}
+            className='bg-white w-full rounded-t-2xl overflow-hidden'
+            style={{ height: 'calc(100vh - 100px)', maxHeight: 700 }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
             <div className='sticky top-0 bg-white px-6 py-4 border-b flex items-center gap-4 z-10'>
               <button onClick={onClose} className='p-1 hover:bg-gray-100 rounded-full transition-colors'>
-                <ChevronLeft size={24} className='text-gray-600' />
+                <ChevronLeft size={28} className='text-gray-800 mt-1' />
               </button>
               <div>
-                <h2 className='text-xl font-bold text-gray-800'>{product.name}</h2>
-                <p className='text-sm text-gray-500'>Customize your order</p>
+                <h2 className='text-2xl font-bold text-gray-800'>{product.name}</h2>
               </div>
             </div>
 
@@ -146,30 +147,28 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
               {/* Product Details */}
               <div className='px-6 py-4'>
                 <p className='text-gray-600 text-sm leading-relaxed'>{product.description}</p>
-
                 {/* Options */}
                 {product.productOptions && product.productOptions.length > 0 && (
                   <div className='mt-6 space-y-6'>
                     {product.productOptions.map((productOption) => (
                       <div key={productOption.id}>
-                        <div className='flex justify-between items-baseline mb-3'>
+                        <div className='flex flex-col mb-3'>
                           <h3 className='font-semibold text-gray-800'>{productOption.option.name}</h3>
-                          <span className='text-sm text-gray-500'>{productOption.option.description}</span>
+                          <span className='mt-1 text-sm text-orange-500'>{productOption.option.description}</span>
                         </div>
                         <div className='grid grid-cols-2 gap-2'>
                           {productOption.option.optionItems.map((item) => (
                             <button
                               key={item.id}
                               onClick={() => handleOptionChange(item)}
-                              className={`relative p-3 rounded-xl text-left transition-all duration-200 ${
-                                isOptionSelected(item)
-                                  ? 'bg-blue-50 border-2 border-blue-500'
-                                  : 'bg-gray-50 border-2 border-gray-100 hover:border-gray-200'
-                              }`}
+                              className={`relative p-3 rounded-2xl text-left transition-all duration-200 ${isOptionSelected(item)
+                                ? 'bg-orange-200 border-2 border-orange-400'
+                                : 'bg-gray-100 border-2 border-gray-100 '
+                                }`}
                             >
-                              <div className='flex justify-between items-start'>
+                              <div className='flex justify-around items-start'>
                                 <span className='font-medium text-gray-800'>{item.name}</span>
-                                <span className='text-sm text-gray-600'>+${item.additionalPrice}</span>
+                                <span className='text-base font-base text-gray-700'>+${item.additionalPrice}</span>
                               </div>
                             </button>
                           ))}
@@ -181,34 +180,26 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
 
                 {/* Note Section */}
                 <div className='mt-6'>
-                  <button
-                    onClick={() => setShowNoteInput(!showNoteInput)}
-                    className='flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors'
+                  <h1 className='text-xl text-orange-500'>Thêm ghi chú</h1>
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className='mt-3'
                   >
-                    <MessageCircle size={20} />
-                    <span>Add special instructions</span>
-                  </button>
-                  {showNoteInput && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className='mt-3'
-                    >
-                      <textarea
-                        value={localNote}
-                        onChange={(e) => setLocalNote(e.target.value)}
-                        placeholder='Add any special requests, allergies, or preferences...'
-                        className='w-full p-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 text-sm'
-                        rows={3}
-                      />
-                    </motion.div>
-                  )}
+                    <textarea
+                      value={localNote}
+                      onChange={(e) => setLocalNote(e.target.value)}
+                      placeholder='Add any special requests, allergies, or preferences...'
+                      className='w-full p-3 border-2 border-gray-100 rounded-xl focus:border-orange-500  text-base'
+                      rows={3}
+                    />
+                  </motion.div>
                 </div>
 
                 {/* Quantity */}
                 <div className='mt-6 flex items-center justify-between'>
-                  <span className='font-medium text-gray-800'>Quantity</span>
+                  <span className='font-medium text-gray-800'>Số lượng</span>
                   <div className='flex items-center gap-3 bg-gray-50 rounded-full p-1'>
                     <motion.button
                       whileTap={{ scale: 0.9 }}
@@ -231,26 +222,27 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
             </div>
 
             {/* Footer */}
-            <div className='fixed bottom-0 left-0 right-0 bg-white border-t px-6 py-4 flex items-center justify-between max-w-2xl mx-auto'>
-              <div className='flex flex-col'>
-                <span className='text-sm text-gray-600'>Total Price</span>
-                <span className='text-2xl font-bold'>${(totalPrice * quantity).toFixed(2)}</span>
-              </div>
+            <div className='fixed bottom-0 left-0 right-0 bg-white border-t px-6 py-4 flex items-center justify-center w-full '>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleAddOrUpdateCart}
-                className={`px-6 py-3 rounded-full flex items-center gap-2 text-white font-medium ${
-                  isEditing ? 'bg-blue-500 hover:bg-blue-600' : 'bg-orange-500 hover:bg-orange-600'
-                }`}
+                className={`px-12 py-3 w-96 rounded-md flex justify-center items-center  text-white font-semibold ${isEditing ? 'bg-orange-500' : 'bg-orange-500'
+                  }`}
               >
-                {isEditing ? <Edit2 size={20} /> : <ShoppingCart size={20} />}
-                <span>{isEditing ? 'Update Cart' : 'Add to Cart'}</span>
+                <div className='w-20'>${(totalPrice * quantity)}</div>
+                <div>-</div>
+                <div className='w-28'>{isEditing ? 'Update Cart' : 'Add to Cart'}</div>
+                <div>{isEditing ? <Edit2 size={20} /> : <ShoppingCart size={20} />}</div>
               </motion.button>
             </div>
           </motion.div>
         </motion.div>
       )}
+      {/* Mini Modal */}
+      <AnimatePresence>
+        {showMiniModal && <MiniModal productName={product.name} productImage={product.image} isEditing={isEditing} />}
+      </AnimatePresence>
     </AnimatePresence>
   )
 }

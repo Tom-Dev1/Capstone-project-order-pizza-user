@@ -37,6 +37,8 @@ const CheckoutProcessButton: React.FC = () => {
         note: notes[item.id] || "",
     }))
 
+    console.log(orderItems);
+
     useEffect(() => {
         if (currentOrderId_ !== null) {
             setOrderId(currentOrderId_)
@@ -78,7 +80,6 @@ const CheckoutProcessButton: React.FC = () => {
             console.log("Order is checked out. Performing checkout order logic...");
 
             navigate("/")
-            // Add your logic for checked out orders here
         } else if (orderStatus === PAYMENT_STATUS.UNPAID) {
             console.log("Order is unpaid. Performing unpaid order logic...");
             if (currentOrderId_ === null) {

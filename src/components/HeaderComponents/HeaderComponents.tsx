@@ -6,7 +6,7 @@ import { LanguageSelector } from "./LanguageSelector"
 
 const Header: React.FC = () => {
     return (
-        <header className="fixed top-0 left-0 right-0 bg-background text-foreground h-[70px] flex items-center z-10">
+        <header className="fixed top-0 left-0 right-0 bg-background text-foreground h-[70px] flex items-center z-20">
             <div className="container mx-auto flex items-center justify-end h-full px-4">
                 <div className="container mx-auto px-4 flex items-center justify-end">
                     <SearchBar />
