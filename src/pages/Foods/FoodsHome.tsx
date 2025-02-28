@@ -36,7 +36,6 @@ const FoodsHome: React.FC = () => {
 
     const observerOptions = {
       root: null,
-      rootMargin: "-80px 0px -70% 0px",
       threshold: 0,
     }
 
