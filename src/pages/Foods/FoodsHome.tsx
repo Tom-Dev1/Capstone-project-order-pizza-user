@@ -1,3 +1,5 @@
+"use client"
+
 import CategoryTitle from "@/components/CategoryTitle"
 import ProductCard from "@/components/ProductCard"
 import useCategories from "@/hooks/useCategories"
@@ -20,10 +22,12 @@ const FoodsHome: React.FC = () => {
 
   // Scroll to category when clicking on navigation button
   const scrollToCategory = (categoryId: string) => {
-    categoryRefs.current[categoryId]?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    })
+    const yOffset = -80 // Adjust this value based on your header height
+    const element = categoryRefs.current[categoryId]
+    if (element) {
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+      window.scrollTo({ top: y, behavior: "smooth" })
+    }
   }
 
   // Set up intersection observer to detect which category is in view
@@ -31,8 +35,8 @@ const FoodsHome: React.FC = () => {
     if (categoriesWithProducts.length === 0) return
 
     const observerOptions = {
-      root: null, // viewport
-      rootMargin: "-100px 0px -70% 0px", // top, right, bottom, left
+      root: null,
+      rootMargin: "-80px 0px -70% 0px",
       threshold: 0,
     }
 
@@ -46,12 +50,10 @@ const FoodsHome: React.FC = () => {
 
     const observer = new IntersectionObserver(observerCallback, observerOptions)
 
-    // Observe all category sections
     Object.values(categoryRefs.current).forEach((ref) => {
       if (ref) observer.observe(ref)
     })
 
-    // Set initial active category if none is set
     if (!activeCategory && categoriesWithProducts.length > 0) {
       setActiveCategory(categoriesWithProducts[0].id)
     }
@@ -64,17 +66,15 @@ const FoodsHome: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-orange-50">
       {/* Hero Section */}
-      <div className="sticky top-0 z-10 bg-white ">
-        <div className="mb-4 overflow-x-auto hide-scrollbar py-3 shadow-sm">
-          <div className="flex gap-2 min-w-max mx-3">
+      <div className="sticky top-0 z-10 bg-white">
+        <div className="py-3 shadow-sm overflow-hidden">
+          <div className="flex gap-2 overflow-x-auto hide-scrollbar px-4">
             {categoriesWithProducts.map((category) => (
               <button
                 key={category.id}
                 onClick={() => scrollToCategory(category.id)}
-                className={`px-4 py-2 rounded-full transition-all duration-300 font-medium
-                    ${activeCategory === category.id
-                    ? "bg-orange-500 text-white shadow-md"
-                    : "bg-white  text-gray-800"
+                className={`px-4 py-2 rounded-full transition-all duration-300 font-medium whitespace-nowrap
+                    ${activeCategory === category.id ? "bg-orange-500 text-white shadow-md" : "bg-white text-gray-800"
                   }`}
               >
                 {category.name}
@@ -84,11 +84,7 @@ const FoodsHome: React.FC = () => {
         </div>
       </div>
       {/* Categories and Products */}
-      <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-1">
-        {/* Category Navigation - Fixed to top when scrolling */}
-
-
-        {/* Categories with Products */}
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-1">
         {categoriesWithProducts.map((category) => (
           <motion.div
             key={category.id}
