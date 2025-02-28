@@ -1,10 +1,12 @@
-import CategoryTitle from '@/components/CategoryTitle'
-import ProductCard from '@/components/ProductCard'
-import useCategories from '@/hooks/useCategories'
-import useProducts from '@/hooks/useProducts'
 import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Search } from 'lucide-react'
+import CategoryTitle from '@/components/CategoryTitle'
+import ProductCard from '@/components/ProductCard'
+import CategoryNav from '@/components/CategoryNav'
+import SmoothScrollHelper from '@/components/SmoothScrollHelper'
+import useCategories from '@/hooks/useCategories'
+import useProducts from '@/hooks/useProducts'
 
 const FoodsHome: React.FC = () => {
   const { foodCategory } = useCategories()
@@ -19,6 +21,9 @@ const FoodsHome: React.FC = () => {
 
   return (
     <div className='min-h-screen bg-gradient-to-b from-white to-orange-50'>
+      {/* Helper component for improved scroll behavior */}
+      <SmoothScrollHelper />
+
       {/* Hero Section */}
       <div className='bg-orange-500 text-white'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16'>
@@ -47,32 +52,22 @@ const FoodsHome: React.FC = () => {
         </div>
       </div>
 
-      {/* Categories and Products */}
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10'>
-        {/* Category Navigation */}
-        <div className='mb-10 overflow-x-auto pb-2'>
-          <div className='flex gap-2 min-w-max'>
-            {categoriesWithProducts.map((category) => (
-              <button
-                key={category.id}
-                className='px-4 py-2 rounded-full bg-white shadow-sm hover:shadow-md transition-shadow text-gray-800 font-medium'
-              >
-                {category.name}
-              </button>
-            ))}
-          </div>
-        </div>
+      {/* Improved Sticky Category Navigation */}
+      <CategoryNav categories={foodCategory} />
 
-        {/* Categories with Products */}
+      {/* Categories with Products */}
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6'>
         {categoriesWithProducts.map((category) => (
           <motion.div
             key={category.id}
-            className='mb-16'
+            className='mb-16 pt-4'
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.5 }}
           >
+            {/* Invisible anchor for scroll targeting with proper offset */}
+            <div id={`category-${category.id}`} className='-mt-20 pt-20 invisible absolute' aria-hidden='true'></div>
             <CategoryTitle categories={[category]} />
             <ProductCard products={category.products} categoryId={category.id} />
           </motion.div>
