@@ -1,5 +1,3 @@
-"use client"
-
 import CategoryTitle from "@/components/CategoryTitle"
 import ProductCard from "@/components/ProductCard"
 import useCategories from "@/hooks/useCategories"

@@ -1,13 +1,9 @@
-"use client"
-
 import type React from "react"
 import { useEffect, useState } from "react"
 import { Outlet, useLocation } from "react-router-dom"
 import BottomTabs from "@/components/BottomTabs"
 import HeaderWithBack from "@/components/HeaderComponents/HeaderWithBack"
 import Header from "@/components/HeaderComponents/HeaderComponents"
-// import Header from "@/components/HeaderComponents/HeaderComponents"
-// import HeaderWithBack from "@/components/HeaderComponents/HeaderWithBack"
 
 const ActionLayout: React.FC = () => {
     const location = useLocation()
