@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Search } from 'lucide-react'
 import CategoryTitle from '@/components/CategoryTitle'
 import ProductCard from '@/components/ProductCard'
 import CategoryNav from '@/components/CategoryNav'
 import SmoothScrollHelper from '@/components/SmoothScrollHelper'
 import useCategories from '@/hooks/useCategories'
 import useProducts from '@/hooks/useProducts'
+import { Search } from 'lucide-react'
 
 const FoodsHome: React.FC = () => {
   const { foodCategory } = useCategories()
