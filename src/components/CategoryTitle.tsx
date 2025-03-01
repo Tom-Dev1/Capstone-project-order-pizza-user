@@ -1,7 +1,7 @@
 import type React from 'react'
 
 interface CategoryTitleProps {
-  categories: { id: number; name: string; description?: string }[]
+  categories: { id: string; name: string; description?: string }[]
 }
 
 const CategoryTitle: React.FC<CategoryTitleProps> = ({ categories }) => {
