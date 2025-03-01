@@ -15,7 +15,7 @@ const RouterIndex = () => {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
-        <Route path="/" element={<CheckStatusAndRedirect />} />
+        <Route index path="/:id" element={<CheckStatusAndRedirect />} />
         <Route path="/closed" element={<ClosedPage />} />
         <Route path="/get-started" element={<WelcomePage />} />
         <Route path="/action" element={<ViewActionPage />} />
