@@ -17,28 +17,28 @@ export const OrderItem: React.FC<OrderItemProps> = ({ item, onRemove }) => {
   const optionsText = item.selectedOptions.map((option) => `${option.name} (+$${option.additionalPrice})`).join(', ')
 
   return (
-    <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between py-4 border-b'>
+    <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-orange-100 hover:border-orange-200 transition-colors'>
       <div className='flex items-start space-x-4 mb-2 sm:mb-0'>
         <img
-          src={item.image || 'https://pizza4ps.com/wp-content/uploads/2024/04/BYO_Garlic-Shrimp-Pizza-1.jpg'}
+          src={item.image || '/placeholder.svg'}
           alt={item.name}
-          className='w-16 h-16 object-cover rounded-md'
+          className='w-20 h-20 object-cover rounded-lg shadow-sm'
         />
         <div>
-          <h3 className='font-semibold'>{item.name}</h3>
-          {optionsText && <p className='text-sm text-gray-500'>{optionsText}</p>}
-          {note && <p className='text-sm text-gray-500 italic'>Note: {note}</p>}
-          <p className='text-gray-700 font-medium'>${totalPrice}</p>
+          <h3 className='font-semibold text-gray-800'>{item.name}</h3>
+          {optionsText && <p className='text-sm text-gray-500 mt-1'>{optionsText}</p>}
+          {note && <p className='text-sm text-orange-600 italic mt-1'>Note: {note}</p>}
+          <p className='text-lg font-semibold text-orange-500 mt-1'>${totalPrice}</p>
         </div>
       </div>
       <div className='flex items-center space-x-4 mt-2 sm:mt-0'>
-        <span className='font-semibold'>Qty: {item.quantity}</span>
+        <span className='px-3 py-1 bg-orange-50 text-orange-600 rounded-full font-medium'>Qty: {item.quantity}</span>
         <button
           onClick={() => onRemove(item.id)}
-          className='p-1 rounded-full bg-red-100 hover:bg-red-200 text-red-500 transition-colors duration-200'
+          className='p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-500 transition-all duration-200 hover:scale-105'
           aria-label='Remove item'
         >
-          <Trash2 size={16} />
+          <Trash2 size={18} />
         </button>
       </div>
     </div>
