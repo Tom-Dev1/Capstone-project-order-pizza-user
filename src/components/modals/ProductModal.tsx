@@ -164,7 +164,10 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                   {/* Product Image */}
                   <div className='relative h-64 bg-gray-100'>
                     <img
-                      src={product.image || '/placeholder.svg'}
+                      src={
+                        product.image ||
+                        'https://cdn.tgdd.vn/2021/09/CookDish/cach-bao-quan-pizza-de-banh-pizza-va-cach-ham-nong-banh-pizza-avt-1200x676.jpg'
+                      }
                       alt={product.name}
                       className='w-full h-full object-cover'
                     />
