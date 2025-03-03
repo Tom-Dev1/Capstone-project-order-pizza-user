@@ -13,8 +13,9 @@ const QRScannerPage: React.FC = () => {
     if (detectedCodes.length > 0) {
       const result = detectedCodes[0].rawValue
       console.log('QR Code scanned:', result)
-      // Redirect to the scanned URL or a specific route
-      navigate(result)
+      const url = new URL(result)
+      const path = url.pathname + url.search
+      navigate(path)
     }
   }
 
