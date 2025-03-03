@@ -81,7 +81,7 @@ export const selectCartItems = createSelector([selectCart], (cart) =>
 )
 
 export const selectCartItemCount = createSelector(
-    [selectCart, (state, productId: string, categoryId: string) => ({ productId, categoryId })],
+    [selectCart, (_state, productId: string, categoryId: string) => ({ productId, categoryId })],
     (cart, { productId, categoryId }) =>
         cart.items.filter((item) => item.id === productId && item.categoryId === categoryId).length,
 )
@@ -95,7 +95,7 @@ export const selectCartItemsCount = createSelector([selectCart], (cart) =>
 )
 
 export const selectCartItem = createSelector(
-    [selectCart, (state, productId?: string, categoryId?: string) => ({ productId, categoryId })],
+    [selectCart, (_state, productId?: string, categoryId?: string) => ({ productId, categoryId })],
     (cart, { productId, categoryId }) =>
         productId && categoryId
             ? cart.items.find((item) => item.id === productId && item.categoryId === categoryId)
