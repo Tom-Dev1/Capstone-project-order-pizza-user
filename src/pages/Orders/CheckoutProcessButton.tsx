@@ -10,10 +10,10 @@ import { useSelector, useDispatch } from 'react-redux'
 import type { RootState } from '@/redux/stores/store'
 import type { OrderItem } from '@/types/order'
 import { motion, AnimatePresence } from 'framer-motion'
-import { clearCart } from '@/redux/stores/cartSlice'
 import { getPaymentStatus } from '@/utils/status-order-utils'
 import { PAYMENT_STATUS } from '@/types/order'
 import { useNavigate } from 'react-router-dom'
+import { clearCart } from '@/redux/slices/cartSlice'
 
 const CheckoutProcessButton: React.FC = () => {
   const { tableId_gbId, currentOrderId_ } = useTable()
@@ -29,18 +29,24 @@ const CheckoutProcessButton: React.FC = () => {
   const notes = useSelector((state: RootState) => state.notes)
   const selectedOptions = useSelector((state: RootState) => state.selectedOptions)
 
-  const orderItems: OrderItem[] = cartItems.map((item) => ({
-    productId: item.id,
-    optionItemIds: selectedOptions[item.id]?.options.map((option) => option.id) || [],
-    quantity: item.quantity,
-    note: notes[item.id] || ''
-  }))
-
+  const orderItems: OrderItem[] = cartItems.map((item) => {
+    const itemNotes = notes[item.id]?.[item.categoryId] || []
+    const combinedNote = itemNotes.join(" + ")
+    return {
+      productId: item.id,
+      optionItemIds: selectedOptions[item.id]?.options.map((option) => option.id) || [],
+      quantity: item.quantity,
+      note: combinedNote,
+    }
+  })
   useEffect(() => {
     if (currentOrderId_ !== null) {
       setOrderId(currentOrderId_)
     }
   }, [currentOrderId_])
+
+
+  console.log("currentOrderId_", currentOrderId_);
 
   const handleOpenModal = async () => {
     const orderStatus = getPaymentStatus(order?.[0]?.status)
@@ -131,6 +137,8 @@ const CheckoutProcessButton: React.FC = () => {
       dispatch(clearCart())
       setShowConfirmModal(false)
       setSuccess('Order placed successfully!')
+      console.log(success);
+
     } catch (err) {
       console.error('Adding food to order failed:', err)
       setError(err instanceof Error ? err.message : 'An unknown error occurred')
