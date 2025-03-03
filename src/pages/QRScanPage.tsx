@@ -4,21 +4,34 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { IDetectedBarcode, Scanner } from '@yudiel/react-qr-scanner'
 import { Pizza, Camera } from 'lucide-react'
-const apiPublic = import.meta.env.VITE_PUBLIC_WEBSITE_URL
 
 const QRScannerPage: React.FC = () => {
   const [scanning, setScanning] = useState(false)
   const navigate = useNavigate()
+  const apiPublic = import.meta.env.VITE_PUBLIC_WEBSITE_URL
 
   const handleScan = (detectedCodes: IDetectedBarcode[]) => {
     if (detectedCodes.length > 0) {
       const result = detectedCodes[0].rawValue
       console.log('QR Code scanned:', result)
-      // Extract the path from the result URL
-      const url = new URL(result)
-      const path = `${apiPublic}/${url.pathname}/${url.search}}`
-      // Redirect to the extracted path
-      navigate(path)
+
+      try {
+        // Parse the scanned URL
+        const url = new URL(result)
+
+        // Extract pathname (UUID) and search parameters (tableCode)
+        const path = url.pathname // e.g. "/e0ef28e8-5e2a-4c36-bfc8-c5f724e6f8f8"
+        const searchParams = url.search // e.g. "?tableCode=A01"
+
+        // Construct the correct navigation path
+        const fullPath = `${apiPublic}${path}${searchParams}`
+        console.log('Navigating to:', fullPath)
+
+        // Use React Router navigate to change the page
+        navigate(fullPath)
+      } catch (error) {
+        console.error('Invalid QR Code URL:', error)
+      }
     }
   }
 
