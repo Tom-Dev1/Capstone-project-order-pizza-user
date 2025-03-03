@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { IDetectedBarcode, Scanner } from '@yudiel/react-qr-scanner'
 import { Pizza, Camera } from 'lucide-react'
+const apiPublic = import.meta.env.VITE_PUBLIC_WEBSITE_URL
 
 const QRScannerPage: React.FC = () => {
   const [scanning, setScanning] = useState(false)
@@ -13,8 +14,10 @@ const QRScannerPage: React.FC = () => {
     if (detectedCodes.length > 0) {
       const result = detectedCodes[0].rawValue
       console.log('QR Code scanned:', result)
+      // Extract the path from the result URL
       const url = new URL(result)
-      const path = url.pathname + url.search
+      const path = `${apiPublic}/${url.pathname}/${url.search}}`
+      // Redirect to the extracted path
       navigate(path)
     }
   }
