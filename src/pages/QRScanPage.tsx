@@ -18,10 +18,6 @@ const QRScannerPage: React.FC = () => {
     }
   }
 
-  const handleError = (error: Error) => {
-    console.error('QR Code scan error:', error)
-  }
-
   useEffect(() => {
     // Start scanning after a short delay to allow animations to complete
     const timer = setTimeout(() => setScanning(true), 1000)
@@ -47,7 +43,7 @@ const QRScannerPage: React.FC = () => {
         className='w-full max-w-md aspect-square relative rounded-2xl overflow-hidden shadow-xl'
       >
         {scanning ? (
-          <Scanner onScan={handleScan} onError={handleError} />
+          <Scanner onScan={handleScan} />
         ) : (
           <div className='w-full h-full bg-gray-200 flex items-center justify-center'>
             <Camera className='w-16 h-16 text-gray-400 animate-pulse' />
