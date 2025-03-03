@@ -7,10 +7,7 @@ import { setItem } from '@/constants'
 import { motion } from 'framer-motion'
 import { MapPin } from 'lucide-react'
 
-interface LoginPageProps {
-  lable: string
-}
-const LoginPage: React.FC<LoginPageProps> = () => {
+const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const [form] = Form.useForm()
