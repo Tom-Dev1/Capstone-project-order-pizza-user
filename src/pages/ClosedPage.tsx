@@ -1,6 +1,7 @@
 import type React from 'react'
 import { motion } from 'framer-motion'
-import { Clock, AlertCircle } from 'lucide-react'
+import { Clock, AlertCircle, Home } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const Closed: React.FC = () => {
   return (
@@ -34,6 +35,15 @@ const Closed: React.FC = () => {
                 Nếu bạn đã đặt trước, vui lòng thông báo cho nhân viên của chúng tôi. Chúng tôi sẽ mở bàn cho bạn ngay
                 lập tức.
               </p>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link
+                  to='/qr-scanner'
+                  className='inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 shadow-md'
+                >
+                  <Home className='w-5 h-5' />
+                  Quay Về Trang Chủ
+                </Link>
+              </motion.div>
             </div>
           </div>
         </div>

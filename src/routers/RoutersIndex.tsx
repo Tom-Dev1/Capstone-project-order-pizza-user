@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import ActionLayout from '@/pages/Layouts/ActionLayout'
 import NotFound from '@/pages/Layouts/NotFound'
+import QRScannerPage from '@/pages/QRScanPage'
 
 const ViewActionPage = lazy(() => import('../pages/ViewActionPage'))
 const FoodsHome = lazy(() => import('@/pages/Foods/FoodsHome'))
@@ -19,6 +20,7 @@ const RouterIndex = () => {
         <Route path='/closed' element={<ClosedPage />} />
         <Route path='/get-started/:id' element={<LoginPage />} />
         <Route path='/action' element={<ViewActionPage />} />
+        <Route path='/qr-scanner' element={<QRScannerPage />} />
         <Route path='/action' element={<ActionLayout />}>
           <Route path='foods' element={<FoodsHome />} />
           <Route path='drinks' element={<Drinks />} />
