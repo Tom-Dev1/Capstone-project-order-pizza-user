@@ -1,13 +1,11 @@
 import type React from 'react'
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { IDetectedBarcode, Scanner } from '@yudiel/react-qr-scanner'
 import { Pizza, Camera } from 'lucide-react'
 
 const QRScannerPage: React.FC = () => {
   const [scanning, setScanning] = useState(false)
-  const navigate = useNavigate()
   const apiPublic = import.meta.env.VITE_PUBLIC_WEBSITE_URL
 
   const handleScan = (detectedCodes: IDetectedBarcode[]) => {
@@ -27,14 +25,13 @@ const QRScannerPage: React.FC = () => {
         const fullPath = `${apiPublic}${path}${searchParams}`
         console.log('Navigating to:', fullPath)
 
-        // Use React Router navigate to change the page
-        navigate(fullPath)
+        // Navigate to the URL in the same tab
+        window.location.href = fullPath
       } catch (error) {
         console.error('Invalid QR Code URL:', error)
       }
     }
   }
-
   useEffect(() => {
     // Start scanning after a short delay to allow animations to complete
     const timer = setTimeout(() => setScanning(true), 1000)
