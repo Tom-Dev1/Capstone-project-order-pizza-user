@@ -6,7 +6,6 @@ interface ButtonProps {
   label: string
   onClick: () => void
   loading?: boolean
-  style: React.CSSProperties
 }
 
 const ButtonComponent: React.FC<ButtonProps> = ({ label, onClick, loading = false }) => {
