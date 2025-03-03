@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { NavLink } from "react-router-dom"
 import { Pizza, Coffee, ShoppingBag } from "lucide-react"
-import { selectCartItemsCount } from "@/redux/stores/cartSlice"
+import { selectCartItemsCount } from "@/redux/slices/cartSlice"
 import { useSelector } from "react-redux"
 
 interface NavItemProps {

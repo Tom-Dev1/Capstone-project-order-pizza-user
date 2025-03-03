@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit"
-import cartReducer from "./cartSlice"
-import selectedOptionsReducer from "./selectedOptionsSlice"
-import notesReducer from "./noteSlice"
+import cartReducer from "../slices/cartSlice"
+import selectedOptionsReducer from "../slices/selectedOptionsSlice"
+import notesReducer from "../slices/noteSlice"
 
 export const store = configureStore({
     reducer: {

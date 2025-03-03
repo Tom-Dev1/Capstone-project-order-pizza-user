@@ -1,46 +1,51 @@
-import type React from 'react'
-import { useSelector } from 'react-redux'
-import type { CartItem } from '@/redux/stores/cartSlice'
-import { Trash2 } from 'lucide-react'
-import type { RootState } from '@/redux/stores/store'
-import { selectNote } from '@/redux/stores/noteSlice'
-import { selectTotalPrice } from '@/redux/stores/selectedOptionsSlice'
+"use client"
+
+import type React from "react"
+import { motion } from "framer-motion"
+import { X } from "lucide-react"
+import type { CartItem } from "@/redux/slices/cartSlice"
 
 interface OrderItemProps {
-  item: CartItem
-  onRemove: (uniqueId: string) => void
+  item: CartItem & {
+    categoryId: string
+    notes: string[]
+  }
+  onRemove: () => void
 }
 
 export const OrderItem: React.FC<OrderItemProps> = ({ item, onRemove }) => {
-  const note = useSelector((state: RootState) => selectNote(state, item.id))
-  const totalPrice = useSelector((state: RootState) => selectTotalPrice(state, item.id))
-  const optionsText = item.selectedOptions.map((option) => `${option.name} (+$${option.additionalPrice})`).join(', ')
-
   return (
-    <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-orange-100 hover:border-orange-200 transition-colors'>
-      <div className='flex items-start space-x-4 mb-2 sm:mb-0'>
-        <img
-          src={item.image || '/placeholder.svg'}
-          alt={item.name}
-          className='w-20 h-20 object-cover rounded-lg shadow-sm'
-        />
-        <div>
-          <h3 className='font-semibold text-gray-800'>{item.name}</h3>
-          {optionsText && <p className='text-sm text-gray-500 mt-1'>{optionsText}</p>}
-          {note && <p className='text-sm text-orange-600 italic mt-1'>Note: {note}</p>}
-          <p className='text-lg font-semibold text-orange-500 mt-1'>${totalPrice}</p>
-        </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="bg-white rounded-xl shadow-sm border border-orange-100 p-4 flex items-center"
+    >
+      <img src={item.image || "/placeholder.svg"} alt={item.name} className="w-20 h-20 object-cover rounded-lg mr-4" />
+      <div className="flex-grow">
+        <h3 className="text-sm font-semibold text-gray-800">{item.name}</h3>
+        <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
+        {item.selectedOptions && item.selectedOptions.length > 0 && (
+          <p className="text-sm text-gray-500">Options: {item.selectedOptions.map((opt) => opt.name).join(", ")}</p>
+        )}
+        {item.notes && item.notes.length > 0 && (
+          <div className="text-sm text-gray-500 mt-2">
+            <span className="font-medium">Note{item.notes.length > 1 ? "s" : ""}:</span>
+            <ul className="list-disc list-inside">
+              {item.notes.map((note, index) => (
+                <li key={index}>{note}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
-      <div className='flex items-center space-x-4 mt-2 sm:mt-0'>
-        <span className='px-3 py-1 bg-orange-50 text-orange-600 rounded-full font-medium'>Qty: {item.quantity}</span>
-        <button
-          onClick={() => onRemove(item.id)}
-          className='p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-500 transition-all duration-200 hover:scale-105'
-          aria-label='Remove item'
-        >
-          <Trash2 size={18} />
+      <div className="flex flex-col items-end">
+        <span className="text-lg font-bold text-orange-500">${(item.price * item.quantity).toFixed(2)}</span>
+        <button onClick={onRemove} className="mt-2 text-gray-400 hover:text-red-500 transition-colors duration-200">
+          <X size={20} />
         </button>
       </div>
-    </div>
+    </motion.div>
   )
 }
+

@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import type { RootState } from "./store"
+import type { RootState } from "../stores/store"
 import type OptionItem from "@/types/option"
 
 interface SelectedOptionsState {
