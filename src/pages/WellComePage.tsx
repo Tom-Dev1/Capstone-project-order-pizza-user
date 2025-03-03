@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { ButtonComponent, InputComponent } from '@/components'
 import { setItem } from '@/constants'
 import { motion } from 'framer-motion'
-import { Pizza, MapPin } from 'lucide-react'
+import { MapPin } from 'lucide-react'
 
 interface LoginPageProps {
   lable: string
