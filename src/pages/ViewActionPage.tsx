@@ -7,8 +7,11 @@ import GiftAnimation from "@/components/Animations/GiftAnimation"
 import CallPaymentModal from "@/components/modals/CallPaymentModal"
 import CallStaffModal from "@/components/modals/CallStaffModal"
 import RatingModal from "@/components/modals/RatingModal"
+import { getItem } from "@/constants"
 
 const ViewActionPage: React.FC = () => {
+
+    const tableCode = getItem<string>('tableCode')
     return (
         <div className="max-w-2xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
             <header className="flex items-start space-x-3 mb-4">
@@ -31,8 +34,8 @@ const ViewActionPage: React.FC = () => {
             <EditNameComponent />
             <div className="flex justify-center items-center space-x-2 my-4">
                 <span className="text-sm sm:text-base">Chúng tôi sẽ trả đồ cho bạn tại bàn:</span>
-                <div className="rounded-full border border-black px-2 py-1">
-                    <span className="text-sm font-semibold">A02</span>
+                <div className="rounded-full border border-black px-3 py-0">
+                    <span className="text-sm font-semibold">{tableCode}</span>
                 </div>
             </div>
             <div className="bg-orange-100 rounded-2xl p-4 flex items-center space-x-3 mb-6">
