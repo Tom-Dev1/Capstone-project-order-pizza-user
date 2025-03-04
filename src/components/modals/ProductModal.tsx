@@ -1,6 +1,5 @@
 "use client"
 
-import type React from "react"
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { motion, AnimatePresence } from "framer-motion"
@@ -20,11 +19,15 @@ interface ProductModalProps {
   onClose: () => void
 }
 
-const ProductModal: React.FC<ProductModalProps> = ({ product, categoryId, isOpen, onClose }) => {
+export default function ProductModal({ product, categoryId, isOpen, onClose }: ProductModalProps) {
   const dispatch = useDispatch()
-  const cartItem = useSelector((state: RootState) => selectCartItem(state, product.id, categoryId))
   const [localSelectedOptions, setLocalSelectedOptions] = useState<OptionItem[]>([])
-  const notes = useSelector((state: RootState) => selectProductCategoryNotes(state, product.id, categoryId))
+  const cartItem = useSelector((state: RootState) =>
+    selectCartItem(state, product.id, categoryId, localSelectedOptions),
+  )
+  const notes = useSelector((state: RootState) =>
+    selectProductCategoryNotes(state, categoryId, product.id, localSelectedOptions),
+  )
   const [localNote, setLocalNote] = useState("")
   const [quantity, setQuantity] = useState(1)
   const totalPrice = useSelector((state: RootState) => selectTotalPrice(state, product.id))
@@ -74,11 +77,21 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, categoryId, isOpen
 
   const handleAddToCart = useCallback(() => {
     if (localNote) {
-      dispatch(setNote({ productId: memoizedProduct.id, categoryId, note: localNote, index: notes.length }))
+      dispatch(
+        setNote({
+          productId: memoizedProduct.id,
+          categoryId,
+          note: localNote,
+          selectedOptions: localSelectedOptions,
+        }),
+      )
     }
     dispatch(
       addToCart({
-        product: memoizedProduct,
+        product: {
+          ...memoizedProduct,
+          price: totalPrice, // Use the calculated total price
+        },
         categoryId,
         selectedOptions: localSelectedOptions,
         quantity,
@@ -89,7 +102,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, categoryId, isOpen
       setShowMiniModal(false)
     }, 2000)
     onClose()
-  }, [dispatch, memoizedProduct, categoryId, localNote, localSelectedOptions, quantity, onClose, notes.length])
+  }, [dispatch, memoizedProduct, categoryId, localNote, localSelectedOptions, quantity, onClose, totalPrice])
 
   const isOptionSelected = useCallback(
     (item: OptionItem) => {
@@ -98,7 +111,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, categoryId, isOpen
     [localSelectedOptions],
   )
 
-  // Animation variants (unchanged)
+  // Animation variants
   const overlayVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
@@ -144,7 +157,11 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, categoryId, isOpen
               <motion.div key="modal-content" variants={contentVariants} initial="hidden" animate="visible" exit="exit">
                 {/* Header */}
                 <div className="sticky top-0 bg-white px-6 py-4 border-b flex items-center gap-4 z-10">
-                  <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
+                  <button
+                    onClick={onClose}
+                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                    aria-label="Close modal"
+                  >
                     <ChevronLeft size={28} className="text-gray-800 mt-1" />
                   </button>
                   <div>
@@ -157,7 +174,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, categoryId, isOpen
                   {/* Product Image */}
                   <div className="relative h-64 bg-gray-100">
                     <img
-                      src={memoizedProduct.image || "/placeholder.svg"}
+                      src={memoizedProduct.image || "/placeholder.svg?height=256&width=400"}
                       alt={memoizedProduct.name}
                       className="w-full h-full object-cover"
                     />
@@ -193,6 +210,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, categoryId, isOpen
                                     ? "bg-orange-200 border-2 border-orange-400"
                                     : "bg-gray-100 border-2 border-gray-100"
                                     }`}
+                                  aria-pressed={isOptionSelected(item)}
                                 >
                                   <div className="flex justify-around items-start">
                                     <span className="font-medium text-gray-800">{item.name}</span>
@@ -214,13 +232,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, categoryId, isOpen
                       transition={{ delay: 0.2 }}
                       className="mt-6"
                     >
-                      <h1 className="text-xl text-orange-500">Thêm ghi chú</h1>
+                      <h3 className="text-xl text-orange-500">Thêm ghi chú</h3>
                       <motion.div layout className="mt-3">
                         <textarea
                           value={localNote}
                           onChange={(e) => setLocalNote(e.target.value)}
                           placeholder="Add any special requests, allergies, or preferences..."
-                          className="w-full p-3 border-2 border-gray-100 rounded-xl focus:border-orange-500  text-base"
+                          className="w-full p-3 border-2 border-gray-100 rounded-xl focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-base"
                           rows={3}
                         />
                       </motion.div>
@@ -240,6 +258,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, categoryId, isOpen
                           whileTap={{ scale: 0.9 }}
                           onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
                           className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white transition-colors"
+                          aria-label="Decrease quantity"
                         >
                           <Minus size={16} className="text-gray-600" />
                         </motion.button>
@@ -248,6 +267,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, categoryId, isOpen
                           whileTap={{ scale: 0.9 }}
                           onClick={() => setQuantity((prev) => prev + 1)}
                           className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white transition-colors"
+                          aria-label="Increase quantity"
                         >
                           <Plus size={16} className="text-gray-600" />
                         </motion.button>
@@ -262,9 +282,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, categoryId, isOpen
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleAddToCart}
-                  className="px-12 py-3 w-96 rounded-md flex justify-center items-center text-white font-semibold bg-orange-500"
+                  className="px-12 py-3 w-full max-w-md rounded-md flex justify-between items-center text-white font-semibold bg-orange-500"
                 >
-                  <div className="w-20">${totalPrice * quantity}</div>
+                  <div className="w-20">${(totalPrice * quantity).toFixed(2)}</div>
                   <div>-</div>
                   <div className="w-28">{cartItem ? "Update Cart" : "Add to Cart"}</div>
                   <div>
@@ -290,6 +310,4 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, categoryId, isOpen
     </>
   )
 }
-
-export default ProductModal
 

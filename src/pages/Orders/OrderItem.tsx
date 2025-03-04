@@ -7,8 +7,8 @@ import type { CartItem } from "@/redux/slices/cartSlice"
 
 interface OrderItemProps {
   item: CartItem & {
-    categoryId: string
     notes: string[]
+    index: number
   }
   onRemove: () => void
 }
@@ -19,9 +19,13 @@ export const OrderItem: React.FC<OrderItemProps> = ({ item, onRemove }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="bg-white rounded-xl shadow-sm border border-orange-100 p-4 flex items-center"
+      className="bg-white rounded-xl shadow-sm border border-orange-100 p-4 flex items-center gap-4"
     >
-      <img src={item.image || "/placeholder.svg"} alt={item.name} className="w-20 h-20 object-cover rounded-lg mr-4" />
+      <img
+        src={item.image || "/placeholder.svg?height=80&width=80"}
+        alt={item.name}
+        className="w-20 h-20 object-cover rounded-lg"
+      />
       <div className="flex-grow">
         <h3 className="text-sm font-semibold text-gray-800">{item.name}</h3>
         <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
@@ -41,7 +45,11 @@ export const OrderItem: React.FC<OrderItemProps> = ({ item, onRemove }) => {
       </div>
       <div className="flex flex-col items-end">
         <span className="text-lg font-bold text-orange-500">${(item.price * item.quantity).toFixed(2)}</span>
-        <button onClick={onRemove} className="mt-2 text-gray-400 hover:text-red-500 transition-colors duration-200">
+        <button
+          onClick={onRemove}
+          className="mt-2 text-gray-400 hover:text-red-500 transition-colors duration-200"
+          aria-label="Remove item"
+        >
           <X size={20} />
         </button>
       </div>
