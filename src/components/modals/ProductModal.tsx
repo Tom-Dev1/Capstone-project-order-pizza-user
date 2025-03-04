@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { motion, AnimatePresence } from "framer-motion"
 import { Minus, Plus, ChevronLeft, ShoppingCart } from "lucide-react"
 import { addToCart, selectCartItem } from "@/redux/slices/cartSlice"
-import { selectProductCategoryNotes, setNote } from "@/redux/slices/noteSlice"
+import { setNote } from "@/redux/slices/noteSlice"
 import { setSelectedOptions, selectTotalPrice } from "@/redux/slices/selectedOptionsSlice"
 import type { RootState } from "@/redux/stores/store"
 import type { ProductModel } from "@/types/product"
@@ -25,9 +25,9 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
   const cartItem = useSelector((state: RootState) =>
     selectCartItem(state, product.id, categoryId, localSelectedOptions),
   )
-  const notes = useSelector((state: RootState) =>
-    selectProductCategoryNotes(state, categoryId, product.id, localSelectedOptions),
-  )
+  // const notes = useSelector((state: RootState) =>
+  //   selectProductCategoryNotes(state, categoryId, product.id, localSelectedOptions),
+  // )
   const [localNote, setLocalNote] = useState("")
   const [quantity, setQuantity] = useState(1)
   const totalPrice = useSelector((state: RootState) => selectTotalPrice(state, product.id))
