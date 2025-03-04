@@ -27,24 +27,26 @@ const CheckoutProcessButton: React.FC = () => {
 
   const cartItems = useSelector((state: RootState) => state.cart.items)
   const notes = useSelector((state: RootState) => state.notes)
-  const selectedOptions = useSelector((state: RootState) => state.selectedOptions)
+  // const selectedOptions = useSelector((state: RootState) => state.selectedOptions)
 
   const orderItems: OrderItem[] = cartItems.map((item) => {
-    const itemNotes = notes[item.id]?.[item.categoryId] || []
+    const itemNotes = notes[item.categoryId]?.[item.id]?.[item.optionsHash] || []
     const combinedNote = itemNotes.join(" + ")
     return {
       productId: item.id,
-      optionItemIds: selectedOptions[item.id]?.options.map((option) => option.id) || [],
+      optionItemIds: item.selectedOptions.map((option) => option.id),
       quantity: item.quantity,
       note: combinedNote,
     }
   })
+
+  console.log(orderItems);
+
   useEffect(() => {
     if (currentOrderId_ !== null) {
       setOrderId(currentOrderId_)
     }
   }, [currentOrderId_])
-
 
   console.log("currentOrderId_", currentOrderId_);
 
