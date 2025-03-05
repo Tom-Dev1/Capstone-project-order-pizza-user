@@ -10,24 +10,20 @@ import { useSelector, useDispatch } from 'react-redux'
 import type { RootState } from '@/redux/stores/store'
 import type { OrderItem } from '@/types/order'
 import { motion, AnimatePresence } from 'framer-motion'
-import { getPaymentStatus } from '@/utils/status-order-utils'
-import { PAYMENT_STATUS } from '@/types/order'
-import { useNavigate } from 'react-router-dom'
 import { clearCart } from '@/redux/slices/cartSlice'
 
 const CheckoutProcessButton: React.FC = () => {
   const { tableId_gbId, currentOrderId_ } = useTable()
-  const { createOrder, addFoodToOrder, isLoading, order } = useOrderService()
+  const { createOrder, addFoodToOrder, isLoading, } = useOrderService()
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [orderId, setOrderId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-  const navigate = useNavigate()
+
   const dispatch = useDispatch()
 
   const cartItems = useSelector((state: RootState) => state.cart.items)
   const notes = useSelector((state: RootState) => state.notes)
-  // const selectedOptions = useSelector((state: RootState) => state.selectedOptions)
 
   const orderItems: OrderItem[] = cartItems.map((item) => {
     const itemNotes = notes[item.categoryId]?.[item.id]?.[item.optionsHash] || []
@@ -39,7 +35,6 @@ const CheckoutProcessButton: React.FC = () => {
       note: combinedNote,
     }
   })
-
   console.log(orderItems);
 
   useEffect(() => {
@@ -47,55 +42,34 @@ const CheckoutProcessButton: React.FC = () => {
       setOrderId(currentOrderId_)
     }
   }, [currentOrderId_])
-
-  console.log("currentOrderId_", currentOrderId_);
+  console.log('currentOrderId_', currentOrderId_);
 
   const handleOpenModal = async () => {
-    const orderStatus = getPaymentStatus(order?.[0]?.status)
-    if (orderStatus === PAYMENT_STATUS.PAID) {
-      if (currentOrderId_ === null) {
-        try {
-          if (!tableId_gbId) {
-            throw new Error('No table ID available')
-          }
-          const createResponse = await createOrder(JSON.stringify({ tableId: tableId_gbId }))
-
-          if (!createResponse || !createResponse.success) {
-            throw new Error(createResponse?.message || 'Failed to create a new order')
-          }
-          const newOrderId = createResponse.result.result.id
-          setOrderId(newOrderId)
-        } catch (err) {
-          console.error('Error creating order:', err)
-          setError(err instanceof Error ? err.message : 'An unknown error occurred')
-          return
+    if (currentOrderId_ === null) {
+      try {
+        if (!tableId_gbId) {
+          throw new Error("No table ID available")
         }
-      } else {
-        setOrderId(currentOrderId_)
-      }
-    } else if (orderStatus === PAYMENT_STATUS.CHECKOUT) {
-      navigate('/')
-    } else if (orderStatus === PAYMENT_STATUS.UNPAID) {
-      if (currentOrderId_ === null) {
-        try {
-          if (!tableId_gbId) {
-            throw new Error('No table ID available')
-          }
-          const createResponse = await createOrder(JSON.stringify({ tableId: tableId_gbId }))
+        const createResponse = await createOrder(JSON.stringify({ tableId: tableId_gbId }))
 
-          if (!createResponse || !createResponse.success) {
-            throw new Error(createResponse?.message || 'Failed to create a new order')
-          }
-          const newOrderId = createResponse.result.result.id
-          setOrderId(newOrderId)
-        } catch (err) {
-          console.error('Error creating order:', err)
-          setError(err instanceof Error ? err.message : 'An unknown error occurred')
-          return
+        if (!createResponse || !createResponse.success) {
+          throw new Error(createResponse?.message || "Failed to create a new order")
         }
-      } else {
-        setOrderId(currentOrderId_)
+        const newOrderId = createResponse.result.result.id
+        setOrderId(newOrderId)
+
+
+        console.log('Order created successfully:')
+        console.log('New Order ID:', newOrderId)
+        console.log('Create Response:', createResponse)
+        console.log('Table ID:', tableId_gbId)
+      } catch (err) {
+        console.error("Error creating order:", err)
+        setError(err instanceof Error ? err.message : "An unknown error occurred")
+        return
       }
+    } else {
+      setOrderId(currentOrderId_)
     }
     setShowConfirmModal(true)
   }
@@ -139,7 +113,7 @@ const CheckoutProcessButton: React.FC = () => {
       dispatch(clearCart())
       setShowConfirmModal(false)
       setSuccess('Order placed successfully!')
-      console.log(success);
+      console.log('Order placed successfully:', success)
 
     } catch (err) {
       console.error('Adding food to order failed:', err)
@@ -152,7 +126,6 @@ const CheckoutProcessButton: React.FC = () => {
       <Button
         className='w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl disabled:bg-orange-300'
         onClick={handleOpenModal}
-        disabled={isLoading || cartItems.length === 0}
       >
         {isLoading ? <Loader2 className='mr-2 h-5 w-5 animate-spin' /> : 'Proceed to Checkout'}
       </Button>

@@ -29,7 +29,7 @@ export default function Orders() {
   const handleRemove = (productId: string, categoryId: string, index: number, optionsHash: string) => {
     dispatch(removeFromCart({ productId, categoryId, index, optionsHash }))
 
-    // Clear all notes for this product
+
     dispatch(clearProductNotes({ productId, categoryId }))
   }
 
@@ -55,10 +55,8 @@ export default function Orders() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
+    <div className="h-screen bg-gradient-to-b from-orange-50 to-white">
       <div className="max-w-3xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-gray-800">Your Order</h1>
-
         {cartItems.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}

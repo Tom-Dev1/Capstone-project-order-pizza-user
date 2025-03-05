@@ -15,14 +15,14 @@ interface NavItemProps {
 const NavItem: React.FC<NavItemProps> = React.memo(({ to, Icon, label, showBadge = false, badgeContent = 0 }) => (
   <NavLink
     to={to}
-    className={({ isActive }) => `flex flex-col items-center ${isActive ? "text-orange-600" : "text-gray-600"}`}
+    className={({ isActive }) => `flex flex-col w-16  items-center ${isActive ? "text-orange-600" : "text-white"}`}
   >
     {({ isActive }) => (
       <>
-        <div className={`rounded-full p-2.5 ${isActive ? "bg-orange-500" : ""} relative`}>
-          <Icon className={`w-6 h-6 ${isActive ? "text-white" : "text-gray-600"}`} />
+        <div className={`mt-2 rounded-full p-2.5 ${isActive ? "bg-orange-500" : ""} relative`}>
+          <Icon className={`w-6 h-6 ${isActive ? "text-white" : "text-white"}`} />
           {showBadge && badgeContent > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
               {badgeContent}
             </span>
           )}
@@ -50,7 +50,7 @@ const BottomTabs: React.FC = () => {
   )
 
   return (
-    <nav className="flex justify-around items-center bg-white border-t border-gray-300 py-1 h-[76px]">
+    <nav className="flex justify-around items-center  bg-my-color border-t border-gray-300 py-1 h-[76px]">
       {navItems.map((item) => (
         <NavItem key={item.to} {...item} />
       ))}

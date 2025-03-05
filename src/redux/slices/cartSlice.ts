@@ -81,7 +81,7 @@ const cartSlice = createSlice({
             if (optionsHash) {
                 // Remove specific item with matching options hash
                 state.items = state.items.filter(
-                    (item,) => !(item.id === productId && item.categoryId === categoryId && item.optionsHash === optionsHash),
+                    (item, i) => !(item.id === productId && item.categoryId === categoryId && item.optionsHash === optionsHash),
                 )
             } else {
                 // Remove by index (backward compatibility)
@@ -105,6 +105,11 @@ export const selectCartItems = createSelector([selectCart], (cart) =>
     cart.items.slice().sort((a, b) => a.addedAt - b.addedAt),
 )
 
+// Memoized selector for cart items count
+export const selectCartItemsCount = createSelector([selectCart], (cart) =>
+    cart.items.reduce((count, item) => count + item.quantity, 0),
+)
+
 export const selectCartItemCount = createSelector(
     [
         selectCart,
@@ -126,10 +131,6 @@ export const selectCartItemCount = createSelector(
 
 export const selectCartTotal = createSelector([selectCart], (cart) =>
     cart.items.reduce((total, item) => total + item.price * item.quantity, 0),
-)
-
-export const selectCartItemsCount = createSelector([selectCart], (cart) =>
-    cart.items.reduce((count, item) => count + item.quantity, 0),
 )
 
 export const selectCartItem = createSelector(

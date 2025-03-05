@@ -25,7 +25,7 @@ const FoodsHome: React.FC = () => {
       <SmoothScrollHelper />
 
       {/* Hero Section */}
-      <div className='bg-orange-500 text-white'>
+      {/* <div className='bg-orange-500 text-white'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16'>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -50,13 +50,17 @@ const FoodsHome: React.FC = () => {
             </div>
           </motion.div>
         </div>
-      </div>
+      </div> */}
 
       {/* Improved Sticky Category Navigation */}
+
+
       <CategoryNav categories={foodCategory} />
 
+
+
       {/* Categories with Products */}
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1 pb-10 '>
         {categoriesWithProducts.map((category) => (
           <motion.div
             key={category.id}

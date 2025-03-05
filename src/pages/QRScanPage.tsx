@@ -12,19 +12,15 @@ const QRScannerPage: React.FC = () => {
     if (detectedCodes.length > 0) {
       const result = detectedCodes[0].rawValue
       console.log('QR Code scanned:', result)
-
       try {
         // Parse the scanned URL
         const url = new URL(result)
-
         // Extract pathname (UUID) and search parameters (tableCode)
         const path = url.pathname // e.g. "/e0ef28e8-5e2a-4c36-bfc8-c5f724e6f8f8"
         const searchParams = url.search // e.g. "?tableCode=A01"
-
         // Construct the correct navigation path
         const fullPath = `${apiPublic}${path}${searchParams}`
         console.log('Navigating to:', fullPath)
-
         // Navigate to the URL in the same tab
         window.location.href = fullPath
       } catch (error) {

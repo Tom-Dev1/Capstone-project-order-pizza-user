@@ -150,11 +150,11 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
               animate="visible"
               exit="exit"
               transition={{ type: "spring", damping: 40, stiffness: 500 }}
-              className="bg-white w-full rounded-t-2xl overflow-hidden max-h-[calc(100vh-100px)]"
-              style={{ height: "auto" }}
+              className="bg-white w-full rounded-t-2xl overflow-hidden"
+              style={{ maxHeight: "calc(100vh - 100px)", height: "auto" }}
               onClick={(e) => e.stopPropagation()}
             >
-              <motion.div key="modal-content" variants={contentVariants} initial="hidden" animate="visible" exit="exit">
+              <motion.div key="modal-content" variants={contentVariants} initial="hidden" animate="visible" exit="exit" className="flex flex-col h-full">
                 {/* Header */}
                 <div className="sticky top-0 bg-white px-6 py-4 border-b flex items-center gap-4 z-10">
                   <button
@@ -170,7 +170,7 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
                 </div>
 
                 {/* Content */}
-                <div className="overflow-y-auto pb-24" style={{ maxHeight: "calc(100vh - 180px)" }}>
+                <div className="overflow-y-auto flex-grow" style={{ maxHeight: "calc(100vh - 180px)" }}>
                   {/* Product Image */}
                   <div className="relative h-64 bg-gray-100">
                     <img
@@ -277,7 +277,7 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
                 </div>
               </motion.div>
               {/* Footer */}
-              <div className="fixed bottom-0 left-0 right-0 bg-white border-t px-6 py-4 flex items-center justify-center w-full">
+              <div className="sticky bottom-0 bg-white border-t px-6 py-4 mt-auto">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}

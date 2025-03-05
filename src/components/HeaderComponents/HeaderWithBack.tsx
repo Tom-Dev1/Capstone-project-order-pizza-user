@@ -20,7 +20,7 @@ const HeaderWithBack: React.FC<HeaderWithBackProps> = ({ title, onBack }) => {
     }
 
     return (
-        <header className="w-full  bg-gray-50  h-[76px]">
+        <div className=" fixed top-0 left-0 right-0 w-full bg-gray-50  h-[76px] z-10">
             <div className="container mx-auto flex items-center h-full px-4">
                 <button
                     onClick={handleBack}
@@ -34,7 +34,7 @@ const HeaderWithBack: React.FC<HeaderWithBackProps> = ({ title, onBack }) => {
                     <h1 className="font-medium">Bàn <span >{tableCode}</span></h1>
                 </div>
             </div>
-        </header>
+        </div>
     )
 }
 

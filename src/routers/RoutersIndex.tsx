@@ -7,7 +7,7 @@ import QRScannerPage from '@/pages/QRScanPage'
 const ViewActionPage = lazy(() => import('../pages/ViewActionPage'))
 const FoodsHome = lazy(() => import('@/pages/Foods/FoodsHome'))
 const Drinks = lazy(() => import('@/pages/Drinks/Drinks'))
-const Orders = lazy(() => import('@/pages/Orders/Orders'))
+const Orders = lazy(() => import('@/pages/Orders/TabOrders'))
 const LoginPage = lazy(() => import('@/pages/WellComePage'))
 const ClosedPage = lazy(() => import('@/pages/ClosedPage'))
 const CheckStatusAndRedirect = lazy(() => import('@/hooks/status-check'))
