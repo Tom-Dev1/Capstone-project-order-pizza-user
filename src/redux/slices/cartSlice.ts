@@ -81,7 +81,7 @@ const cartSlice = createSlice({
             if (optionsHash) {
                 // Remove specific item with matching options hash
                 state.items = state.items.filter(
-                    (item, i) => !(item.id === productId && item.categoryId === categoryId && item.optionsHash === optionsHash),
+                    (item) => !(item.id === productId && item.categoryId === categoryId && item.optionsHash === optionsHash),
                 )
             } else {
                 // Remove by index (backward compatibility)

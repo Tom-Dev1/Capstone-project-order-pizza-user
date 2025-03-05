@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Search } from 'lucide-react'
 import CategoryTitle from '@/components/CategoryTitle'
 import ProductCard from '@/components/ProductCard'
 import CategoryNav from '@/components/CategoryNav'
