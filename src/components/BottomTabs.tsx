@@ -19,7 +19,7 @@ const NavItem: React.FC<NavItemProps> = React.memo(({ to, Icon, label, showBadge
   >
     {({ isActive }) => (
       <>
-        <div className={`mt-11 rounded-full p-2.5 ${isActive ? "bg-orange-500" : ""} relative`}>
+        <div className={`mt-1 rounded-full p-2.5 ${isActive ? "bg-orange-500" : ""} relative`}>
           <Icon className={`w-6 h-6 ${isActive ? "text-white" : "text-white"}`} />
           {showBadge && badgeContent > 0 && (
             <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
