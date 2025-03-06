@@ -1,6 +1,6 @@
 import React, { useMemo } from "react"
 import { NavLink } from "react-router-dom"
-import { Pizza, Coffee, ShoppingBag } from "lucide-react"
+import { Pizza, ShoppingBag } from "lucide-react"
 import { selectCartItemsCount } from "@/redux/slices/cartSlice"
 import { useSelector } from "react-redux"
 
@@ -43,7 +43,6 @@ const BottomTabs: React.FC = () => {
   const navItems = useMemo(
     () => [
       { to: "/action/foods", Icon: Pizza, label: "Đồ ăn" },
-
       { to: "/action/orders", Icon: ShoppingBag, label: "Đơn hàng", showBadge: true, badgeContent: cartItemsCount },
     ],
     [cartItemsCount],
