@@ -55,7 +55,7 @@ export default function Orders() {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-b from-orange-50 to-white">
+    <div className=" bg-gradient-to-b from-orange-50 to-white">
       <div className="max-w-3xl mx-auto px-4 py-8">
         {cartItems.length === 0 ? (
           <motion.div

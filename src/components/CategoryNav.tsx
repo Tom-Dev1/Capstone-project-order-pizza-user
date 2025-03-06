@@ -17,13 +17,13 @@ const CategoryNav: React.FC<ImprovedCategoryNavProps> = ({ categories }) => {
     const handleScroll = () => {
       if (navRef.current) {
         const rect = navRef.current.getBoundingClientRect()
-        setIsSticky(rect.top <= 0)
+        setIsSticky(rect.top <= 100)
       }
     }
 
     const observerOptions = {
       root: null,
-      rootMargin: "-80px 0px -60% 0px",
+      rootMargin: "120px 0px -60% 0px",
       threshold: [0, 0.1, 0.2],
     }
 
@@ -68,14 +68,18 @@ const CategoryNav: React.FC<ImprovedCategoryNavProps> = ({ categories }) => {
     const element = document.getElementById(`category-${categoryId}`)
     if (element) {
       const navHeight = navRef.current?.offsetHeight || 0
-      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
-      const offsetPosition = elementPosition - navHeight
 
+      const elementRect = element.getBoundingClientRect()
+
+      const offsetPosition = window.scrollY + elementRect.top - navHeight + 60
+
+      // Scroll to the calculated position
       window.scrollTo({
         top: offsetPosition,
         behavior: "smooth",
       })
 
+      setActiveCategory(categoryId)
     }
   }
 
@@ -83,7 +87,7 @@ const CategoryNav: React.FC<ImprovedCategoryNavProps> = ({ categories }) => {
     <div
       ref={navRef}
       data-category-nav="true"
-      className={`bg-white py-2 px-4 sm:px-6 lg:px-8 duration-300 ${isSticky ? "sticky z-20 top-0 shadow-md border-b border-gray-200" : ""
+      className={`bg-white  py-2 px-4 sm:px-6 lg:px-8 duration-300 ${isSticky ? "sticky z-20 top-0 shadow-md border-b border-gray-200" : ""
         }`}
     >
       <div className="overflow-x-auto pb-1 -mx-1 px-1 hide-scrollbar">
