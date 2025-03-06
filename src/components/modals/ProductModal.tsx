@@ -77,16 +77,16 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
 
   // Add this effect to prevent background scrolling when modal is open
   useEffect(() => {
+    // Save the current overflow style
+    const originalStyle = window.getComputedStyle(document.body).overflow
+    // Prevent scrolling on the body
     if (isOpen) {
-      // Save the current overflow style
-      const originalStyle = window.getComputedStyle(document.body).overflow
-      // Prevent scrolling on the body
       document.body.style.overflow = "hidden"
+    }
 
-      // Restore original overflow on cleanup
-      return () => {
-        document.body.style.overflow = originalStyle
-      }
+    // Restore original overflow on cleanup
+    return () => {
+      document.body.style.overflow = originalStyle
     }
   }, [isOpen])
 
@@ -229,8 +229,8 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
                                   whileTap={{ scale: 0.98 }}
                                   onClick={() => handleOptionChange(item)}
                                   className={`relative p-3 rounded-2xl text-left transition-all duration-200 ${isOptionSelected(item)
-                                      ? "bg-orange-200 border-2 border-orange-400"
-                                      : "bg-gray-100 border-2 border-gray-100"
+                                    ? "bg-orange-200 border-2 border-orange-400"
+                                    : "bg-gray-100 border-2 border-gray-100"
                                     }`}
                                   aria-pressed={isOptionSelected(item)}
                                 >
