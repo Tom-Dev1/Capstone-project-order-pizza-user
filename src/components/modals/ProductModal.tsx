@@ -75,6 +75,21 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
     )
   }, [dispatch, memoizedProduct, localSelectedOptions])
 
+  // Add this effect to prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      // Save the current overflow style
+      const originalStyle = window.getComputedStyle(document.body).overflow
+      // Prevent scrolling on the body
+      document.body.style.overflow = "hidden"
+
+      // Restore original overflow on cleanup
+      return () => {
+        document.body.style.overflow = originalStyle
+      }
+    }
+  }, [isOpen])
+
   const handleAddToCart = useCallback(() => {
     if (localNote) {
       dispatch(
@@ -150,11 +165,18 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
               animate="visible"
               exit="exit"
               transition={{ type: "spring", damping: 40, stiffness: 500 }}
-              className="bg-white w-full rounded-t-2xl overflow-hidden"
-              style={{ maxHeight: "calc(100vh - 100px)", height: "auto" }}
+              className="bg-white w-full rounded-t-2xl overflow-hidden max-h-[80vh]"
+              style={{ height: "auto" }}
               onClick={(e) => e.stopPropagation()}
             >
-              <motion.div key="modal-content" variants={contentVariants} initial="hidden" animate="visible" exit="exit" className="flex flex-col h-full">
+              <motion.div
+                key="modal-content"
+                variants={contentVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="flex flex-col h-full"
+              >
                 {/* Header */}
                 <div className="sticky top-0 bg-white px-6 py-4 border-b flex items-center gap-4 z-10">
                   <button
@@ -170,7 +192,7 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
                 </div>
 
                 {/* Content */}
-                <div className="overflow-y-auto flex-grow" style={{ maxHeight: "calc(100vh - 180px)" }}>
+                <div className="overflow-y-auto flex-grow" style={{ maxHeight: "calc(80vh - 180px)" }}>
                   {/* Product Image */}
                   <div className="relative h-64 bg-gray-100">
                     <img
@@ -207,8 +229,8 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
                                   whileTap={{ scale: 0.98 }}
                                   onClick={() => handleOptionChange(item)}
                                   className={`relative p-3 rounded-2xl text-left transition-all duration-200 ${isOptionSelected(item)
-                                    ? "bg-orange-200 border-2 border-orange-400"
-                                    : "bg-gray-100 border-2 border-gray-100"
+                                      ? "bg-orange-200 border-2 border-orange-400"
+                                      : "bg-gray-100 border-2 border-gray-100"
                                     }`}
                                   aria-pressed={isOptionSelected(item)}
                                 >
