@@ -71,7 +71,7 @@ export default function Orders() {
         ) : (
           <>
             <motion.div variants={containerVariants} initial="hidden" animate="visible"
-              className="border border-gray-200 rounded-t-lg last:border-b-0 ">
+              className="border border-gray-200 rounded-lg pb-4">
               {orderItems.map((item) => (
 
                 <OrderItem
@@ -81,7 +81,7 @@ export default function Orders() {
                 />
               ))}
 
-              <div className="text-sm space-y-1 px-3">
+              <div className="text-sm space-y-1 px-3 mt-4">
                 <div className="flex justify-between items-center text-gray-600">
                   <span className="font-bold">Giá chưa thuế</span>
                   <span className="font-medium">{convertToVND(totalPrice)}đ </span>
@@ -91,7 +91,7 @@ export default function Orders() {
                   <span className="font-medium"></span>
                 </div>
                 <div className="border-t-2"></div>
-                <div className="flex justify-between items-center pt-1 text-my-color">
+                <div className="flex justify-between items-center mt-4 pt-1 text-my-color">
                   <span className="font-bold text-lg">Tổng cộng</span>
                   <span className="font-medium text-base">{convertToVND(totalPrice)}đ</span>
                 </div>
