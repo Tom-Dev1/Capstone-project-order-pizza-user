@@ -1,5 +1,3 @@
-"use client"
-
 import { getItem } from "@/constants"
 import OrderService from "@/services/order-service"
 import TableService from "@/services/table-service"
@@ -13,19 +11,12 @@ const useTable = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
 
-
-
     const tableId = getItem("tableId")
-
-
-
     const createNewOrder = useCallback(async () => {
-
         if (!tableId) {
             setError("No table ID provided")
             return
         }
-
         setLoading(true)
         setError(null)
         try {
@@ -45,7 +36,6 @@ const useTable = () => {
                     } else {
                         throw new Error(orderResponse.message || "Failed to create order")
                     }
-
                 } else {
                     setCurrentOrderId_(tableResponse.result.currentOrderId)
                 }

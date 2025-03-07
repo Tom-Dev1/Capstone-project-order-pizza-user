@@ -10,10 +10,14 @@ import CallStaffModal from '@/components/modals/CallStaffModal'
 import RatingModal from '@/components/modals/RatingModal'
 import { getItem } from '@/constants'
 import { motion } from 'framer-motion'
+import useTable from '@/hooks/useTable'
 
 const ViewActionPage: React.FC = () => {
   const tableCode = getItem<string>('tableCode')
   const [currentBanner, setCurrentBanner] = useState(0)
+  const { currentOrderId_ } = useTable()
+  console.log("currentOrderID", currentOrderId_);
+
   const banners = [
     'https://graphicsfamily.com/wp-content/uploads/edd/2021/09/Pizza-Restaurant-Social-Media-Banner-1180x664.jpg',
     'https://cms.piklab.vn/resources/Tai%20nguyen%20Piklab/File%20design%20TMDT/piklab926.jpg',

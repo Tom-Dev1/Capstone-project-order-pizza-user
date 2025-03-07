@@ -1,6 +1,6 @@
 import type ApiResponse from "@/apis/apiUtils"
 import { get, post } from "@/apis/apiUtils"
-import type { AddFoodResponse, CreateOrderResponse, Order } from "@/types/order"
+import type { AddFoodResponse, CreateOrderResponse, Order, OrderItemResutl } from "@/types/order"
 
 class OrderService {
     private static instance: OrderService
@@ -39,6 +39,14 @@ class OrderService {
             return await get<Order>(`/orders/${orderId}`)
 
 
+        } catch (error) {
+            console.error(`Error fetching order with id ${orderId}:`, error)
+            throw error
+        }
+    }
+    public async getOrderItemByOrderID(orderId: string): Promise<ApiResponse<OrderItemResutl>> {
+        try {
+            return await get<OrderItemResutl>(`/order-items?IncludeProperties=OrderItemDetails.OptionItem&TakeCount=1000&OrderId=${orderId}`)
         } catch (error) {
             console.error(`Error fetching order with id ${orderId}:`, error)
             throw error

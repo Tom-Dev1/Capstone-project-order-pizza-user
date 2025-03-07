@@ -12,6 +12,7 @@ import type { RootState } from "@/redux/stores/store"
 import type { OrderItem } from "@/types/order"
 import { motion, AnimatePresence } from "framer-motion"
 import { clearCart } from "@/redux/slices/cartSlice"
+import { getItem } from "@/constants"
 
 interface BottomOrderProps {
     activeTab: "tab1" | "tab2"
@@ -74,6 +75,7 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
         }
         setShowConfirmModal(true)
     }
+    console.log('currentOrderID_', orderId);
 
     const handleCloseModal = () => {
         setShowConfirmModal(false)
@@ -140,6 +142,8 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
             </div>
         )
     }
+    const tableCode = getItem<string>('tableCode')
+
 
     return (
         <>
@@ -170,8 +174,8 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
                             transition={{ type: "spring", damping: 15, stiffness: 300 }}
                             className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full"
                         >
-                            <h2 className="text-2xl font-bold mb-4 text-gray-800">Confirm Order</h2>
-                            <p className="mb-6 text-gray-600">Are you ready to place your order?</p>
+                            <h2 className="text-2xl font-bold mb-4 text-gray-800">Confirm Order {tableCode}</h2>
+                            <p className="mb-6 text-gray-600">Are you ready to place your order? </p>
                             <div className="flex justify-end space-x-3">
                                 <Button variant="outline" onClick={handleCloseModal} disabled={isLoading} className="hover:bg-gray-100">
                                     Cancel

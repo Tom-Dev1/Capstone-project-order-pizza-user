@@ -28,8 +28,6 @@ export default function Orders() {
 
   const handleRemove = (productId: string, categoryId: string, index: number, optionsHash: string) => {
     dispatch(removeFromCart({ productId, categoryId, index, optionsHash }))
-
-
     dispatch(clearProductNotes({ productId, categoryId }))
   }
 
@@ -53,7 +51,6 @@ export default function Orders() {
       },
     },
   }
-
   return (
     <div className=" bg-gray-50 to-white">
       <div className="max-w-3xl px-2 py-3 pb-32">
@@ -62,7 +59,7 @@ export default function Orders() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col items-center justify-center py-16 bg-white rounded-2xl  border border-gray-100"
+              className="flex flex-col items-center justify-center py-16 rounded-2xl  "
             >
               <ShoppingCart size={80} className="text-orange-400 mb-6" />
               <p className="text-lg font-semibold text-gray-500 mb-6">Bạn chưa có đơn hàng nào!</p>

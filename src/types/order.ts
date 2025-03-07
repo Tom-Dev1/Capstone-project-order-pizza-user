@@ -1,3 +1,6 @@
+import { OrderStatusObject } from "@/utils/orderStatusColor";
+import OptionItem from "./option";
+
 export interface OrderItem {
     productId: string
     optionItemIds: string[] | null
@@ -44,3 +47,33 @@ export const PAYMENT_STATUS = {
 } as const;
 
 export type PaymentStatus = typeof PAYMENT_STATUS[keyof typeof PAYMENT_STATUS];
+// Order items 
+
+export interface OrderItemResutl {
+    items: OrderItemsRES[]
+    totalCount: number
+}
+export interface OrderItemsRES {
+    id: string;
+    tableCode: string;
+    name: string;
+    note: string;
+    quantity: number;
+    price: number;
+    totalPrice: number;
+    startTime: string;
+    orderId: string;
+    productId: string;
+    orderItemStatus: OrderStatusObject;
+    order: null;
+    product: null;
+    orderItemDetails: orderItemDetails[];
+}
+export interface orderItemDetails {
+    id: string;
+    name: string;
+    additionalPrice: number;
+    optionItemId: string;
+    orderItemId: string;
+    optionItem: OptionItem[];
+}
