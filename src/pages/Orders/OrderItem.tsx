@@ -2,10 +2,9 @@
 
 import type React from "react"
 import { motion } from "framer-motion"
-import { Plus, X } from "lucide-react"
+import { X } from "lucide-react"
 import { type CartItem } from "@/redux/slices/cartSlice"
 import { convertToVND } from "@/utils/convertToVND"
-import { useDispatch } from "react-redux"
 
 interface OrderItemProps {
   item: CartItem & {
@@ -18,7 +17,6 @@ interface OrderItemProps {
 
 export const OrderItem: React.FC<OrderItemProps> = ({ item, onRemove, }) => {
 
-  const dispatch = useDispatch()
 
   return (
     <div className=" p-2 ">
