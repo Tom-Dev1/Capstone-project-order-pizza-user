@@ -6,7 +6,7 @@ interface CategoryTitleProps {
 
 const CategoryTitle: React.FC<CategoryTitleProps> = ({ categories }) => {
   return (
-    <div className='flex overflow-x-auto py-2 bg-white shadow-sm rounded-l-lg border-l-[7px] border-orange-400'>
+    <div className='flex overflow-x-auto py-2 bg-orange-50  rounded-l-lg border-l-[7px] border-orange-400'>
       {categories.map((item) => (
         <div
           key={item.id}

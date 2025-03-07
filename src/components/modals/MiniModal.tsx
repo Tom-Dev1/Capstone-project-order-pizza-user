@@ -26,7 +26,7 @@ const MiniModal: React.FC<MiniModalProps> = ({ productName, productImage, isEdit
                 <h3 className="font-semibold">{productName}</h3>
                 <p className="text-sm text-green-600 flex items-center">
                     <Check className="mr-1" size={16} />
-                    {isEditing ? "Updated in cart" : "Added to cart"}
+                    Added to cart
                 </p>
             </div>
         </motion.div>

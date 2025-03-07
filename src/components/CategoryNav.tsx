@@ -99,7 +99,7 @@ const CategoryNav: React.FC<ImprovedCategoryNavProps> = ({ categories }) => {
               onClick={() => scrollToCategory(category.id)}
               className={` cursor-pointer px-4 py-2 rounded-full transition-all duration-300 font-medium focus:outline-none focus:ring-2 focus:ring-orange-300 ${activeCategory === category.id
                 ? "bg-orange-500 text-white shadow-md"
-                : "bg-white border border-orange-200 text-gray-800 hover:bg-orange-50"
+                : "bg-white border border-gray-200 text-my-color"
                 }`}
             >
               {category.name}
