@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import CategoryTitle from '@/components/CategoryTitle'
 import ProductCard from '@/components/ProductCard'
 import CategoryNav from '@/components/CategoryNav'
-import SmoothScrollHelper from '@/components/SmoothScrollHelper'
+// import SmoothScrollHelper from '@/components/SmoothScrollHelper'
 import useCategories from '@/hooks/useCategories'
 import useProducts from '@/hooks/useProducts'
 import { Search } from 'lucide-react'
@@ -34,7 +34,7 @@ const FoodsHome: React.FC = () => {
   return (
     <div className='bg-gray-50'>
       {/* Helper component for improved scroll behavior */}
-      <SmoothScrollHelper />
+      {/* <SmoothScrollHelper /> */}
 
       {/* Hero Section */}
       <div className="relative overflow-hidden z-0">
