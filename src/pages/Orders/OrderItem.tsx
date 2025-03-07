@@ -41,7 +41,9 @@ export const OrderItem: React.FC<OrderItemProps> = ({ item, onRemove, }) => {
               <span className="font-medium">Lựa chọn:</span>
               <ul className="list-disc list-inside">
                 {item.selectedOptions.map((opt, index) => (
-                  <li key={index}>{opt.name}</li>
+                  <li key={index} >
+                    <span>{opt.name}</span> <span>+{convertToVND(opt.additionalPrice)}VND</span>
+                  </li>
                 ))}
               </ul>
             </div>

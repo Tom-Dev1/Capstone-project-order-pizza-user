@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { motion, AnimatePresence } from "framer-motion"
-import { Minus, Plus, ChevronLeft, } from "lucide-react"
-import { addToCart, } from "@/redux/slices/cartSlice"
+import { Minus, Plus, ChevronLeft } from "lucide-react"
+import { addToCart } from "@/redux/slices/cartSlice"
 import { setNote } from "@/redux/slices/noteSlice"
 import { setSelectedOptions, selectTotalPrice } from "@/redux/slices/selectedOptionsSlice"
 import type { RootState } from "@/redux/stores/store"
@@ -12,7 +12,8 @@ import type { ProductModel } from "@/types/product"
 import type OptionItem from "@/types/option"
 import MiniModal from "./MiniModal"
 import { convertToVND } from "@/utils/convertToVND"
-import { Sheet, SheetContent, SheetDescription, SheetTitle, } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet"
+
 interface ProductModalProps {
   product: ProductModel
   categoryId: string
@@ -23,12 +24,6 @@ interface ProductModalProps {
 export default function ProductModal({ product, categoryId, isOpen, onClose }: ProductModalProps) {
   const dispatch = useDispatch()
   const [localSelectedOptions, setLocalSelectedOptions] = useState<OptionItem[]>([])
-  // const cartItem = useSelector((state: RootState) =>
-  //   selectCartItem(state, product.id, categoryId, localSelectedOptions),
-  // )
-  // const notes = useSelector((state: RootState) =>
-  //   selectProductCategoryNotes(state, categoryId, product.id, localSelectedOptions),
-  // )
   const [localNote, setLocalNote] = useState("")
   const [quantity, setQuantity] = useState(1)
   const totalPrice = useSelector((state: RootState) => selectTotalPrice(state, product.id))
@@ -51,20 +46,31 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
     }
   }, [isOpen, memoizedProduct, dispatch])
 
-  const handleOptionChange = useCallback((option: OptionItem) => {
-    setLocalSelectedOptions((prev) => {
-      const isOptionSelected = prev.some((opt) => opt.id === option.id)
-      let updatedOptions
+  const handleOptionChange = useCallback(
+    (option: OptionItem) => {
+      setLocalSelectedOptions((prev) => {
+        const isOptionSelected = prev.some((opt) => opt.id === option.id)
+        let updatedOptions
 
-      if (isOptionSelected) {
-        updatedOptions = prev.filter((opt) => opt.id !== option.id)
-      } else {
-        updatedOptions = [...prev, option]
-      }
+        if (isOptionSelected) {
+          updatedOptions = prev.filter((opt) => opt.id !== option.id)
+        } else {
+          updatedOptions = [...prev, option]
+        }
 
-      return updatedOptions
-    })
-  }, [])
+        dispatch(
+          setSelectedOptions({
+            productId: memoizedProduct.id,
+            basePrice: memoizedProduct.price,
+            options: updatedOptions,
+          }),
+        )
+
+        return updatedOptions
+      })
+    },
+    [dispatch, memoizedProduct],
+  )
 
   const handleAddToCart = useCallback(() => {
     if (localNote) {
@@ -102,18 +108,13 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
     [localSelectedOptions],
   )
 
-
   return (
     <>
       <Sheet open={isOpen} onOpenChange={onClose}>
         <SheetContent side="bottom" className="max-h-[82vh]  rounded-t-lg flex flex-col p-0">
           {/* Header */}
           <div className="sticky top-0 bg-white px-4  mt-3 flex items-center gap-4 z-10">
-            <button
-              onClick={onClose}
-              className="p-1 rounded-full transition-colors"
-              aria-label="Close modal"
-            >
+            <button onClick={onClose} className="p-1 rounded-full transition-colors" aria-label="Close modal">
               <ChevronLeft size={28} className="text-gray-800 mt-1" />
             </button>
             <div>
@@ -135,18 +136,16 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
 
             {/* Product Details */}
             <div className="px-6 py-4">
-              <SheetDescription className="text-gray-600 text-sm italic leading-relaxed">"{memoizedProduct.description}"</SheetDescription>
+              <SheetDescription className="text-gray-600 text-sm italic leading-relaxed">
+                "{memoizedProduct.description}"
+              </SheetDescription>
               {/* Options */}
               {memoizedProduct.productOptions?.length > 0 && (
                 <div className="mt-2 space-y-6">
                   {memoizedProduct.productOptions.map((productOption) => (
-                    <div
-                      key={productOption.id}
-
-                    >
+                    <div key={productOption.id}>
                       <div className="flex flex-col mb-3">
                         <h3 className="text-xl text-orange-500">{productOption.option.name}</h3>
-                        {/* <span className="mt-1 text-sm italic text-orange-500">{productOption.option.description}</span> */}
                       </div>
                       <div className="grid grid-cols-1 gap-2">
                         {productOption.option.optionItems.map((item) => (
@@ -156,17 +155,20 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
                             whileTap={{ scale: 0.98 }}
                             onClick={() => handleOptionChange(item)}
                             className={`relative p-2 rounded-xl text-left transition-all duration-200 ${isOptionSelected(item)
-                              ? "bg-orange-200 border-2 border-orange-400"
-                              : "bg-gray-100 border-2 border-gray-100"
+                                ? "bg-orange-200 border-2 border-orange-400"
+                                : "bg-gray-100 border-2 border-gray-100"
                               }`}
                             aria-pressed={isOptionSelected(item)}
                           >
                             <div className="flex justify-between px-2">
                               <div className="w-40">
-
                                 <span className="font-medium text-gray-800">{item.name}</span>
                               </div>
-                              <div className="w-32"><h1 className="text-base  text-right font-base text-gray-700">+{convertToVND(item.additionalPrice)}VND</h1></div>
+                              <div className="w-32">
+                                <h1 className="text-base  text-right font-base text-gray-700">
+                                  +{convertToVND(item.additionalPrice)}VND
+                                </h1>
+                              </div>
                             </div>
                           </motion.button>
                         ))}
@@ -227,7 +229,7 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
             </div>
           </div>
 
-          <div className=" bg-white border-t px-4 py-3 mt-auto" >
+          <div className=" bg-white border-t px-4 py-3 mt-auto">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -237,18 +239,13 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
               <div className="w-28">Thêm vào giỏ</div>
               <div className="w-20">{convertToVND(totalPrice * quantity)}VND</div>
             </motion.button>
-          </div >
+          </div>
         </SheetContent>
       </Sheet>
 
       <AnimatePresence>
         {showMiniModal && (
-          <MiniModal
-            key="mini-modal"
-            productName={memoizedProduct.name}
-            productImage={memoizedProduct.image}
-
-          />
+          <MiniModal key="mini-modal" productName={memoizedProduct.name} productImage={memoizedProduct.image} />
         )}
       </AnimatePresence>
     </>
