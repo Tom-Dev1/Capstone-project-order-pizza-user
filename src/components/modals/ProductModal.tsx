@@ -12,7 +12,7 @@ import type { ProductModel } from "@/types/product"
 import type OptionItem from "@/types/option"
 import MiniModal from "./MiniModal"
 import { convertToVND } from "@/utils/convertToVND"
-
+import { Sheet, SheetContent, } from "@/components/ui/sheet"
 interface ProductModalProps {
   product: ProductModel
   categoryId: string
@@ -66,30 +66,30 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
     })
   }, [])
 
-  useEffect(() => {
-    dispatch(
-      setSelectedOptions({
-        productId: memoizedProduct.id,
-        basePrice: memoizedProduct.price,
-        options: localSelectedOptions,
-      }),
-    )
-  }, [dispatch, memoizedProduct, localSelectedOptions])
+  // useEffect(() => {
+  //   dispatch(
+  //     setSelectedOptions({
+  //       productId: memoizedProduct.id,
+  //       basePrice: memoizedProduct.price,
+  //       options: localSelectedOptions,
+  //     }),
+  //   )
+  // }, [dispatch, memoizedProduct, localSelectedOptions])
 
-  // Add this effect to prevent background scrolling when modal is open
-  useEffect(() => {
-    // Save the current overflow style
-    const originalStyle = window.getComputedStyle(document.body).overflow
-    // Prevent scrolling on the body
-    if (isOpen) {
-      document.body.style.overflow = "hidden"
-    }
+  // // Add this effect to prevent background scrolling when modal is open
+  // useEffect(() => {
+  //   // Save the current overflow style
+  //   const originalStyle = window.getComputedStyle(document.body).overflow
+  //   // Prevent scrolling on the body
+  //   if (isOpen) {
+  //     document.body.style.overflow = "hidden"
+  //   }
 
-    // Restore original overflow on cleanup
-    return () => {
-      document.body.style.overflow = originalStyle
-    }
-  }, [isOpen])
+  //   // Restore original overflow on cleanup
+  //   return () => {
+  //     document.body.style.overflow = originalStyle
+  //   }
+  // }, [isOpen])
 
   const handleAddToCart = useCallback(() => {
     if (localNote) {
@@ -126,199 +126,153 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
     },
     [localSelectedOptions],
   )
-  const overlayVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-    exit: { opacity: 0 },
-  }
 
-  const modalVariants = {
-    hidden: { y: "100%" },
-    visible: { y: 0 },
-    exit: { y: "100%" },
-  }
-
-  const contentVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 },
-  }
 
   return (
     <>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            key="modal-overlay"
-            variants={overlayVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end justify-center z-50"
-            onClick={onClose}
-          >
-            <motion.div
-              key="modal-container"
-              variants={modalVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={{ type: "spring", damping: 40, stiffness: 500 }}
-              className="bg-white w-full rounded-t-2xl overflow-hidden "
-              style={{ height: "auto" }}
-              onClick={(e) => e.stopPropagation()}
+      <Sheet open={isOpen} onOpenChange={onClose}>
+        <SheetContent side="bottom" className="max-h-[82vh]  rounded-t-lg flex flex-col p-0">
+          {/* Header */}
+          <div className="sticky top-0 bg-white px-4  mt-3 flex items-center gap-4 z-10">
+            <button
+              onClick={onClose}
+              className="p-1 rounded-full transition-colors"
+              aria-label="Close modal"
             >
-              <motion.div
-                key="modal-content"
-                variants={contentVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                className="flex flex-col"
-                style={{ maxHeight: "calc(90vh - 180px)" }}
-              >
-                {/* Header */}
-                <div className="sticky top-0 bg-white px-4 py-2 border-b flex items-center gap-4 z-10">
-                  <button
-                    onClick={onClose}
-                    className="p-1 rounded-full transition-colors"
-                    aria-label="Close modal"
-                  >
-                    <ChevronLeft size={28} className="text-gray-800 mt-1" />
-                  </button>
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-800">{memoizedProduct.name}</h2>
-                  </div>
-                </div>
+              <ChevronLeft size={28} className="text-gray-800 mt-1" />
+            </button>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800">{memoizedProduct.name}</h2>
+            </div>
+          </div>
 
-                {/* Content */}
-                <div className="overflow-y-auto flex-grow" style={{ maxHeight: "calc(90vh - 180px)" }}>
-                  {/* Product Image */}
-                  <div className="relative h-64 bg-gray-100">
-                    <img
-                      src={memoizedProduct.image || "https://pizza4ps.com/wp-content/uploads/2023/07/20200001_2.jpg"}
-                      alt={memoizedProduct.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                  </div>
+          {/* Product Content */}
+          <div className="overflow-y-auto">
+            {/* Product Image */}
+            <div className="relative h-64 bg-gray-100">
+              <img
+                src={memoizedProduct.image || "https://pizza4ps.com/wp-content/uploads/2023/07/20200001_2.jpg"}
+                alt={memoizedProduct.name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+            </div>
 
-                  {/* Product Details */}
-                  <div className="px-6 py-4">
-                    <p className="text-gray-600 text-sm italic leading-relaxed">"{memoizedProduct.description}"</p>
+            {/* Product Details */}
+            <div className="px-6 py-4">
+              <p className="text-gray-600 text-sm italic leading-relaxed">"{memoizedProduct.description}"</p>
+              {/* Options */}
+              {memoizedProduct.productOptions?.length > 0 && (
+                <div className="mt-2 space-y-6">
+                  {memoizedProduct.productOptions.map((productOption) => (
+                    <div
+                      key={productOption.id}
 
-                    {/* Options */}
-                    {memoizedProduct.productOptions?.length > 0 && (
-                      <div className="mt-2 space-y-6">
-                        {memoizedProduct.productOptions.map((productOption) => (
-                          <motion.div
-                            key={productOption.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
+                    >
+                      <div className="flex flex-col mb-3">
+                        <h3 className="text-xl text-orange-500">{productOption.option.name}</h3>
+                        {/* <span className="mt-1 text-sm italic text-orange-500">{productOption.option.description}</span> */}
+                      </div>
+                      <div className="grid grid-cols-1 gap-2">
+                        {productOption.option.optionItems.map((item) => (
+                          <motion.button
+                            key={`${productOption.id}-${item.id}`}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => handleOptionChange(item)}
+                            className={`relative p-2 rounded-xl text-left transition-all duration-200 ${isOptionSelected(item)
+                              ? "bg-orange-200 border-2 border-orange-400"
+                              : "bg-gray-100 border-2 border-gray-100"
+                              }`}
+                            aria-pressed={isOptionSelected(item)}
                           >
-                            <div className="flex flex-col mb-3">
-                              <h3 className="text-xl text-orange-500">{productOption.option.name}</h3>
-                              {/* <span className="mt-1 text-sm italic text-orange-500">{productOption.option.description}</span> */}
-                            </div>
-                            <div className="grid grid-cols-1 gap-2">
-                              {productOption.option.optionItems.map((item) => (
-                                <motion.button
-                                  key={`${productOption.id}-${item.id}`}
-                                  whileHover={{ scale: 1.02 }}
-                                  whileTap={{ scale: 0.98 }}
-                                  onClick={() => handleOptionChange(item)}
-                                  className={`relative p-2 rounded-xl text-left transition-all duration-200 ${isOptionSelected(item)
-                                    ? "bg-orange-200 border-2 border-orange-400"
-                                    : "bg-gray-100 border-2 border-gray-100"
-                                    }`}
-                                  aria-pressed={isOptionSelected(item)}
-                                >
-                                  <div className="flex justify-between px-2">
-                                    <div className="w-40">
+                            <div className="flex justify-between px-2">
+                              <div className="w-40">
 
-                                      <span className="font-medium text-gray-800">{item.name}</span>
-                                    </div>
-                                    <div className="w-32"><h1 className="text-base  text-right font-base text-gray-700">+{convertToVND(item.additionalPrice)}VND</h1></div>
-                                  </div>
-                                </motion.button>
-                              ))}
-                              <div className=" mt-4 border-b border-dashed"></div>
+                                <span className="font-medium text-gray-800">{item.name}</span>
+                              </div>
+                              <div className="w-32"><h1 className="text-base  text-right font-base text-gray-700">+{convertToVND(item.additionalPrice)}VND</h1></div>
                             </div>
-                          </motion.div>
+                          </motion.button>
                         ))}
+                        <div className=" mt-4 border-b border-dashed"></div>
                       </div>
-                    )}
-
-                    {/* Note Section */}
-                    <motion.div
-                      key="note-section"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.2 }}
-                      className="mt-3"
-                    >
-                      <h3 className="text-xl text-orange-500">Thêm ghi chú</h3>
-                      <motion.div layout className="mt-3">
-                        <textarea
-                          value={localNote}
-                          onChange={(e) => setLocalNote(e.target.value)}
-                          placeholder="Ghi chú món ăn của bạn...."
-                          className="w-full p-3 border-2  rounded-xl   text-base"
-                          rows={3}
-                        />
-                      </motion.div>
-                    </motion.div>
-
-                    {/* Quantity */}
-                    <motion.div
-                      key="quantity-section"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.3 }}
-                      className="mt-6 flex items-center justify-between"
-                    >
-                      <span className="font-medium text-gray-800">Số lượng</span>
-                      <div className="flex items-center gap-3 bg-gray-50 rounded-full p-1">
-                        <motion.button
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-                          className="w-7 h-7 flex items-center bg-orange-200 justify-center rounded-full  transition-colors"
-                          aria-label="Decrease quantity"
-                        >
-                          <Minus size={16} className="text-gray-600" />
-                        </motion.button>
-                        <span className="w-8 text-center font-medium">{quantity}</span>
-                        <motion.button
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => setQuantity((prev) => prev + 1)}
-                          className="w-7 h-7 flex items-center bg-orange-200 justify-center rounded-full  transition-colors"
-                          aria-label="Increase quantity"
-                        >
-                          <Plus size={16} className="text-gray-600" />
-                        </motion.button>
-                      </div>
-                    </motion.div>
-                  </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {/* Note Section */}
+              <motion.div
+                key="note-section"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="mt-3"
+              >
+                <h3 className="text-xl text-orange-500">Thêm ghi chú</h3>
+                <motion.div layout className="mt-3">
+                  <textarea
+                    value={localNote}
+                    onChange={(e) => setLocalNote(e.target.value)}
+                    placeholder="Ghi chú món ăn của bạn...."
+                    className="w-full p-3 border-2  rounded-xl   text-base"
+                    rows={3}
+                  />
+                </motion.div>
+              </motion.div>
+              {/* Quantity */}
+              <motion.div
+                key="quantity-section"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="mt-6 flex items-center justify-between"
+              >
+                <span className="font-medium text-gray-800">Số lượng</span>
+                <div className="flex items-center gap-3 bg-gray-50 rounded-full p-1">
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                    className="w-7 h-7 flex items-center bg-orange-200 justify-center rounded-full  transition-colors"
+                    aria-label="Decrease quantity"
+                  >
+                    <Minus size={16} className="text-gray-600" />
+                  </motion.button>
+                  <span className="w-8 text-center font-medium">{quantity}</span>
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setQuantity((prev) => prev + 1)}
+                    className="w-7 h-7 flex items-center bg-orange-200 justify-center rounded-full  transition-colors"
+                    aria-label="Increase quantity"
+                  >
+                    <Plus size={16} className="text-gray-600" />
+                  </motion.button>
                 </div>
               </motion.div>
-              {/* Footer */}
-              <div className="sticky bottom-0 bg-white border-t px-6 py-4 mt-auto">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleAddToCart}
-                  className="px-12 py-3 w-full  rounded-md flex justify-center items-center text-white font-semibold bg-my-color"
-                >
-                  <div className="w-28">Thêm vào giỏ</div>
-                  <div className="w-20">{convertToVND(totalPrice * quantity)}VND</div>
+            </div>
 
-                </motion.button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+
+          </div>
+
+
+
+          <div className=" bg-white border-t px-6 py-4 mt-auto" >
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleAddToCart}
+              className="px-12 py-3 w-full  rounded-md flex justify-center items-center text-white font-semibold bg-my-color"
+            >
+              <div className="w-28">Thêm vào giỏ</div>
+              <div className="w-20">{convertToVND(totalPrice * quantity)}VND</div>
+
+            </motion.button>
+          </div >
+
+        </SheetContent>
+      </Sheet>
+
 
       <AnimatePresence>
         {showMiniModal && (
