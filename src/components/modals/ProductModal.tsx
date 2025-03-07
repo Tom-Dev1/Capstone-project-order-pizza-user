@@ -12,7 +12,7 @@ import type { ProductModel } from "@/types/product"
 import type OptionItem from "@/types/option"
 import MiniModal from "./MiniModal"
 import { convertToVND } from "@/utils/convertToVND"
-import { Sheet, SheetContent, } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetDescription, SheetTitle, } from "@/components/ui/sheet"
 interface ProductModalProps {
   product: ProductModel
   categoryId: string
@@ -66,31 +66,6 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
     })
   }, [])
 
-  // useEffect(() => {
-  //   dispatch(
-  //     setSelectedOptions({
-  //       productId: memoizedProduct.id,
-  //       basePrice: memoizedProduct.price,
-  //       options: localSelectedOptions,
-  //     }),
-  //   )
-  // }, [dispatch, memoizedProduct, localSelectedOptions])
-
-  // // Add this effect to prevent background scrolling when modal is open
-  // useEffect(() => {
-  //   // Save the current overflow style
-  //   const originalStyle = window.getComputedStyle(document.body).overflow
-  //   // Prevent scrolling on the body
-  //   if (isOpen) {
-  //     document.body.style.overflow = "hidden"
-  //   }
-
-  //   // Restore original overflow on cleanup
-  //   return () => {
-  //     document.body.style.overflow = originalStyle
-  //   }
-  // }, [isOpen])
-
   const handleAddToCart = useCallback(() => {
     if (localNote) {
       dispatch(
@@ -142,7 +117,7 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
               <ChevronLeft size={28} className="text-gray-800 mt-1" />
             </button>
             <div>
-              <h2 className="text-2xl font-bold text-gray-800">{memoizedProduct.name}</h2>
+              <SheetTitle className="text-2xl font-bold text-gray-800">{memoizedProduct.name}</SheetTitle>
             </div>
           </div>
 
@@ -160,7 +135,7 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
 
             {/* Product Details */}
             <div className="px-6 py-4">
-              <p className="text-gray-600 text-sm italic leading-relaxed">"{memoizedProduct.description}"</p>
+              <SheetDescription className="text-gray-600 text-sm italic leading-relaxed">"{memoizedProduct.description}"</SheetDescription>
               {/* Options */}
               {memoizedProduct.productOptions?.length > 0 && (
                 <div className="mt-2 space-y-6">
@@ -250,14 +225,9 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
                 </div>
               </motion.div>
             </div>
-
-
-
           </div>
 
-
-
-          <div className=" bg-white border-t px-6 py-4 mt-auto" >
+          <div className=" bg-white border-t px-4 py-3 mt-auto" >
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -266,13 +236,10 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
             >
               <div className="w-28">Thêm vào giỏ</div>
               <div className="w-20">{convertToVND(totalPrice * quantity)}VND</div>
-
             </motion.button>
           </div >
-
         </SheetContent>
       </Sheet>
-
 
       <AnimatePresence>
         {showMiniModal && (

@@ -123,24 +123,23 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
         }
     }
 
-    const renderButton = (text: string, action: () => void, isWhite = false, isDisabled = false) => (
-        <div
-            className={`text-sm w-40 flex justify-center items-center border-2 rounded-md py-3 cursor-pointer
-                        ${isWhite ? "bg-white" : ""} 
-                        ${isLoading || isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
-            onClick={isLoading || isDisabled ? undefined : action}
-        >
-            {isLoading && text === "Đặt đơn" ? (
-                <Loader2 className="mr-2 h-5 w-5 animate-spin text-my-color" />
-            ) : (
-                <p
-                    className={`uppercase font-semibold ${isWhite ? "text-my-color" : "text-white"} ${isDisabled ? "text-gray-400" : ""}`}
-                >
-                    {text}
-                </p>
-            )}
-        </div>
-    )
+    const renderButton = (text: string, action: () => void, isWhite = false, isHidden = false) => {
+        if (isHidden) return null
+        return (
+            <div
+                className={`text-sm w-40 flex justify-center items-center border-2 rounded-md py-2 cursor-pointer
+                                ${isWhite ? "bg-white" : ""} 
+                                ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                onClick={isLoading ? undefined : action}
+            >
+                {isLoading && text === "Đặt đơn" ? (
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin text-my-color" />
+                ) : (
+                    <p className={`uppercase font-semibold ${isWhite ? "text-my-color" : "text-white"}`}>{text}</p>
+                )}
+            </div>
+        )
+    }
 
     return (
         <>

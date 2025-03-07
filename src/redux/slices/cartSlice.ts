@@ -6,6 +6,7 @@ import type OptionItem from "@/types/option"
 export interface CartItem {
     id: string
     categoryId: string
+    description: string;
     name: string
     price: number
     quantity: number
@@ -56,6 +57,7 @@ const cartSlice = createSlice({
                 // If it's a new item or has different options, add it to the cart
                 state.items.push({
                     id: product.id,
+                    description: product.description,
                     categoryId,
                     name: product.name,
                     price: product.price,

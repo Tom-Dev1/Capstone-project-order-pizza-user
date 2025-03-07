@@ -8,7 +8,7 @@ import { ShoppingCart } from "lucide-react"
 import type { RootState } from "@/redux/stores/store"
 import { motion } from "framer-motion"
 import { OrderItem } from "./OrderItem"
-import CheckoutProcessButton from "./CheckoutProcessButton"
+import { convertToVND } from "@/utils/convertToVND"
 
 export default function Orders() {
   const dispatch = useDispatch()
@@ -55,49 +55,50 @@ export default function Orders() {
   }
 
   return (
-    <div className=" bg-gradient-to-b from-orange-50 to-white">
-      <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className=" bg-gray-50 to-white">
+      <div className="max-w-3xl px-2 py-3 pb-32">
         {cartItems.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center justify-center py-16 bg-white rounded-2xl shadow-sm border border-orange-100"
-          >
-            <ShoppingCart size={80} className="text-orange-300 mb-6" />
-            <p className="text-xl text-gray-500 mb-6">Your cart is empty</p>
-            <a
-              href="/action/foods"
-              className="bg-orange-500 text-white py-3 px-6 rounded-xl font-semibold hover:bg-orange-600 transition-all duration-200 hover:shadow-lg"
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center justify-center py-16 bg-white rounded-2xl  border border-gray-100"
             >
-              Start Ordering
-            </a>
-          </motion.div>
+              <ShoppingCart size={80} className="text-orange-400 mb-6" />
+              <p className="text-lg font-semibold text-gray-500 mb-6">Bạn chưa có đơn hàng nào!</p>
+            </motion.div>
+          </div>
         ) : (
           <>
-            <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-4 mb-8">
+            <motion.div variants={containerVariants} initial="hidden" animate="visible"
+              className="border border-gray-200 rounded-t-lg last:border-b-0 ">
               {orderItems.map((item) => (
+
                 <OrderItem
                   key={`${item.id}-${item.categoryId}-${item.optionsHash}`}
                   item={item}
                   onRemove={() => handleRemove(item.id, item.categoryId, item.index, item.optionsHash)}
                 />
               ))}
+
+              <div className="text-sm space-y-1 px-3">
+                <div className="flex justify-between items-center text-gray-600">
+                  <span className="font-bold">Giá chưa thuế</span>
+                  <span className="font-medium">{convertToVND(totalPrice)}đ </span>
+                </div>
+                <div className="flex justify-between items-center text-gray-600">
+                  <span className="font-bold">Thuế 8%</span>
+                  <span className="font-medium"></span>
+                </div>
+                <div className="border-t-2"></div>
+                <div className="flex justify-between items-center pt-1 text-my-color">
+                  <span className="font-bold text-lg">Tổng cộng</span>
+                  <span className="font-medium text-base">{convertToVND(totalPrice)}đ</span>
+                </div>
+              </div>
+
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="sticky bottom-4"
-            >
-              <div className="bg-white rounded-2xl shadow-lg border border-orange-100 p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <span className="text-lg text-gray-600 font-medium">Total Amount</span>
-                  <span className="text-3xl font-bold text-orange-500">${totalPrice.toFixed(2)}</span>
-                </div>
-                <CheckoutProcessButton />
-              </div>
-            </motion.div>
           </>
         )}
       </div>

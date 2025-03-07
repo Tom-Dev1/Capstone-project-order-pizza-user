@@ -31,7 +31,7 @@ const HeaderWithBack: React.FC<HeaderWithBackProps> = ({ title, onBack }) => {
                 </button>
                 <div className="ml-2">
                     <h1 className=" uppercase text-lg font-normal text-gray-900 flex-1">{title}</h1>
-                    <h1 className="font-medium">Bàn <span >{tableCode}</span></h1>
+                    <h1 className="font-medium text-my-color">Bàn <span>{tableCode}</span></h1>
                 </div>
             </div>
         </div>

@@ -2,8 +2,10 @@
 
 import type React from "react"
 import { motion } from "framer-motion"
-import { X } from "lucide-react"
-import type { CartItem } from "@/redux/slices/cartSlice"
+import { Plus, X } from "lucide-react"
+import { type CartItem } from "@/redux/slices/cartSlice"
+import { convertToVND } from "@/utils/convertToVND"
+import { useDispatch } from "react-redux"
 
 interface OrderItemProps {
   item: CartItem & {
@@ -11,49 +13,71 @@ interface OrderItemProps {
     index: number
   }
   onRemove: () => void
+
 }
 
-export const OrderItem: React.FC<OrderItemProps> = ({ item, onRemove }) => {
+export const OrderItem: React.FC<OrderItemProps> = ({ item, onRemove, }) => {
+
+  const dispatch = useDispatch()
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="bg-white rounded-xl shadow-sm border border-orange-100 p-4 flex items-center gap-4"
-    >
-      <img
-        src={item.image || "/placeholder.svg?height=80&width=80"}
-        alt={item.name}
-        className="w-20 h-20 object-cover rounded-lg"
-      />
-      <div className="flex-grow">
-        <h3 className="text-sm font-semibold text-gray-800">{item.name}</h3>
-        <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
-        {item.selectedOptions && item.selectedOptions.length > 0 && (
-          <p className="text-sm text-gray-500">Options: {item.selectedOptions.map((opt) => opt.name).join(", ")}</p>
-        )}
-        {item.notes && item.notes.length > 0 && (
-          <div className="text-sm text-gray-500 mt-2">
-            <span className="font-medium">Note{item.notes.length > 1 ? "s" : ""}:</span>
-            <ul className="list-disc list-inside">
-              {item.notes.map((note, index) => (
-                <li key={index}>{note}</li>
-              ))}
-            </ul>
+    <div className=" p-2 ">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        className={`flex items-start gap-4 pb-4 border-b-2 border-dashed`}
+      >
+        <img
+          src={item.image || "https://pizza4ps.com/wp-content/uploads/2023/07/20200001_2.jpg"}
+          alt={item.name}
+          className="w-20 h-20 object-cover rounded-lg"
+        />
+        <div className="flex-grow">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-gray-800">{item.name}</h3>
+
           </div>
-        )}
-      </div>
-      <div className="flex flex-col items-end">
-        <span className="text-lg font-bold text-orange-500">${(item.price * item.quantity).toFixed(2)}</span>
-        <button
-          onClick={onRemove}
-          className="mt-2 text-gray-400 hover:text-red-500 transition-colors duration-200"
-          aria-label="Remove item"
-        >
-          <X size={20} />
-        </button>
-      </div>
-    </motion.div>
+          {item.selectedOptions && item.selectedOptions.length > 0 && (
+            <div className="text-sm text-gray-500 mt-1">
+              <span className="font-medium">Lựa chọn:</span>
+              <ul className="list-disc list-inside">
+                {item.selectedOptions.map((opt, index) => (
+                  <li key={index}>{opt.name}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {item.notes && item.notes.length > 0 && (
+            <div className="text-sm text-gray-500 mt-">
+              <span className="font-medium">Note{item.notes.length > 1 ? "s" : ""}:</span>
+              <ul className="list-disc list-inside">
+                {item.notes.map((note, index) => (
+                  <li key={index} className="break-words pl-1 -indent-4 ml-4">
+                    {note}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <div className="">
+            <span className="text-sm font-semibold text-black">x{item.quantity}</span>
+            <span className="text-sm font-bold text-my-color"> Tổng tiền: {convertToVND((item.price * item.quantity))}VND</span>
+          </div>
+
+        </div>
+        <div className="flex flex-col items-end">
+          <button
+            onClick={onRemove}
+            className="mt-2 text-white bg-my-color rounded-full transition-colors duration-200"
+            aria-label="Remove item"
+          >
+            <X size={20} />
+          </button>
+        </div>
+      </motion.div>
+
+    </div >
   )
 }
 
