@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { motion, AnimatePresence } from "framer-motion"
-import { Minus, Plus, ChevronLeft, ShoppingCart } from "lucide-react"
-import { addToCart, selectCartItem } from "@/redux/slices/cartSlice"
+import { Minus, Plus, ChevronLeft, } from "lucide-react"
+import { addToCart, } from "@/redux/slices/cartSlice"
 import { setNote } from "@/redux/slices/noteSlice"
 import { setSelectedOptions, selectTotalPrice } from "@/redux/slices/selectedOptionsSlice"
 import type { RootState } from "@/redux/stores/store"
@@ -23,9 +23,9 @@ interface ProductModalProps {
 export default function ProductModal({ product, categoryId, isOpen, onClose }: ProductModalProps) {
   const dispatch = useDispatch()
   const [localSelectedOptions, setLocalSelectedOptions] = useState<OptionItem[]>([])
-  const cartItem = useSelector((state: RootState) =>
-    selectCartItem(state, product.id, categoryId, localSelectedOptions),
-  )
+  // const cartItem = useSelector((state: RootState) =>
+  //   selectCartItem(state, product.id, categoryId, localSelectedOptions),
+  // )
   // const notes = useSelector((state: RootState) =>
   //   selectProductCategoryNotes(state, categoryId, product.id, localSelectedOptions),
   // )
@@ -326,7 +326,7 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
             key="mini-modal"
             productName={memoizedProduct.name}
             productImage={memoizedProduct.image}
-            isEditing={!!cartItem}
+
           />
         )}
       </AnimatePresence>

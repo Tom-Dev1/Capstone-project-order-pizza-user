@@ -4,9 +4,8 @@ import { Check } from "lucide-react"
 interface MiniModalProps {
     productName: string
     productImage: string
-    isEditing: boolean
 }
-const MiniModal: React.FC<MiniModalProps> = ({ productName, productImage, isEditing }) => {
+const MiniModal: React.FC<MiniModalProps> = ({ productName, productImage, }) => {
     return (
         <motion.div
             initial={{ opacity: 0, y: 50 }}
