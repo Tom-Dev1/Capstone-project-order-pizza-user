@@ -5,13 +5,17 @@ import { convertToVND } from "@/utils/convertToVND"
 import { getStatusColor, getStatusLabel } from "@/utils/orderStatusColor"
 import useTable from "@/hooks/useTable"
 import OrderService from "@/services/order-service"
+import { useDispatch } from 'react-redux'
+import { setTotalCount } from '@/redux/slices/totalCountSlide'
+import { setTotalPrice } from "@/redux/slices/totalPriceSlice"
 
-const BookedOrders: React.FC = ({ }) => {
+
+const BookedOrders: React.FC = () => {
     const { currentOrderId_ } = useTable()
     const [orderItems, setOrderItems] = useState<OrderItemsRES[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
-
+    const dispatch = useDispatch()
     const totalOrderPrice = useMemo(() => {
         if (!orderItems || orderItems.length === 0) return 0
         return orderItems.reduce((total, item) => {
@@ -19,6 +23,11 @@ const BookedOrders: React.FC = ({ }) => {
             return total + itemTotal
         }, 0)
     }, [orderItems])
+
+    console.log("total price", totalOrderPrice);
+    dispatch(setTotalPrice(totalOrderPrice))
+
+
 
     const fetchOrderItems = useCallback(async () => {
 
@@ -28,14 +37,15 @@ const BookedOrders: React.FC = ({ }) => {
             const response = await orderService.getOrderItemByOrderID(`${currentOrderId_}`)
             if (response.result && response.message) {
                 setOrderItems(response.result.items)
+                dispatch(setTotalCount(response.result.totalCount))
             }
 
-        } catch (err) {
-            setError("Không thể tải danh sách đơn hàng.")
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Không thể tải danh sách đơn hàng.")
         } finally {
             setLoading(false)
         }
-    }, [currentOrderId_])
+    }, [currentOrderId_, dispatch])
 
     useEffect(() => {
         if (currentOrderId_) {
@@ -51,7 +61,7 @@ const BookedOrders: React.FC = ({ }) => {
     return (
         <div className="space-y-4 p-4 pb-24">
             {orderItems.map((item) => (
-                <div key={item.id} className="bg-white shadow-md rounded-lg overflow-hidden">
+                <div key={item.id} className="bg-white border border-gray-100 rounded-lg overflow-hidden">
                     <div className="p-4 pb-2 flex justify-between items-center">
                         <span className="font-medium">{item.name}<span className=" ml-2"> x{item.quantity}</span></span>
                         <span className="font-normal">{convertToVND(item.price)} VND</span>
@@ -91,10 +101,22 @@ const BookedOrders: React.FC = ({ }) => {
                 </div>
             ))}
 
-            <div className="bg-white shadow-md rounded-lg p-4 mt-6 sticky bottom-20">
-                <div className="flex justify-between items-center">
-                    <span className="font-medium text-lg">Tổng cộng:</span>
-                    <span className="font-bold text-lg text-primary">{convertToVND(totalOrderPrice)}VND</span>
+            <div className="bg-white border border-gray-100 rounded-lg p-4 mt-6 sticky bottom-16">
+                <div className="text-sm space-y-1 px-3 mt-4">
+                    <div className="flex justify-between items-center text-gray-600">
+                        <span className="font-bold">Giá chưa thuế</span>
+                        <span className="font-medium">{convertToVND(totalOrderPrice)} VND </span>
+                    </div>
+                    <div className="flex justify-between items-center text-gray-600">
+                        <span className="font-bold">Thuế 8%</span>
+                        <span className="font-medium"></span>
+                    </div>
+                    <div className="border-t-2"></div>
+
+                    <div className="flex justify-between items-center">
+                        <span className="font-medium text-lg">Tổng cộng:</span>
+                        <span className="font-bold text-lg text-primary">{convertToVND(totalOrderPrice)} VND</span>
+                    </div>
                 </div>
             </div>
         </div>

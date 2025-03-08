@@ -6,13 +6,23 @@ import { useNavigate } from "react-router-dom"
 import useTable from "@/hooks/useTable"
 import { useOrderService } from "@/hooks/useOrderService"
 import { Button } from "@/components/ui/button"
-import { Loader2, CheckCircle, XCircle } from "lucide-react"
+import { Loader2, XCircle } from "lucide-react"
 import { useSelector, useDispatch } from "react-redux"
 import type { RootState } from "@/redux/stores/store"
 import type { OrderItem } from "@/types/order"
-import { motion, AnimatePresence } from "framer-motion"
 import { clearCart } from "@/redux/slices/cartSlice"
 import { getItem } from "@/constants"
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+
+} from "@/components/ui/alert-dialog"
+import SuccessCart from "@/components/Animations/SuccessCart"
+import { CheckoutNotificationModal } from "./CheckoutNotificationModal"
 
 interface BottomOrderProps {
     activeTab: "tab1" | "tab2"
@@ -25,6 +35,7 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
     const { createOrder, addFoodToOrder, isLoading } = useOrderService()
     const [showConfirmModal, setShowConfirmModal] = useState(false)
     const [showResultModal, setShowResultModal] = useState(false)
+    const [showCheckOutModal, setShowCheckOutModal] = useState(false)
     const [orderId, setOrderId] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState<string | null>(null)
@@ -52,34 +63,47 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
     }, [currentOrderId_])
 
     const handleOpenModal = async () => {
-        if (isCartEmpty) return
-        if (currentOrderId_ === null) {
-            try {
-                if (!tableId_gbId) {
-                    throw new Error("No table ID available")
-                }
-                const createResponse = await createOrder(JSON.stringify({ tableId: tableId_gbId }))
-                if (!createResponse || !createResponse.success) {
-                    throw new Error(createResponse?.message || "Failed to create a new order")
-                }
-                const newOrderId = createResponse.result.result.id
-                setOrderId(newOrderId)
-            } catch (err) {
-                console.error("Error creating order:", err)
-                setError(err instanceof Error ? err.message : "An unknown error occurred")
-                setShowResultModal(true)
+
+        // If on checkout tab, open checkout notification modal
+
+        if (activeTab === "tab1") {
+            if (isCartEmpty) {
+                console.log('Cart is empty, returning')
                 return
             }
+            if (currentOrderId_ === null) {
+                try {
+                    if (!tableId_gbId) {
+                        throw new Error("No table ID available")
+                    }
+                    const createResponse = await createOrder(JSON.stringify({ tableId: tableId_gbId }))
+                    if (!createResponse || !createResponse.success) {
+                        throw new Error(createResponse?.message || "Failed to create a new order")
+                    }
+                    const newOrderId = createResponse.result.result.id
+                    setOrderId(newOrderId)
+                } catch (err) {
+                    console.error("Error creating order:", err)
+                    setError(err instanceof Error ? err.message : "An unknown error occurred")
+                    setShowResultModal(true)
+                    return
+                }
+            } else {
+                setOrderId(currentOrderId_)
+            }
+            setShowConfirmModal(true)
         } else {
-            setOrderId(currentOrderId_)
+            setShowCheckOutModal(true)
         }
-        setShowConfirmModal(true)
+
+
     }
     console.log('currentOrderID_', orderId);
 
     const handleCloseModal = () => {
         setShowConfirmModal(false)
         setShowResultModal(false)
+        setShowCheckOutModal(false)
     }
 
     const validateOrderItems = (items: OrderItem[]): boolean => {
@@ -125,13 +149,18 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
         }
     }
 
+    const handleCheckoutConfirm = async () => {
+        // Add  checkout logic here
+        setShowCheckOutModal(false)
+        // navigate or show a success message
+    }
     const renderButton = (text: string, action: () => void, isWhite = false, isHidden = false) => {
         if (isHidden) return null
         return (
             <div
                 className={`text-sm w-40 flex justify-center items-center border-2 rounded-md py-2 cursor-pointer
                                 ${isWhite ? "bg-white" : ""} 
-                                ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                                `}
                 onClick={isLoading ? undefined : action}
             >
                 {isLoading && text === "Đặt đơn" ? (
@@ -144,6 +173,10 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
     }
     const tableCode = getItem<string>('tableCode')
 
+    // Add console.log to track state changes
+    useEffect(() => {
+        console.log('showCheckOutModal changed:', showCheckOutModal)
+    }, [showCheckOutModal])
 
     return (
         <>
@@ -152,93 +185,70 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
                 <div className="flex items-center">
                     {renderButton(
                         activeTab === "tab1" ? "Đặt đơn" : "Thanh Toán",
-                        handleOpenModal,
+                        () => {
+                            console.log('Button clicked')
+                            handleOpenModal()
+                        },
                         true,
                         isCartEmpty && activeTab === "tab1",
                     )}
                 </div>
             </div>
 
-            <AnimatePresence>
-                {showConfirmModal && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            transition={{ type: "spring", damping: 15, stiffness: 300 }}
-                            className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full"
-                        >
-                            <h2 className="text-2xl font-bold mb-4 text-gray-800">Confirm Order {tableCode}</h2>
-                            <p className="mb-6 text-gray-600">Are you ready to place your order? </p>
-                            <div className="flex justify-end space-x-3">
-                                <Button variant="outline" onClick={handleCloseModal} disabled={isLoading} className="hover:bg-gray-100">
-                                    Cancel
-                                </Button>
-                                <Button
-                                    onClick={handleConfirmCheckout}
-                                    disabled={isLoading}
-                                    className="bg-orange-500 hover:bg-orange-600 text-white"
-                                >
-                                    {isLoading ? (
-                                        <>
-                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            Processing...
-                                        </>
-                                    ) : (
-                                        "Confirm Order"
-                                    )}
-                                </Button>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
+            {showConfirmModal && (
+                <AlertDialog open={showConfirmModal} onOpenChange={handleCloseModal} >
+                    <AlertDialogContent className="max-w-[80%] flex flex-col">
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Bạn đã xác nhận đặt món?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Yêu cầu của bạn sẽ được gửi tới nhà hàng.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter className="flex flex-row justify-between items-center mt-2">
+                            <Button className="px-4 w-28 bg-gray-200 border rounded-sm text-black" onClick={handleCloseModal} disabled={isLoading}>Hủy</Button>
+                            <Button className="px-4 w-28 bg-my-color border rounded-sm text-white" onClick={handleConfirmCheckout} disabled={isLoading}>Xác nhận</Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            )}
 
-                {showResultModal && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            transition={{ type: "spring", damping: 15, stiffness: 300 }}
-                            className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full"
-                        >
-                            {success ? (
-                                <>
-                                    <div className="flex items-center mb-4">
-                                        <CheckCircle className="text-green-500 mr-2" size={24} />
-                                        <h2 className="text-2xl font-bold text-gray-800">Order Successful</h2>
-                                    </div>
-                                    <p className="mb-6 text-gray-600">{success}</p>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="flex items-center mb-4">
-                                        <XCircle className="text-red-500 mr-2" size={24} />
-                                        <h2 className="text-2xl font-bold text-gray-800">Order Failed</h2>
-                                    </div>
-                                    <p className="mb-6 text-gray-600">{error}</p>
-                                </>
-                            )}
-                            <div className="flex justify-end">
-                                <Button onClick={handleCloseModal} className="bg-gray-200 hover:bg-gray-300 text-gray-800">
-                                    Close
-                                </Button>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {showResultModal && (
+                <AlertDialog open={showResultModal} onOpenChange={handleCloseModal} >
+                    <AlertDialogContent className="max-w-[80%] flex flex-col">
+                        {success ?
+                            (<>
+                                <div className="flex flex-col items-center justify-center mb-4">
+                                    <SuccessCart />
+                                    <h3 className="mt-2">Bàn {tableCode}</h3>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle className="text-xl font-semibold text-green-500 my-1">Yêu cầu gọi món thành công</AlertDialogTitle>
+                                        <AlertDialogDescription className="break-words italic">
+                                            Yêu cầu của bạn sẽ được gửi tới nhà hàng, nhân viên sẽ xác nhận đơn hàng trong ít phút. Chúc quý khách vui vẻ!
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                </div>
+                            </>) :
+                            (<>
+                                <div className="flex items-center mb-4">
+                                    <XCircle className="text-red-500 mr-2" size={24} />
+                                    <h2 className="text-2xl font-bold text-gray-800">Order Failed</h2>
+                                </div>
+                                <p className="mb-6 text-gray-600">{error}</p>
+                            </>)}
+                        <AlertDialogFooter className="justify-center items-center mt-3">
+                            <Button className="px-4 w-28 bg-my-color border rounded-sm text-white" onClick={handleCloseModal} disabled={isLoading}>Đóng</Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            )}
+
+            <CheckoutNotificationModal
+                isOpen={showCheckOutModal}
+                onClose={handleCloseModal}
+                onConfirm={handleCheckoutConfirm}
+                tableCode={tableCode || "Unknown"}
+            />
+
         </>
     )
 }
