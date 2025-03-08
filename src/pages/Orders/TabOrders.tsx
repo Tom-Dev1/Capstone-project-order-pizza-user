@@ -46,7 +46,7 @@ export default function SwitchTabs() {
         if (activeTab === "tab1") {
             intervalId = setInterval(() => {
                 fetchOrderItems()
-            }, 10000) // 3 seconds
+            }, 3000) // 3 seconds
         }
 
         return () => {

@@ -78,7 +78,7 @@ export function CheckoutNotificationModal({
                 <p className="text-sm text-center text-gray-600 mb-2">Bạn có muốn thanh toán hóa đơn này?</p>
 
                 <AlertDialogFooter className="flex flex-row justify-between items-center mt-2">
-                    <Button className="px-4 w-28 bg-gray-200 border rounded-sm text-black" onClick={onClose} >
+                    <Button variant={"outline"} className="px-4 w-28" onClick={onClose} >
                         Hủy
                     </Button>
                     <Button

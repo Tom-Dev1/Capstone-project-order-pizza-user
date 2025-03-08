@@ -205,7 +205,7 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter className="flex flex-row justify-between items-center mt-2">
-                            <Button className="px-4 w-28 bg-gray-200 border rounded-sm text-black" onClick={handleCloseModal} disabled={isLoading}>Hủy</Button>
+                            <Button variant={"outline"} className="px-4 w-28" onClick={handleCloseModal} disabled={isLoading}>Hủy</Button>
                             <Button className="px-4 w-28 bg-my-color border rounded-sm text-white" onClick={handleConfirmCheckout} disabled={isLoading}>Xác nhận</Button>
                         </AlertDialogFooter>
                     </AlertDialogContent>
