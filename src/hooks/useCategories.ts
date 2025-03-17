@@ -15,7 +15,7 @@ const useCategories = () => {
     setError(null)
 
     try {
-      let DRINK_CATEGORY_ID = '36acef28-b139-4e30-b4d6-5abe375f7c0b'
+      const DRINK_CATEGORY_ID = '36acef28-b139-4e30-b4d6-5abe375f7c0b'
       const categoryService = CategoryService.getInstance()
       const response = await categoryService.getAllCategories()
       if (response.success && response.result.items && response.result.items.length > 0) {
