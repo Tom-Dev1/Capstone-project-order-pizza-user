@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
@@ -161,7 +159,7 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
                 className={`text-sm w-40 flex justify-center items-center border-2 rounded-md py-2 cursor-pointer
                                 ${isWhite ? "bg-white" : ""} 
                                 `}
-                onClick={isLoading ? undefined : action}
+                onClick={action}
             >
                 {isLoading && text === "Đặt đơn" ? (
                     <Loader2 className="mr-2 h-5 w-5 animate-spin text-my-color" />

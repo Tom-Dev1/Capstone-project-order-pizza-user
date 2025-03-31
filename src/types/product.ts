@@ -2,15 +2,17 @@ import { CategoryModel } from "./category";
 import { ProductOption } from "./product-option";
 
 export interface ProductModel {
-    id: string;
-    name: string;
-    price: number;
-    image: string;
-    description: string;
-    categoryId: string;
-    productType: number;
-    category: CategoryModel
-    productOptions: ProductOption[]
+    id: string
+    name: string
+    price: number
+    image: string
+    imageUrl: string | null
+    imagePublicId: string | null
+    description: string
+    categoryId: string
+    productType: string
+    category: CategoryModel | null
+    options: ProductOption[]
 }
 
 

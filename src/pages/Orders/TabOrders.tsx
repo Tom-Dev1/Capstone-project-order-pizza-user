@@ -25,6 +25,7 @@ export default function SwitchTabs() {
             if (response.result && response.message) {
                 setTotalCount(response.result.totalCount)
             }
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
             console.log("Không thể tải danh sách đơn hàng.");
 

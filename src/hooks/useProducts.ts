@@ -15,6 +15,7 @@ const useProducts = () => {
             const productService = ProductService.getInstance()
             const response = await productService.getAllProducts()
             if (response.success && response.result.items) {
+                console.log(response.result);
 
                 setProducts(response.result.items)
             } else {
