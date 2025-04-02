@@ -46,6 +46,8 @@ const StatusCheck: React.FC = () => {
                     }
                 }
             } catch (err) {
+                console.log(err);
+
                 setError("An unexpected error occurred")
             } finally {
                 setIsLoading(false)

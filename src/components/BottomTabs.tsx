@@ -49,7 +49,7 @@ const BottomTabs: React.FC = () => {
   )
 
   return (
-    <nav className="flex justify-around items-center  bg-my-color border-t border-gray-300 py-1 h-[76px]">
+    <nav className="flex justify-around items-center  bg-my-color border-t border-gray-300  h-[76px]">
       {navItems.map((item) => (
         <NavItem key={item.to} {...item} />
       ))}
