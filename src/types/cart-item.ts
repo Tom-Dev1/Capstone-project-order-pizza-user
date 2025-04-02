@@ -1,4 +1,4 @@
-import OptionItem from "./option"
+import OptionItem from "./product"
 
 export interface CartItem {
     id: string
