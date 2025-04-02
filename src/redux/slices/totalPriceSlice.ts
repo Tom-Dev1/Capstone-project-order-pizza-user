@@ -1,28 +1,26 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from '../stores/store';
-
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
+import { RootState } from "../stores/store"
 
 interface TotalPriceState {
-    totalPrice: number;
+    totalPrice: number
 }
 const initialState: TotalPriceState = {
     totalPrice: 0,
-};
+}
 
 const totalPriceSlice = createSlice({
-    name: 'totalPrice',
+    name: "totalPrice",
     initialState,
     reducers: {
         setTotalPrice: (state, action: PayloadAction<number>) => {
-            state.totalPrice = action.payload;
+            state.totalPrice = action.payload
         },
-
     },
-});
+})
 
 export const { setTotalPrice } = totalPriceSlice.actions
 
 export const selectTotalPrice = (state: RootState) => state.totalPrice.totalPrice
 
-
 export default totalPriceSlice.reducer
+

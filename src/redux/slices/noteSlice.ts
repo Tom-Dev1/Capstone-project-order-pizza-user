@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "@/redux/stores/store"
-import type OptionItem from "@/types/option"
+import OptionItem from "@/types/product"
 
 // Modified to include optionsHash for identifying unique option combinations
 interface NoteState {

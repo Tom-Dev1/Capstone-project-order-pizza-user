@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import SuccessCart from "@/components/Animations/SuccessCart"
 import { CheckoutNotificationModal } from "./CheckoutNotificationModal"
+import TableService from "@/services/table-service"
 
 interface BottomOrderProps {
     activeTab: "tab1" | "tab2"
@@ -148,9 +149,26 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
     }
 
     const handleCheckoutConfirm = async () => {
-        // Add  checkout logic here
-        setShowCheckOutModal(false)
-        // navigate or show a success message
+        try {
+            const tableID = getItem<string>("tableId")
+            const tablesService = TableService.getInstance()
+            const apiResponse = await tablesService.callStaff(`${tableID}`)
+
+            if (apiResponse.success) {
+                // Close the modal first to prevent UI issues during navigation
+                setShowCheckOutModal(false)
+                // Navigate to the payment page on success
+                navigate("/action/payment")
+            } else {
+                alert("Không thể gọi nhân viên. Vui lòng thử lại sau.")
+            }
+        } catch (error) {
+            console.error("Error calling staff:", error)
+            alert("Đã xảy ra lỗi. Vui lòng thử lại sau.")
+        } finally {
+            // Make sure modal is closed in any case
+            setShowCheckOutModal(false)
+        }
     }
     const renderButton = (text: string, action: () => void, isWhite = false, isHidden = false) => {
         if (isHidden) return null

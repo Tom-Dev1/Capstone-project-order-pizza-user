@@ -1,18 +1,28 @@
 import { CategoryModel } from "./category";
-import { ProductOption } from "./product-option";
 
 export interface ProductModel {
     id: string
     name: string
     price: number
-    image: string
-    imageUrl: string | null
-    imagePublicId: string | null
+    imageUrl: string
     description: string
     categoryId: string
-    productType: string
+    productType: "HotKitchen" | "ColdKitchen"
     category: CategoryModel | null
-    options: ProductOption[]
+    options: Option[]
+}
+
+export interface Option {
+    id: string;
+    name: string;
+    description: string;
+    optionItems: OptionItem[];
+}
+
+export default interface OptionItem {
+    id: string,
+    name: string,
+    additionalPrice: number
 }
 
 

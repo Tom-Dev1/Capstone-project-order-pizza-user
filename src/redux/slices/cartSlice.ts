@@ -1,12 +1,11 @@
 import { createSlice, type PayloadAction, createSelector } from "@reduxjs/toolkit"
-import type { RootState } from "../stores/store"
 import type { ProductModel } from "@/types/product"
-import type OptionItem from "@/types/option"
+import { RootState } from "../stores/store"
+import OptionItem from "@/types/product"
 
 export interface CartItem {
     id: string
     categoryId: string
-
     name: string
     price: number
     quantity: number
@@ -57,12 +56,11 @@ const cartSlice = createSlice({
                 // If it's a new item or has different options, add it to the cart
                 state.items.push({
                     id: product.id,
-
                     categoryId,
                     name: product.name,
                     price: product.price,
                     quantity,
-                    image: product.image,
+                    image: product.imageUrl,
                     selectedOptions,
                     optionsHash,
                     addedAt: Date.now(),

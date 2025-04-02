@@ -10,6 +10,7 @@ const Orders = lazy(() => import('@/pages/Orders/TabOrders'))
 const LoginPage = lazy(() => import('@/pages/WellComePage'))
 const ClosedPage = lazy(() => import('@/pages/ClosedPage'))
 const CheckStatusAndRedirect = lazy(() => import('@/hooks/status-check'))
+const Payment = lazy(() => import('@/pages/Payment'))
 const Loading = lazy(() => import('@/pages/Layouts/LoadingFallBack'))
 const RouterIndex = () => {
   return (
@@ -23,6 +24,7 @@ const RouterIndex = () => {
         <Route path='/action' element={<ActionLayout />}>
           <Route path='foods' element={<FoodsHome />} />
           <Route path='orders' element={<Orders />} />
+          <Route path='payment' element={<Payment />} />
         </Route>
         <Route path='*' element={<NotFound />} />
       </Routes>

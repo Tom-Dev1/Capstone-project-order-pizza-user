@@ -4,15 +4,15 @@ import { useState, useEffect, useCallback, useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { motion, AnimatePresence } from "framer-motion"
 import { Minus, Plus, ChevronLeft } from "lucide-react"
-import { addToCart } from "@/redux/slices/cartSlice"
-import { setNote } from "@/redux/slices/noteSlice"
-import { setSelectedOptions, selectTotalPrice } from "@/redux/slices/selectedOptionsSlice"
 import type { RootState } from "@/redux/stores/store"
 import type { ProductModel } from "@/types/product"
-import type OptionItem from "@/types/option"
 import MiniModal from "./MiniModal"
 import { convertToVND } from "@/utils/convertToVND"
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet"
+import OptionItem from "@/types/product"
+import { setNote } from "@/redux/slices/noteSlice"
+import { addToCart } from "@/redux/slices/cartSlice"
+import { selectTotalPrice, setSelectedOptions } from "@/redux/slices/selectedOptionsSlice"
 
 interface ProductModalProps {
   product: ProductModel
@@ -118,7 +118,7 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
               <ChevronLeft size={28} className="text-gray-800 mt-1" />
             </button>
             <div>
-              <SheetTitle className="text-2xl font-bold text-gray-800">{memoizedProduct.name}</SheetTitle>
+              <SheetTitle className="text-2xl w-80 font-bold text-gray-800 truncate">{memoizedProduct.name}</SheetTitle>
             </div>
           </div>
 
@@ -127,7 +127,7 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
             {/* Product Image */}
             <div className="relative h-64 bg-gray-100">
               <img
-                src={memoizedProduct.image || "https://pizza4ps.com/wp-content/uploads/2023/07/20200001_2.jpg"}
+                src={memoizedProduct.imageUrl || "https://pizza4ps.com/wp-content/uploads/2023/07/20200001_2.jpg"}
                 alt={memoizedProduct.name}
                 className="w-full h-full object-cover"
               />
@@ -140,23 +140,23 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
                 "{memoizedProduct.description}"
               </SheetDescription>
               {/* Options */}
-              {memoizedProduct.productOptions?.length > 0 && (
+              {memoizedProduct.options?.length > 0 && (
                 <div className="mt-2 space-y-6">
-                  {memoizedProduct.productOptions.map((productOption) => (
+                  {memoizedProduct.options.map((productOption) => (
                     <div key={productOption.id}>
                       <div className="flex flex-col mb-3">
-                        <h3 className="text-xl text-orange-500">{productOption.option.name}</h3>
+                        <h3 className="text-xl text-orange-500">{productOption.name}</h3>
                       </div>
                       <div className="grid grid-cols-1 gap-2">
-                        {productOption.option.optionItems.map((item) => (
+                        {productOption.optionItems.map((item) => (
                           <motion.button
                             key={`${productOption.id}-${item.id}`}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => handleOptionChange(item)}
                             className={`relative p-2 rounded-xl text-left transition-all duration-200 ${isOptionSelected(item)
-                                ? "bg-orange-200 border-2 border-orange-400"
-                                : "bg-gray-100 border-2 border-gray-100"
+                              ? "bg-orange-200 border-2 border-orange-400"
+                              : "bg-gray-100 border-2 border-gray-100"
                               }`}
                             aria-pressed={isOptionSelected(item)}
                           >
@@ -245,7 +245,7 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
 
       <AnimatePresence>
         {showMiniModal && (
-          <MiniModal key="mini-modal" productName={memoizedProduct.name} productImage={memoizedProduct.image} />
+          <MiniModal key="mini-modal" productName={memoizedProduct.name} productImage={memoizedProduct.imageUrl} />
         )}
       </AnimatePresence>
     </>

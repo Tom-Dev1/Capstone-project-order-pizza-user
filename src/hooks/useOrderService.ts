@@ -19,6 +19,8 @@ export function useOrderService() {
             const response = await OrderService.getInstance().createOrder(tableIdJson)
             return response
         } catch (err) {
+            console.log(err);
+
             setError("Error creating order")
             return null
         } finally {
@@ -33,6 +35,8 @@ export function useOrderService() {
             const response = await OrderService.getInstance().addFoodToOrder(orderDataJson)
             return response
         } catch (err) {
+            console.log(err);
+
             setError("Error add Food to Order")
             return null
         } finally {
@@ -58,6 +62,8 @@ export function useOrderService() {
             }
 
         } catch (err) {
+            console.log(err);
+
             setError("error get orderById")
             return null
         } finally {

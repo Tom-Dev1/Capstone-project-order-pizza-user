@@ -1,5 +1,5 @@
 import { OrderStatusObject } from "@/utils/orderStatusColor";
-import OptionItem from "./option";
+import OptionItem from "./product";
 
 export interface OrderItem {
     productId: string
@@ -21,10 +21,11 @@ export interface Order {
     endTime: string | null;
     status: string;
     tableId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     table: any;
 }
 
-// Response
+// Resquest Order
 export interface CreateOrderResponse {
     success: boolean;
     result: OrderIdResponse;
@@ -47,7 +48,10 @@ export const PAYMENT_STATUS = {
 } as const;
 
 export type PaymentStatus = typeof PAYMENT_STATUS[keyof typeof PAYMENT_STATUS];
-// Order items 
+
+
+
+// Order items  RES
 
 export interface OrderItemResutl {
     items: OrderItemsRES[]

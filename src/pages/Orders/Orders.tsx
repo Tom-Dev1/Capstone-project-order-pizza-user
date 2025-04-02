@@ -79,21 +79,11 @@ export default function Orders() {
               ))}
 
               <div className="text-sm space-y-1 px-3 mt-4">
-                <div className="flex justify-between items-center text-gray-600">
-                  <span className="font-bold">Giá chưa thuế</span>
-                  <span className="font-medium">{convertToVND(totalPrice)}đ </span>
-                </div>
-                <div className="flex justify-between items-center text-gray-600">
-                  <span className="font-bold">Thuế 8%</span>
-                  <span className="font-medium"></span>
-                </div>
-                <div className="border-t-2"></div>
                 <div className="flex justify-between items-center mt-4 pt-1 text-my-color">
                   <span className="font-bold text-lg">Tổng cộng</span>
                   <span className="font-medium text-base">{convertToVND(totalPrice)}đ</span>
                 </div>
               </div>
-
             </motion.div>
 
           </>

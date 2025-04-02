@@ -1,5 +1,5 @@
-import ApiResponse, { get } from "@/apis/apiUtils"
-import TableDataModels, { TableResult } from "@/types/tables"
+import ApiResponse, { get, } from "@/apis/apiUtils"
+import TableDataModels, { CallStaff, TableResult } from "@/types/tables"
 
 class TableService {
     private static instance: TableService
@@ -35,6 +35,27 @@ class TableService {
         } catch (error) {
             console.error(`Error fetching table with status ${id}:`, error)
             throw error
+        }
+    }
+    public async callStaff(id: string): Promise<CallStaff> {
+        const url = `https://vietsac.id.vn/api/Notification/callstaff/${id}`;
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Lỗi HTTP: ${response.status}`);
+            }
+
+            const data: CallStaff = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Có lỗi xảy ra khi gọi API callStaff:", error);
+            throw error;
         }
     }
 

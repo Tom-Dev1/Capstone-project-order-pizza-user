@@ -4,12 +4,12 @@ import React from "react"
 import { useState, useCallback } from "react"
 import { useSelector } from "react-redux"
 import { motion } from "framer-motion"
-import { selectCartItem } from "@/redux/slices/cartSlice"
 import type { ProductModel } from "@/types/product"
 import ProductModal from "./modals/ProductModal"
 import type { RootState } from "@/redux/stores/store"
-import { ShoppingCart, } from "lucide-react"
+import { ShoppingCart } from "lucide-react"
 import { convertToVND } from "@/utils/convertToVND"
+import { selectCartItem } from "@/redux/slices/cartSlice"
 
 interface ProductListProps {
   products: ProductModel[]
@@ -61,7 +61,7 @@ const ProductItem: React.FC<ProductItemProps> = React.memo(({ product, categoryI
         {/* Image container with overlay */}
         <div className="relative h-44 w-44 md:h-44 overflow-hidden">
           <motion.img
-            src={product.image || "https://pizza4ps.com/wp-content/uploads/2023/07/20200001_2.jpg"}
+            src={product.imageUrl || "https://pizza4ps.com/wp-content/uploads/2023/07/20200001_2.jpg"}
             alt={product.name}
             className="w-44 h-44 md:h-44 md:w-56 object-cover rounded-sm "
             animate={{ scale: isHovered ? 1.05 : 1 }}
@@ -80,10 +80,12 @@ const ProductItem: React.FC<ProductItemProps> = React.memo(({ product, categoryI
         {/* Content */}
         <div className="p-2 mt-1">
           <div className="h-10">
-            <div className="text-sm font-medium text-center text-my-color ">{product.name}</div>
+            <div className="text-sm font-medium text-center text-my-color truncate">{product.name}</div>
           </div>
           <motion.button
-            className={`w-[155px] mt-2 py-1 mb-2 rounded-sm font-medium transition-colors flex items-center justify-center  ${cartItem ? "border rounded-md border-my-color bg-my-color text-white " : "  border rounded-md border-my-color text-my-color"
+            className={`w-[155px] mt-2 py-1 mb-2 rounded-sm font-medium transition-colors flex items-center justify-center  ${cartItem
+              ? "border rounded-md border-my-color bg-my-color text-white "
+              : "  border rounded-md border-my-color text-my-color"
               }`}
             animate={{ scale: isClicked ? 0.95 : 1 }}
             transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -91,14 +93,11 @@ const ProductItem: React.FC<ProductItemProps> = React.memo(({ product, categoryI
           >
             {cartItem ? (
               <>
-
                 <span>{convertToVND(product.price)} VND</span>
               </>
             ) : (
               <>
-
                 <span>{convertToVND(product.price)} VND</span>
-
               </>
             )}
           </motion.button>

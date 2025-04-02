@@ -33,8 +33,8 @@ export function CheckoutNotificationModal({
     const totalCount = useSelector(selectTotalCount)
     const totalPrice = useSelector(selectTotalPrice)
 
-    const tax = totalPrice * 0.08 // 8% tax
-    const total = totalPrice + tax
+
+    const total = totalPrice
 
     return (
         <AlertDialog open={isOpen} onOpenChange={onClose}>
@@ -64,10 +64,7 @@ export function CheckoutNotificationModal({
                             <span>Giá chưa thuế</span>
                             <span className="font-medium">{convertToVND(totalPrice)}VND</span>
                         </div>
-                        <div className="flex justify-between items-center text-gray-600">
-                            <span>Thuế 8%</span>
-                            <span className="font-medium">{convertToVND(tax)}VND</span>
-                        </div>
+
                         <div className="flex justify-between items-center pt-2 text-gray-900 border-t mt-2">
                             <span className="font-medium">Tổng cộng</span>
                             <span className="font-medium text-base">{convertToVND(total)}đ</span>
@@ -75,9 +72,9 @@ export function CheckoutNotificationModal({
                     </div>
                 </div>
 
-                <p className="text-sm text-center text-gray-600 mb-2">Bạn có muốn thanh toán hóa đơn này?</p>
-
-                <AlertDialogFooter className="flex flex-row justify-between items-center mt-2">
+                <p className="text-sm text-center text-gray-600 ">Bạn có muốn thanh toán hóa đơn này?</p>
+                <p className="text-sm text-center text-gray-600 ">Chúng tôi sẽ cho nhân viên tới thanh toán đơn hàng của bạn.</p>
+                <AlertDialogFooter className="flex flex-row justify-between items-center mt-3">
                     <Button variant={"outline"} className="px-4 w-28" onClick={onClose} >
                         Hủy
                     </Button>
@@ -85,7 +82,7 @@ export function CheckoutNotificationModal({
                         className="px-4 w-28 bg-my-color border rounded-sm text-white"
                         onClick={onConfirm}
                     >
-                        {"Đang xử lý..."}
+                        Xác nhận
                     </Button>
                 </AlertDialogFooter>
             </AlertDialogContent>
