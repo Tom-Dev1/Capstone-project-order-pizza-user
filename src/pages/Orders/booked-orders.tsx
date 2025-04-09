@@ -1,5 +1,3 @@
-"use client"
-
 import type { OrderItemsRES } from "@/types/order"
 import type React from "react"
 import { useEffect, useMemo, useRef, useState } from "react"

@@ -1,5 +1,3 @@
-"use client"
-
 import { useMemo } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { removeFromCart, selectCartItems, selectCartTotal } from "@/redux/slices/cartSlice"
