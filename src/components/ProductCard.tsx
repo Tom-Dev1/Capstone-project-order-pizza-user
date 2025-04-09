@@ -36,7 +36,8 @@ const ProductItem: React.FC<ProductItemProps> = React.memo(({ product, categoryI
   const [isClicked, setIsClicked] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
 
-  const cartItem = useSelector((state: RootState) => selectCartItem(state, product.id, categoryId))
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cartItem = useSelector<RootState, any>((state: RootState) => selectCartItem(state, product.id, categoryId))
 
   const handleOpenModal = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
