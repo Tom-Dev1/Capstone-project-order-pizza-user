@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import Orders from "./Orders"
 import BookedOrders from "./booked-orders"

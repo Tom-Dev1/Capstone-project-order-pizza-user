@@ -18,7 +18,11 @@ const BookedOrders: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
     const dispatch = useDispatch()
-    const hasFetched = useRef<string | null>(null);
+    const hasFetched = useRef<string | null>(null)
+    // Track if component is mounted
+    const isMounted = useRef(true)
+    // Cache for API responses
+    const orderCache = useRef<Record<string, { items: OrderItemsRES[]; totalCount: number; timestamp: number }>>({})
 
     const totalOrderPrice = useMemo(() => {
         if (!orderItems || orderItems.length === 0) return 0
@@ -28,45 +32,95 @@ const BookedOrders: React.FC = () => {
         }, 0)
     }, [orderItems])
 
-
     // Only dispatch when totalOrderPrice changes and component is mounted
     useEffect(() => {
         dispatch(setTotalPrice(totalOrderPrice))
     }, [totalOrderPrice, dispatch])
 
+    // Set isMounted to false when component unmounts
+    useEffect(() => {
+        return () => {
+            isMounted.current = false
+        }
+    }, [])
+
     useEffect(() => {
         const fetchOrderItems = async () => {
-
             if (!currentOrderId_ || hasFetched.current === currentOrderId_) {
                 setLoading(false)
-                setOrderItems([])
+                return
+            }
+
+            // Check cache first
+            const now = Date.now()
+            const cacheEntry = orderCache.current[currentOrderId_]
+            const CACHE_TTL = 30000 // 30 seconds cache TTL
+
+            if (cacheEntry && now - cacheEntry.timestamp < CACHE_TTL) {
+                console.log("Using cached order data")
+                setOrderItems(cacheEntry.items)
+                dispatch(setTotalCount(cacheEntry.totalCount))
+                setLoading(false)
+                hasFetched.current = currentOrderId_
                 return
             }
 
             try {
-                hasFetched.current = currentOrderId_;
+                hasFetched.current = currentOrderId_
                 setLoading(true)
                 const orderService = OrderService.getInstance()
                 const response = await orderService.getOrderItemByOrderID(`${currentOrderId_}`)
 
+                // Only update state if component is still mounted
+                if (!isMounted.current) return
+
                 if (response.result && response.message) {
-                    setOrderItems(response.result.items || [])
-                    dispatch(setTotalCount(response.result.totalCount))
+                    const items = response.result.items || []
+                    const totalCount = response.result.totalCount
+
+                    // Update cache
+                    orderCache.current[currentOrderId_] = {
+                        items,
+                        totalCount,
+                        timestamp: Date.now(),
+                    }
+
+                    setOrderItems(items)
+                    dispatch(setTotalCount(totalCount))
                 } else {
                     setOrderItems([])
                 }
             } catch (err: unknown) {
+                // Only update state if component is still mounted
+                if (!isMounted.current) return
+
                 setError(err instanceof Error ? err.message : "Không thể tải danh sách đơn hàng.")
                 setOrderItems([])
             } finally {
+                // Only update loading state if component is still mounted
+                // eslint-disable-next-line no-unsafe-finally
+                if (!isMounted.current) return
+
                 setLoading(false)
             }
         }
 
         fetchOrderItems()
+
+        // Set up polling for real-time updates (every 30 seconds)
+        const pollingInterval = 30000 // 30 seconds
+        const intervalId = setInterval(() => {
+            if (isMounted.current && currentOrderId_) {
+                // Reset hasFetched to allow polling to work
+                hasFetched.current = null
+                fetchOrderItems()
+            }
+        }, pollingInterval)
+
+        return () => {
+            clearInterval(intervalId)
+        }
     }, [currentOrderId_, dispatch])
-
-
 
     if (loading) return <LoadingFallBack />
     if (error) return <div>Error: {error}</div>
@@ -82,15 +136,15 @@ const BookedOrders: React.FC = () => {
                         <div className="p-4 pb-2 flex justify-between items-center">
                             <span className="font-medium">
                                 {item.name}
-                                <span className=" ml-2"> x{item.quantity}</span>
+                                <span className="ml-2"> x{item.quantity}</span>
                             </span>
                             <span className="font-normal">{convertToVND(item.price)} VND</span>
                         </div>
                         <div className="px-4">
                             {item.orderItemDetails && item.orderItemDetails.length > 0 ? (
                                 <>
-                                    <h3 className="text-sm font-medium ">Lựa chọn:</h3>
-                                    <div className=" pl-5 space-y-1">
+                                    <h3 className="text-sm font-medium">Lựa chọn:</h3>
+                                    <div className="pl-5 space-y-1">
                                         {item.orderItemDetails.map((detail, index) => (
                                             <div key={detail.id || index} className="text-sm flex justify-between items-center text-gray-600">
                                                 <div> • {detail.name}</div>
@@ -117,7 +171,9 @@ const BookedOrders: React.FC = () => {
 
                         <div className="p-4 flex justify-end">
                             <div
-                                className={` flex justify-center w-32 px-4 py-2 rounded-lg font-semibold text-sm ${getStatusColor(item.orderItemStatus)}`}
+                                className={`flex justify-center w-32 px-4 py-2 rounded-lg font-semibold text-sm ${getStatusColor(
+                                    item.orderItemStatus,
+                                )}`}
                             >
                                 {getStatusLabel(item.orderItemStatus)}
                             </div>
@@ -131,7 +187,6 @@ const BookedOrders: React.FC = () => {
             {orderItems && orderItems.length > 0 && (
                 <div className="bg-white border border-gray-100 rounded-lg p-4 mt-6 sticky bottom-16">
                     <div className="text-sm space-y-1 px-3 mt-4">
-
                         <div className="flex justify-between items-center">
                             <span className="font-medium text-lg">Tổng cộng:</span>
                             <span className="font-bold text-lg text-primary">{convertToVND(totalOrderPrice)} VND</span>
@@ -144,4 +199,3 @@ const BookedOrders: React.FC = () => {
 }
 
 export default BookedOrders
-
