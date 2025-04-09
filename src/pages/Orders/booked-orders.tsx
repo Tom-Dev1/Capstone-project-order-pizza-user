@@ -12,10 +12,15 @@ import { useDispatch } from "react-redux"
 import { setTotalPrice } from "@/redux/slices/totalPriceSlice"
 import { setTotalCount } from "@/redux/slices/totalCountSlide"
 
-const BookedOrders: React.FC = () => {
+// Explicitly define the props interface
+export interface BookedOrdersProps {
+    initialData?: { items: OrderItemsRES[]; totalCount: number } | null
+}
+
+const BookedOrders: React.FC<BookedOrdersProps> = ({ initialData = null }) => {
     const { currentOrderId_ } = useTable()
-    const [orderItems, setOrderItems] = useState<OrderItemsRES[]>([])
-    const [loading, setLoading] = useState<boolean>(true)
+    const [orderItems, setOrderItems] = useState<OrderItemsRES[]>(initialData?.items || [])
+    const [loading, setLoading] = useState<boolean>(!initialData || initialData.items.length === 0)
     const [error, setError] = useState<string | null>(null)
     const dispatch = useDispatch()
     const hasFetched = useRef<string | null>(null)
@@ -23,6 +28,20 @@ const BookedOrders: React.FC = () => {
     const isMounted = useRef(true)
     // Cache for API responses
     const orderCache = useRef<Record<string, { items: OrderItemsRES[]; totalCount: number; timestamp: number }>>({})
+
+    // Initialize cache with initialData if available
+    useEffect(() => {
+        if (initialData && initialData.items.length > 0 && currentOrderId_) {
+            orderCache.current[currentOrderId_] = {
+                items: initialData.items,
+                totalCount: initialData.totalCount,
+                timestamp: Date.now(),
+            }
+
+            // Update totalCount in Redux
+            dispatch(setTotalCount(initialData.totalCount))
+        }
+    }, [initialData, currentOrderId_, dispatch])
 
     const totalOrderPrice = useMemo(() => {
         if (!orderItems || orderItems.length === 0) return 0
@@ -46,6 +65,13 @@ const BookedOrders: React.FC = () => {
 
     useEffect(() => {
         const fetchOrderItems = async () => {
+            // If we have initialData and haven't fetched yet, mark as fetched
+            if (initialData?.items && initialData.items.length > 0 && !hasFetched.current && currentOrderId_) {
+                hasFetched.current = currentOrderId_
+                setLoading(false)
+                return
+            }
+
             if (!currentOrderId_ || hasFetched.current === currentOrderId_) {
                 setLoading(false)
                 return
@@ -120,9 +146,9 @@ const BookedOrders: React.FC = () => {
         return () => {
             clearInterval(intervalId)
         }
-    }, [currentOrderId_, dispatch])
+    }, [currentOrderId_, dispatch, initialData])
 
-    if (loading) return <LoadingFallBack />
+    if (loading && orderItems.length === 0) return <LoadingFallBack />
     if (error) return <div>Error: {error}</div>
     if (!orderItems || orderItems.length === 0) {
         return <div className="p-4 text-center text-gray-500">Không có đơn hàng nào</div>
