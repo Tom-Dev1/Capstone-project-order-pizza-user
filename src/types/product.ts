@@ -15,6 +15,7 @@ export interface ProductModel {
 export interface Option {
     id: string;
     name: string;
+    selectMany: boolean
     description: string;
     optionItems: OptionItem[];
 }

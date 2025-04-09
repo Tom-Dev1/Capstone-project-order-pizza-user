@@ -2,7 +2,7 @@
 
 import type { OrderItemsRES } from "@/types/order"
 import type React from "react"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import LoadingFallBack from "../Layouts/LoadingFallBack"
 import { convertToVND } from "@/utils/convertToVND"
 import { getStatusColor, getStatusLabel } from "@/utils/orderStatusColor"
@@ -18,6 +18,8 @@ const BookedOrders: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
     const dispatch = useDispatch()
+    const hasFetched = useRef<string | null>(null);
+
     const totalOrderPrice = useMemo(() => {
         if (!orderItems || orderItems.length === 0) return 0
         return orderItems.reduce((total, item) => {
@@ -26,43 +28,45 @@ const BookedOrders: React.FC = () => {
         }, 0)
     }, [orderItems])
 
+
     // Only dispatch when totalOrderPrice changes and component is mounted
     useEffect(() => {
         dispatch(setTotalPrice(totalOrderPrice))
     }, [totalOrderPrice, dispatch])
 
-    const fetchOrderItems = useCallback(async () => {
-        if (!currentOrderId_) {
-            setLoading(false)
-            return
+    useEffect(() => {
+        const fetchOrderItems = async () => {
+
+            if (!currentOrderId_ || hasFetched.current === currentOrderId_) {
+                setLoading(false)
+                setOrderItems([])
+                return
+            }
+
+            try {
+                hasFetched.current = currentOrderId_;
+                setLoading(true)
+                const orderService = OrderService.getInstance()
+                const response = await orderService.getOrderItemByOrderID(`${currentOrderId_}`)
+
+                if (response.result && response.message) {
+                    setOrderItems(response.result.items || [])
+                    dispatch(setTotalCount(response.result.totalCount))
+                } else {
+                    setOrderItems([])
+                }
+            } catch (err: unknown) {
+                setError(err instanceof Error ? err.message : "Không thể tải danh sách đơn hàng.")
+                setOrderItems([])
+            } finally {
+                setLoading(false)
+            }
         }
 
-        try {
-            setLoading(true)
-            const orderService = OrderService.getInstance()
-            const response = await orderService.getOrderItemByOrderID(`${currentOrderId_}`)
-            if (response.result && response.message) {
-                setOrderItems(response.result.items || [])
-                dispatch(setTotalCount(response.result.totalCount))
-            } else {
-                setOrderItems([])
-            }
-        } catch (err: unknown) {
-            setError(err instanceof Error ? err.message : "Không thể tải danh sách đơn hàng.")
-            setOrderItems([])
-        } finally {
-            setLoading(false)
-        }
+        fetchOrderItems()
     }, [currentOrderId_, dispatch])
 
-    useEffect(() => {
-        if (currentOrderId_) {
-            fetchOrderItems()
-        } else {
-            setOrderItems([])
-            setLoading(false)
-        }
-    }, [currentOrderId_, fetchOrderItems])
+
 
     if (loading) return <LoadingFallBack />
     if (error) return <div>Error: {error}</div>

@@ -3,16 +3,24 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { motion, AnimatePresence } from "framer-motion"
-import { Minus, Plus, ChevronLeft } from "lucide-react"
+import { Minus, Plus, ChevronLeft, Check } from "lucide-react"
 import type { RootState } from "@/redux/stores/store"
 import type { ProductModel } from "@/types/product"
 import MiniModal from "./MiniModal"
 import { convertToVND } from "@/utils/convertToVND"
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet"
-import OptionItem from "@/types/product"
+import type OptionItem from "@/types/product"
 import { setNote } from "@/redux/slices/noteSlice"
 import { addToCart } from "@/redux/slices/cartSlice"
 import { selectTotalPrice, setSelectedOptions } from "@/redux/slices/selectedOptionsSlice"
+
+export interface Option {
+  id: string
+  name: string
+  selectMany: boolean
+  description: string
+  optionItems: OptionItem[]
+}
 
 interface ProductModalProps {
   product: ProductModel
@@ -47,15 +55,29 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
   }, [isOpen, memoizedProduct, dispatch])
 
   const handleOptionChange = useCallback(
-    (option: OptionItem) => {
+    (option: OptionItem, productOption: Option) => {
       setLocalSelectedOptions((prev) => {
         const isOptionSelected = prev.some((opt) => opt.id === option.id)
         let updatedOptions
 
         if (isOptionSelected) {
+          // If already selected, remove it
           updatedOptions = prev.filter((opt) => opt.id !== option.id)
         } else {
-          updatedOptions = [...prev, option]
+          if (productOption.selectMany) {
+            // If selectMany is true, add to existing selections
+            updatedOptions = [...prev, option]
+          } else {
+            // If selectMany is false, remove any other options from the same group and add the new one
+            updatedOptions = [
+              ...prev.filter(
+                (opt) =>
+                  // Keep options from other groups
+                  !productOption.optionItems.some((item) => item.id === opt.id),
+              ),
+              option,
+            ]
+          }
         }
 
         dispatch(
@@ -111,9 +133,9 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
   return (
     <>
       <Sheet open={isOpen} onOpenChange={onClose}>
-        <SheetContent side="bottom" className="max-h-[82vh]  rounded-t-lg flex flex-col p-0">
+        <SheetContent side="bottom" className="max-h-[82vh] rounded-t-lg flex flex-col p-0">
           {/* Header */}
-          <div className="sticky top-0 bg-white px-4  mt-3 flex items-center gap-4 z-10">
+          <div className="sticky top-0 bg-white px-4 mt-3 flex items-center gap-4 z-10">
             <button onClick={onClose} className="p-1 rounded-full transition-colors" aria-label="Close modal">
               <ChevronLeft size={28} className="text-gray-800 mt-1" />
             </button>
@@ -146,6 +168,9 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
                     <div key={productOption.id}>
                       <div className="flex flex-col mb-3">
                         <h3 className="text-xl text-orange-500">{productOption.name}</h3>
+                        <p className="text-sm text-gray-500">
+                          {productOption.selectMany ? "Chọn nhiều" : "Chỉ chọn một"}
+                        </p>
                       </div>
                       <div className="grid grid-cols-1 gap-2">
                         {productOption.optionItems.map((item) => (
@@ -153,26 +178,42 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
                             key={`${productOption.id}-${item.id}`}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            onClick={() => handleOptionChange(item)}
+                            onClick={() => handleOptionChange(item, productOption)}
                             className={`relative p-2 rounded-xl text-left transition-all duration-200 ${isOptionSelected(item)
-                              ? "bg-orange-200 border-2 border-orange-400"
-                              : "bg-gray-100 border-2 border-gray-100"
+                                ? "bg-orange-200 border-2 border-orange-400"
+                                : "bg-gray-100 border-2 border-gray-100"
                               }`}
                             aria-pressed={isOptionSelected(item)}
                           >
                             <div className="flex justify-between px-2">
-                              <div className="w-40">
+                              <div className="w-40 flex items-center gap-2">
+                                {!productOption.selectMany && (
+                                  <div
+                                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isOptionSelected(item) ? "border-orange-500 bg-orange-100" : "border-gray-300"
+                                      }`}
+                                  >
+                                    {isOptionSelected(item) && <div className="w-3 h-3 rounded-full bg-orange-500" />}
+                                  </div>
+                                )}
+                                {productOption.selectMany && (
+                                  <div
+                                    className={`w-5 h-5 rounded-md border-2 flex items-center justify-center ${isOptionSelected(item) ? "border-orange-500 bg-orange-100" : "border-gray-300"
+                                      }`}
+                                  >
+                                    {isOptionSelected(item) && <Check size={14} className="text-orange-500" />}
+                                  </div>
+                                )}
                                 <span className="font-medium text-gray-800">{item.name}</span>
                               </div>
                               <div className="w-32">
-                                <h1 className="text-base  text-right font-base text-gray-700">
+                                <h1 className="text-base text-right font-base text-gray-700">
                                   +{convertToVND(item.additionalPrice)}VND
                                 </h1>
                               </div>
                             </div>
                           </motion.button>
                         ))}
-                        <div className=" mt-4 border-b border-dashed"></div>
+                        <div className="mt-4 border-b border-dashed"></div>
                       </div>
                     </div>
                   ))}
@@ -192,7 +233,7 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
                     value={localNote}
                     onChange={(e) => setLocalNote(e.target.value)}
                     placeholder="Ghi chú món ăn của bạn...."
-                    className="w-full p-3 border-2  rounded-xl   text-base"
+                    className="w-full p-3 border-2 rounded-xl text-base"
                     rows={3}
                   />
                 </motion.div>
@@ -210,7 +251,7 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-                    className="w-7 h-7 flex items-center bg-orange-200 justify-center rounded-full  transition-colors"
+                    className="w-7 h-7 flex items-center bg-orange-200 justify-center rounded-full transition-colors"
                     aria-label="Decrease quantity"
                   >
                     <Minus size={16} className="text-gray-600" />
@@ -219,7 +260,7 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setQuantity((prev) => prev + 1)}
-                    className="w-7 h-7 flex items-center bg-orange-200 justify-center rounded-full  transition-colors"
+                    className="w-7 h-7 flex items-center bg-orange-200 justify-center rounded-full transition-colors"
                     aria-label="Increase quantity"
                   >
                     <Plus size={16} className="text-gray-600" />
@@ -229,12 +270,12 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
             </div>
           </div>
 
-          <div className=" bg-white border-t px-4 py-3 mt-auto">
+          <div className="bg-white border-t px-4 py-3 mt-auto">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleAddToCart}
-              className="px-12 py-3 w-full  rounded-md flex justify-center items-center text-white font-semibold bg-my-color"
+              className="px-12 py-3 w-full rounded-md flex justify-center items-center text-white font-semibold bg-my-color"
             >
               <div className="w-28">Thêm vào giỏ</div>
               <div className="w-20">{convertToVND(totalPrice * quantity)}VND</div>
@@ -251,4 +292,3 @@ export default function ProductModal({ product, categoryId, isOpen, onClose }: P
     </>
   )
 }
-
