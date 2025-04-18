@@ -1,4 +1,5 @@
 export const ORDER_ID_STATUS_STATUS = {
+    CANCELLED: { value: "Cancelled", label: "Đã hủy" },
     PENDING: { value: "Pending", label: "Đang nấu" },
     SERVING: { value: "Serving", label: "Đang phục vụ" },
     DONE: { value: "Done", label: "Hoàn thành" },
@@ -15,11 +16,13 @@ export function getStatusColor(status: OrderStatusObject | OrderStatusValue): st
 
     switch (statusValue) {
         case "Pending":
-            return "bg-red-500 text-white"
+            return "bg-yellow-500 text-white"
         case "Serving":
             return "bg-blue-500 text-white"
         case "Done":
             return "bg-green-500 text-white"
+        case "Cancelled":
+            return "bg-red-500 text-white"
         default:
             return "bg-gray-500 text-gray-800"
     }
