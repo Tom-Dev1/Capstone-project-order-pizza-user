@@ -25,7 +25,15 @@ export default function StaffModal({ isOpen, onClose }: CallStaffModalProps) {
       )
 
       if (apiResponse.success) {
-        toast.success('Gọi nhân viên thành công!')
+        toast.success('Gọi nhân viên thành công!', {
+          duration: 2000,
+          position: 'top-center',
+          style: {
+            background: '#11aa77',
+            color: '#fff',
+            borderRadius: '10px'
+          }
+        })
         // Close the modal first to prevent UI issues during navigation
 
         // Navigate to the payment page on success

@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import CashIcon from '../Icons/CashIcon'
-import VietComBankIcon from '../Icons/VietComBankIcon'
 import CreditCard from '../Icons/CreditCard'
 import toast from 'react-hot-toast'
 import { Button } from '../ui/button'
@@ -31,14 +30,10 @@ export default function PaymentModal({ isOpen, onClose, onSubmit }: PaymentModal
       name: 'Tiền mặt',
       icon: <CashIcon />
     },
+
     {
-      id: 'vietqr',
-      name: 'Techcombank VietQR Pro',
-      icon: <VietComBankIcon />
-    },
-    {
-      id: 'payoo',
-      name: 'Quẹt thẻ Payoo',
+      id: 'banking',
+      name: 'Thanh toán chuyển khoản',
       icon: <CreditCard />
     }
   ]

@@ -56,7 +56,15 @@ const RatingModal = () => {
         orderId: currentOrderId_
       })
 
-      toast.success('Cảm ơn bạn đã đánh giá!')
+      toast.success('Cảm ơn bạn đã đánh giá!', {
+        duration: 2000,
+        position: 'top-center',
+        style: {
+          background: '#11aa77',
+          color: '#fff',
+          borderRadius: '10px'
+        }
+      })
       closeModal()
     } catch (error) {
       console.error('Error submitting feedback:', error)
