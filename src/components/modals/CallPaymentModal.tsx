@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import Cash from '../Icons/Cash'
 import PaymentModal from './PaymentModal'
+import { getItem } from '@/constants'
+import TableService from '@/services/table-service'
 
 const CallPaymentModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -8,10 +10,29 @@ const CallPaymentModal = () => {
   const openModal = () => setIsModalOpen(true)
   const closeModal = () => setIsModalOpen(false)
 
-  const handleSubmit = (paymentOptionId: string) => {
+  const handleSubmit = async (paymentOptionId: string) => {
     console.log('Selected payment option:', paymentOptionId)
-    // You can add more logic here, such as making an API call
-    closeModal()
+    try {
+      const tableCode = getItem<string>('tableCode')
+      const tableID = getItem<string>('tableId')
+      const tablesService = TableService.getInstance()
+      const apiResponse = await tablesService.callStaff(
+        `${tableID}`,
+        `Gọi nhân viên thanh toán bàn ${tableCode} với phương thức: ${paymentOptionId}`
+      )
+
+      if (apiResponse.success) {
+        // Close the modal first to prevent UI issues during navigation
+        // Navigate to the payment page on success
+      } else {
+        alert('Không thể gọi nhân viên. Vui lòng thử lại sau.')
+      }
+    } catch (error) {
+      console.error('Error calling staff:', error)
+      alert('Đã xảy ra lỗi. Vui lòng thử lại sau.')
+    } finally {
+      closeModal()
+    }
   }
 
   return (
