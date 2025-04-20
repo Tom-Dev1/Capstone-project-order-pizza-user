@@ -25,7 +25,7 @@ const MiniModal: React.FC<MiniModalProps> = ({ productName, productImage, }) => 
                 <h3 className="font-semibold">{productName}</h3>
                 <p className="text-sm text-green-600 flex items-center">
                     <Check className="mr-1" size={16} />
-                    Added to cart
+                    Thêm vào giỏ hàng thành công!
                 </p>
             </div>
         </motion.div>
