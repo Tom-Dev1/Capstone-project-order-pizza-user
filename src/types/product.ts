@@ -1,5 +1,4 @@
 import { CategoryModel } from "./category";
-
 export interface ProductModel {
     id: string
     name: string
@@ -7,11 +6,38 @@ export interface ProductModel {
     imageUrl: string
     description: string
     categoryId: string
-    productType: "HotKitchen" | "ColdKitchen"
+    productType: ProductType
     category: CategoryModel | null
-    options: Option[]
-}
+    productRole: ProductRole
+    productStatus: ProductStatus
+    productOptions: ProductOption[]
+    childProducts: ChildProducts[]
+    productComboSlots: ProductComboSlots[]
 
+}
+export type ProductRole = "Master" | "Child" | "Combo"
+export type ProductStatus = "Available" | "OutOfIngredient" | "Locked"
+export type ProductType = "HotKitchen" | "ColdKitchen"
+export interface ProductComboSlots {
+    id: string
+    slotName: string
+    productComboSlotItems: ProductComboSlotItem[]
+}
+export interface ProductComboSlotItem {
+    id: string
+    productId: string
+    product: ChildProducts
+}
+export interface ChildProducts {
+    id: string
+    name: string
+    price: number
+}
+export interface ProductOption {
+    id: string;
+    optionId: string;
+    option: Option
+}
 export interface Option {
     id: string;
     name: string;
@@ -25,7 +51,6 @@ export default interface OptionItem {
     name: string,
     additionalPrice: number
 }
-
 
 export interface ProductsResult {
     items: ProductModel[]

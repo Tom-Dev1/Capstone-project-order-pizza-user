@@ -16,8 +16,11 @@ const useProducts = () => {
             const response = await productService.getAllProducts()
             if (response.success && response.result.items) {
                 console.log(response.result);
-
-                setProducts(response.result.items)
+                const productsData = Array.isArray(response.result.items) ? response.result.items : [response.result.items]
+                const masterProducts = productsData.filter(
+                    (product) => product.productRole === 'Master' || product.productRole === 'Combo'
+                )
+                setProducts(masterProducts)
             } else {
                 setProducts([])
             }

@@ -1,6 +1,7 @@
 import type ApiResponse from "@/apis/apiUtils"
 import { get, post } from "@/apis/apiUtils"
-import type { AddFoodResponse, CreateOrderResponse, Order, OrderItemResutl } from "@/types/order"
+import type { AddFoodResponse, CreateOrderResponse, OrderItemResutl } from "@/types/order"
+import { OrderDetail } from "@/types/order-detail"
 
 class OrderService {
     private static instance: OrderService
@@ -34,9 +35,9 @@ class OrderService {
             throw error
         }
     }
-    public async getOrderById(orderId: string): Promise<ApiResponse<Order>> {
+    public async getOrderDetailDetailByOrderId(orderId: string): Promise<ApiResponse<OrderDetail>> {
         try {
-            return await get<Order>(`/orders/${orderId}`)
+            return await get<OrderDetail>(`/orders/${orderId}?includeProperties=AdditionalFees%2COrderItems.OrderItemDetails%2COrderVouchers.Voucher`)
 
 
         } catch (error) {
