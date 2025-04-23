@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import useTable from "@/hooks/useTable"
 import { useOrderService } from "@/hooks/useOrderService"
@@ -23,7 +23,8 @@ import {
 import SuccessCart from "@/components/Animations/SuccessCart"
 import { CheckoutNotificationModal } from "./CheckoutNotificationModal"
 import TableService from "@/services/table-service"
-
+import { useQuery } from "@tanstack/react-query"
+import OrderService from "@/services/order-service"
 interface BottomOrderProps {
   activeTab: "tab1" | "tab2"
 }
@@ -44,6 +45,42 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
   const notes = useSelector((state: RootState) => state.notes)
 
   const isCartEmpty = cartItems.length === 0
+
+  // Fetch order details for checkout
+  const { data: orderDetail, } = useQuery({
+    queryKey: ["orderDetail", currentOrderId_],
+    queryFn: async () => {
+      if (!currentOrderId_) return null
+      const orderService = OrderService.getInstance()
+      const response = await orderService.getOrderDetailDetailByOrderId(currentOrderId_)
+      if (!response.success) throw new Error(response.message || "Không thể tải thông tin đơn hàng")
+      return response.result
+    },
+    enabled: !!currentOrderId_ && activeTab === "tab2",
+    staleTime: 10000,
+  })
+
+  // Calculate total count and price for checkout
+  const { totalCount, totalPrice } = useMemo(() => {
+    if (!orderDetail?.orderItems) return { totalCount: 0, totalPrice: 0 }
+
+    const count = orderDetail.orderItems.length
+    const price = orderDetail.orderItems.reduce((total, item) => {
+      if (item.orderItemStatus !== "Cancelled") {
+        return total + item.totalPrice
+      }
+      return total
+    }, 0)
+
+    return { totalCount: count, totalPrice: price }
+  }, [orderDetail?.orderItems])
+
+
+
+
+
+
+
 
   // Chuyển đổi cart items thành định dạng orderItems
   const getOrderItems = (): OrderItem[] => {
@@ -314,12 +351,16 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
         </AlertDialog>
       )}
 
-      <CheckoutNotificationModal
-        isOpen={showCheckOutModal}
-        onClose={handleCloseModal}
-        onConfirm={handleCheckoutConfirm}
-        tableCode={tableCode || "Unknown"}
-      />
+      {showCheckOutModal && (
+        <CheckoutNotificationModal
+          isOpen={showCheckOutModal}
+          onClose={handleCloseModal}
+          onConfirm={handleCheckoutConfirm}
+          tableCode={tableCode || "Unknown"}
+          totalCount={totalCount}
+          totalPrice={totalPrice}
+        />
+      )}
     </>
   )
 }

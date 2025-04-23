@@ -27,7 +27,6 @@ export interface AdditionalFee {
 
 export interface OrderItemDetail {
     id: string
-
     name: string
     note: string
     quantity: number
@@ -43,6 +42,7 @@ export interface OrderItemDetail {
     startTimeServing: string | null
     isProductCombo: boolean
     reasonCancel: string | null
+    parentId: string | null
 }
 
 export interface OrderItemOption {

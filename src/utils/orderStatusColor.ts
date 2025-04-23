@@ -1,6 +1,6 @@
 export const ORDER_ID_STATUS_STATUS = {
     CANCELLED: { value: "Cancelled", label: "Đã hủy" },
-    PENDING: { value: "Pending", label: "Đang nấu" },
+    PENDING: { value: "Pending", label: "Đang chờ" },
     SERVING: { value: "Serving", label: "Đang phục vụ" },
     DONE: { value: "Done", label: "Hoàn thành" },
     COOKING: { value: "Cooking", label: "Đang nấu" },
