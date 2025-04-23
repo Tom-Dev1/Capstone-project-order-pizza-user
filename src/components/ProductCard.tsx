@@ -44,7 +44,7 @@ const ProductItem: React.FC<ProductItemProps> = React.memo(({ product, categoryI
       e.preventDefault()
       e.stopPropagation()
       // Only open modal if product is available
-      if (product.productStatus !== "OutOfIngredient" && product.productStatus !== "Locked") {
+      if (product.productStatus !== "OutOfIngredient") {
         setIsModalOpen(true)
         setIsClicked(true)
         setTimeout(() => setIsClicked(false), 200)
@@ -58,7 +58,7 @@ const ProductItem: React.FC<ProductItemProps> = React.memo(({ product, categoryI
   }, [])
 
   // Check if product is out of stock
-  const isOutOfStock = product.productStatus === "OutOfIngredient" || product.productStatus === "Locked"
+  const isOutOfStock = product.productStatus === "OutOfIngredient"
 
   return (
     <>
@@ -103,10 +103,10 @@ const ProductItem: React.FC<ProductItemProps> = React.memo(({ product, categoryI
           </div>
           <motion.button
             className={`w-[155px] mt-2 py-1 mb-2 rounded-sm font-medium transition-colors flex items-center justify-center ${isOutOfStock
-                ? "border rounded-md border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed"
-                : cartItem
-                  ? "border rounded-md border-my-color bg-my-color text-white"
-                  : "border rounded-md border-my-color text-my-color"
+              ? "border rounded-md border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed"
+              : cartItem
+                ? "border rounded-md border-my-color bg-my-color text-white"
+                : "border rounded-md border-my-color text-my-color"
               }`}
             animate={{ scale: isClicked ? 0.95 : 1 }}
             transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -116,9 +116,9 @@ const ProductItem: React.FC<ProductItemProps> = React.memo(({ product, categoryI
             {isOutOfStock ? (
               <span>Hết nguyên liệu</span>
             ) : cartItem ? (
-              <span>{convertToVND(product.price)} VND</span>
+              <span>{convertToVND(product.price)} đ</span>
             ) : (
-              <span>{convertToVND(product.price)} VND</span>
+              <span>{convertToVND(product.price)} đ</span>
             )}
           </motion.button>
         </div>

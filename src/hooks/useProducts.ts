@@ -18,7 +18,7 @@ const useProducts = () => {
                 console.log(response.result);
                 const productsData = Array.isArray(response.result.items) ? response.result.items : [response.result.items]
                 const masterProducts = productsData.filter(
-                    (product) => product.productRole === 'Master' || product.productRole === 'Combo'
+                    (product) => product.productRole === 'Master' || product.productRole === 'Combo' && product.productStatus !== 'Locked',
                 )
                 setProducts(masterProducts)
             } else {

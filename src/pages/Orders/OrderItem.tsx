@@ -42,7 +42,7 @@ export const OrderItem: React.FC<OrderItemProps> = ({ item, onRemove, }) => {
               <ul className="list-disc list-inside">
                 {item.selectedOptions.map((opt, index) => (
                   <li key={index} >
-                    <span>{opt.name}</span> <span>+{convertToVND(opt.additionalPrice)}VND</span>
+                    <span>{opt.name}</span> <span>+{convertToVND(opt.additionalPrice)}đ</span>
                   </li>
                 ))}
               </ul>
@@ -62,7 +62,7 @@ export const OrderItem: React.FC<OrderItemProps> = ({ item, onRemove, }) => {
           )}
           <div className="">
             <span className="text-sm font-semibold text-black">x{item.quantity}</span>
-            <span className="text-sm font-bold text-my-color"> Tổng tiền: {convertToVND((item.price * item.quantity))}VND</span>
+            <span className="text-sm font-bold text-my-color"> Tổng tiền: {convertToVND((item.price * item.quantity))}đ</span>
           </div>
 
         </div>

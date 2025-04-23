@@ -154,9 +154,9 @@ const BookedOrders: React.FC<BookedOrdersProps> = ({ initialData = null, onOrder
             <div className="p-4 pb-2 flex justify-between ">
 
 
-                <div className="font-medium"> {item.name} x{item.quantity}</div>
+                <div className="font-medium"> {item.name} {isChild ? "" : (<span>x{item.quantity}</span>)}</div>
 
-                <div className="font-normal w-28 text-right items-start h-auto">{convertToVND(item.price)} đ</div>
+                <div className="font-normal w-28 text-right items-start h-auto">{convertToVND(item.price)}đ</div>
 
             </div>
             <div className="px-4">
@@ -170,7 +170,7 @@ const BookedOrders: React.FC<BookedOrdersProps> = ({ initialData = null, onOrder
                                     <div> • {detail.name}</div>
                                     <div>
                                         {detail.additionalPrice > 0 && (
-                                            <span className="ml-2 text-sm text-gray-600">(+{convertToVND(detail.additionalPrice)}) đ</span>
+                                            <span className="ml-2 text-sm text-gray-600">(+{convertToVND(detail.additionalPrice)})đ</span>
                                         )}
                                     </div>
                                 </div>
@@ -189,8 +189,6 @@ const BookedOrders: React.FC<BookedOrdersProps> = ({ initialData = null, onOrder
                 )}
                 <div className="border-t border-dashed mt-2"></div>
                 <div className="flex justify-between items-center mt-1">
-
-
                     {isChild ? (
                         <>
                         </>
@@ -198,7 +196,7 @@ const BookedOrders: React.FC<BookedOrdersProps> = ({ initialData = null, onOrder
 
                         <span className="font-medium">Tổng tiền:</span>
                         <span className={`font-bold ${item.orderItemStatus === "Cancelled" ? "line-through text-gray-500" : ""}`}>
-                            {convertToVND(item.totalPrice)} đ
+                            {convertToVND(item.totalPrice)}đ
                         </span></>)}
 
                 </div>
@@ -261,7 +259,7 @@ const BookedOrders: React.FC<BookedOrdersProps> = ({ initialData = null, onOrder
                     <div className="text-sm space-y-1 px-3 mt-4">
                         <div className="flex justify-between items-center">
                             <span className="font-medium text-lg">Tạm tính:</span>
-                            <span className="font-bold text-lg text-primary">{convertToVND(totalOrderPrice)} đ</span>
+                            <span className="font-bold text-lg text-primary">{convertToVND(totalOrderPrice)}đ</span>
                         </div>
 
                     </div>

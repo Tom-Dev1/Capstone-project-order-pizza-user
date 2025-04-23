@@ -27,6 +27,7 @@ export interface ProductComboSlotItem {
     id: string
     productId: string
     product: ChildProducts
+    extraPrice: number
 }
 export interface ChildProducts {
     id: string

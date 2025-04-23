@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { motion, AnimatePresence } from "framer-motion"
-import { Minus, Plus, ChevronLeft, Check, X } from "lucide-react"
+import { Minus, Plus, ChevronLeft, Check, AlertCircle } from "lucide-react"
 import type { RootState } from "@/redux/stores/store"
 import type { ProductModel, ChildProducts, ProductComboSlotItem } from "@/types/product"
 import MiniModal from "./MiniModal"
@@ -40,6 +40,7 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
   const [quantity, setQuantity] = useState(1)
   const [selectedChildProduct, setSelectedChildProduct] = useState<ChildProducts | null>(null)
   const [selectedComboItems, setSelectedComboItems] = useState<Record<string, ProductComboSlotItem>>({})
+  const [missingComboSelections, setMissingComboSelections] = useState<string[]>([])
   const [showMiniModal, setShowMiniModal] = useState(false)
 
   // Check if this product is already in the cart
@@ -86,15 +87,16 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
     }
   }, [isOpen, productId])
 
-  // Reset state when modal opens
+  // Reset state when modal opens and auto-select first item for each combo slot
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && product) {
       setQuantity(1)
       setLocalNote("")
       setLocalSelectedOptions([])
+      setMissingComboSelections([])
 
       // Nếu sản phẩm có childProducts, tự động chọn childProduct có giá thấp nhất
-      if (product?.childProducts && product.childProducts.length > 0) {
+      if (product.childProducts && product.childProducts.length > 0) {
         // Sắp xếp childProducts theo giá tăng dần và chọn cái đầu tiên (giá thấp nhất)
         const sortedChildProducts = [...product.childProducts].sort((a, b) => a.price - b.price)
         setSelectedChildProduct(sortedChildProducts[0])
@@ -112,15 +114,28 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
         dispatch(
           setSelectedOptions({
             productId: productId,
-            basePrice: product?.price || 0,
+            basePrice: product.price || 0,
             options: [],
           }),
         )
       }
 
-      setSelectedComboItems({})
+      // Nếu là sản phẩm combo, tự động chọn item đầu tiên cho mỗi slot
+      if (product.productRole === "Combo" && product.productComboSlots) {
+        const initialSelections: Record<string, ProductComboSlotItem> = {}
+
+        product.productComboSlots.forEach((slot) => {
+          if (slot.productComboSlotItems.length > 0) {
+            // Sắp xếp theo extraPrice tăng dần và chọn item đầu tiên
+            const sortedItems = [...slot.productComboSlotItems].sort((a, b) => a.extraPrice - b.extraPrice)
+            initialSelections[slot.id] = sortedItems[0]
+          }
+        })
+
+        setSelectedComboItems(initialSelections)
+      }
     }
-  }, [isOpen, productId, product, dispatch])
+  }, [isOpen, product, productId, dispatch])
 
   // Update Redux state when child product is selected
   useEffect(() => {
@@ -152,18 +167,15 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
 
   const handleComboItemSelect = useCallback((slotId: string, item: ProductComboSlotItem) => {
     setSelectedComboItems((prev) => {
-      // If the item is already selected, remove it (deselect)
-      if (prev[slotId]?.id === item.id) {
-        const newState = { ...prev }
-        delete newState[slotId]
-        return newState
-      }
-      // Otherwise, select it
+      // Luôn cập nhật item mới, không cho phép bỏ chọn
       return {
         ...prev,
         [slotId]: item,
       }
     })
+
+    // Xóa slot này khỏi danh sách thiếu nếu có
+    setMissingComboSelections((prev) => prev.filter((id) => id !== slotId))
   }, [])
 
   const handleOptionChange = useCallback(
@@ -206,10 +218,31 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
     [dispatch, productId, currentBasePrice],
   )
 
+  const isComboComplete = useCallback(() => {
+    if (!product || product.productRole !== "Combo") return true
 
+    // Kiểm tra xem tất cả các slot đã được chọn chưa
+    const missingSlots: string[] = []
+
+    if (product.productComboSlots) {
+      product.productComboSlots.forEach((slot) => {
+        if (!selectedComboItems[slot.id] && slot.productComboSlotItems.length > 0) {
+          missingSlots.push(slot.id)
+        }
+      })
+    }
+
+    setMissingComboSelections(missingSlots)
+    return missingSlots.length === 0
+  }, [product, selectedComboItems])
 
   const handleAddToCart = useCallback(() => {
     if (!product) return
+
+    // Kiểm tra xem combo đã đầy đủ chưa
+    if (product.productRole === "Combo" && !isComboComplete()) {
+      return // Không cho phép thêm vào giỏ hàng nếu combo chưa đầy đủ
+    }
 
     if (localNote) {
       dispatch(
@@ -233,12 +266,16 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
 
       const comboName = selectedItems.length > 0 ? `${product.name} (${comboItemNames})` : product.name
 
+      // Tính tổng giá combo bằng cách cộng giá gốc với extraPrice của các item đã chọn
+      const totalComboPrice =
+        product.price + Object.values(selectedComboItems).reduce((sum, item) => sum + item.extraPrice, 0)
+
       dispatch(
         addToCart({
           product: {
             ...product,
             name: comboName,
-            price: product.price + Object.values(selectedComboItems).reduce((sum, item) => sum + item.product.price, 0),
+            price: totalComboPrice,
           },
           categoryId,
           selectedOptions: localSelectedOptions,
@@ -314,6 +351,7 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
     selectedChildProduct,
     selectedComboItems,
     additionalOptionsPrice,
+    isComboComplete,
   ])
 
   const isOptionSelected = useCallback(
@@ -366,6 +404,21 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
   // Determine if this product has child products
   const hasChildProducts = product.childProducts && product.childProducts.length > 0
 
+  // Tính tổng giá combo
+  const calculateComboPrice = () => {
+    if (!isCombo) return 0
+
+    // Giá cơ bản của combo
+    const basePrice = product.price
+
+    // Tổng extraPrice của các item đã chọn
+    const extraPriceTotal = Object.values(selectedComboItems).reduce((sum, item) => sum + item.extraPrice, 0)
+
+    return basePrice + extraPriceTotal
+  }
+
+  const comboTotalPrice = calculateComboPrice()
+
   return (
     <>
       <Sheet open={isOpen} onOpenChange={onClose}>
@@ -414,68 +467,69 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
                 <div className="mt-6 space-y-6">
                   <div className="bg-orange-50 p-3 rounded-lg mb-4">
                     <p className="text-sm text-gray-700">
-                      Bạn có thể chọn combo với giá gốc {convertToVND(product.price)} VND hoặc tùy chỉnh các món bên
-                      dưới. Bấm vào món đã chọn để bỏ chọn.
+                      Combo với giá gốc {convertToVND(product.price)} VND. Vui lòng chọn các món bên dưới để hoàn thành
+                      combo của bạn.
                     </p>
                   </div>
                   {product.productComboSlots.map((slot) => (
                     <div key={slot.id} className="mb-4">
                       <div className="flex justify-between items-center mb-3">
-                        <h3 className="text-xl text-orange-500">
-                          {slot.slotName} <span className="text-sm font-normal text-gray-500">(Tùy chọn)</span>
+                        <h3
+                          className={`text-xl ${missingComboSelections.includes(slot.id) ? "text-red-500" : "text-orange-500"}`}
+                        >
+                          {slot.slotName} <span className="text-sm font-normal text-gray-500">(Bắt buộc)</span>
                         </h3>
-                        {selectedComboItems[slot.id] && (
-                          <button
-                            onClick={() => {
-                              setSelectedComboItems((prev) => {
-                                const newState = { ...prev }
-                                delete newState[slot.id]
-                                return newState
-                              })
-                            }}
-                            className="text-sm text-orange-500 flex items-center gap-1 hover:text-orange-700"
-                          >
-                            <X size={14} /> Bỏ chọn
-                          </button>
-                        )}
                       </div>
+                      {missingComboSelections.includes(slot.id) && (
+                        <div className="flex items-center text-red-500 text-sm mb-2">
+                          <AlertCircle size={16} className="mr-1" />
+                          <span>Vui lòng chọn một món cho mục này</span>
+                        </div>
+                      )}
                       <div className="grid grid-cols-1 gap-2">
-                        {slot.productComboSlotItems.map((item) => (
-                          <motion.button
-                            key={item.id}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => handleComboItemSelect(slot.id, item)}
-                            className={`relative p-3 rounded-xl text-left transition-all duration-200 ${selectedComboItems[slot.id]?.id === item.id
-                              ? "bg-orange-200 border-2 border-orange-400"
-                              : "bg-gray-100 border-2 border-gray-100"
-                              }`}
-                            aria-pressed={selectedComboItems[slot.id]?.id === item.id}
-                          >
-                            <div className="flex justify-between items-center">
-                              <div className="flex items-center gap-2">
-                                <div
-                                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedComboItems[slot.id]?.id === item.id
-                                    ? "border-orange-500 bg-orange-100"
-                                    : "border-gray-300"
-                                    }`}
-                                >
-                                  {selectedComboItems[slot.id]?.id === item.id && (
-                                    <div className="w-3 h-3 rounded-full bg-orange-500" />
-                                  )}
+                        {slot.productComboSlotItems
+                          .slice() // Tạo bản sao để tránh thay đổi mảng gốc
+                          .sort((a, b) => a.extraPrice - b.extraPrice) // Sắp xếp theo extraPrice từ thấp đến cao
+                          .map((item) => (
+                            <motion.button
+                              key={item.id}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              onClick={() => handleComboItemSelect(slot.id, item)}
+                              className={`relative p-3 rounded-xl text-left transition-all duration-200 ${selectedComboItems[slot.id]?.id === item.id
+                                ? "bg-orange-200 border-2 border-orange-400"
+                                : "bg-gray-100 border-2 border-gray-100"
+                                }`}
+                              aria-pressed={selectedComboItems[slot.id]?.id === item.id}
+                            >
+                              <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-2">
+                                  <div
+                                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedComboItems[slot.id]?.id === item.id
+                                      ? "border-orange-500 bg-orange-100"
+                                      : "border-gray-300"
+                                      }`}
+                                  >
+                                    {selectedComboItems[slot.id]?.id === item.id && (
+                                      <div className="w-3 h-3 rounded-full bg-orange-500" />
+                                    )}
+                                  </div>
+                                  <span className="font-medium text-gray-800">{item.product.name}</span>
                                 </div>
-                                <span className="font-medium text-gray-800">{item.product.name}</span>
+                                {item.extraPrice > 0 ? (
+                                  <div>
+                                    <span className="font-medium text-gray-700">
+                                      +{convertToVND(item.extraPrice)}đ
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <span className="font-medium text-gray-700">+0đ</span>
+                                  </div>
+                                )}
                               </div>
-                              {item.product.price > 0 && (
-                                <div>
-                                  <span className="font-medium text-gray-700">
-                                    +{convertToVND(item.product.price)} VND
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          </motion.button>
-                        ))}
+                            </motion.button>
+                          ))}
                       </div>
                       <div className="mt-4 border-b border-dashed"></div>
                     </div>
@@ -519,7 +573,7 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
                               <span className="font-medium text-gray-800">{childProduct.name}</span>
                             </div>
                             <div>
-                              <span className="font-medium text-gray-700">{convertToVND(childProduct.price)} VND</span>
+                              <span className="font-medium text-gray-700">{convertToVND(childProduct.price)}đ</span>
                             </div>
                           </div>
                         </motion.button>
@@ -543,47 +597,54 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
                           </p>
                         </div>
                         <div className="grid grid-cols-1 gap-2">
-                          {productOption.optionItems.sort((a, b) => a.additionalPrice - b.additionalPrice).map((item) => (
-                            <motion.button
-                              key={`${productOption.id}-${item.id}`}
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              onClick={() => handleOptionChange(item, productOption)}
-                              className={`relative p-2 rounded-xl text-left transition-all duration-200 ${isOptionSelected(item)
-                                ? "bg-orange-200 border-2 border-orange-400"
-                                : "bg-gray-100 border-2 border-gray-100"
-                                }`}
-                              aria-pressed={isOptionSelected(item)}
-                            >
-                              <div className="flex justify-between px-2">
-                                <div className="w-40 flex items-center gap-2">
-                                  {!productOption.selectMany && (
-                                    <div
-                                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isOptionSelected(item) ? "border-orange-500 bg-orange-100" : "border-gray-300"
-                                        }`}
-                                    >
-                                      {isOptionSelected(item) && <div className="w-3 h-3 rounded-full bg-orange-500" />}
-                                    </div>
-                                  )}
-                                  {productOption.selectMany && (
-                                    <div
-                                      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center ${isOptionSelected(item) ? "border-orange-500 bg-orange-100" : "border-gray-300"
-                                        }`}
-                                    >
-                                      {isOptionSelected(item) && <Check size={14} className="text-orange-500" />}
-                                    </div>
-                                  )}
+                          {productOption.optionItems
+                            .slice() // Tạo bản sao để tránh thay đổi mảng gốc
+                            .sort((a, b) => a.additionalPrice - b.additionalPrice) // Sắp xếp theo additionalPrice từ thấp đến cao
+                            .map((item) => (
+                              <motion.button
+                                key={`${productOption.id}-${item.id}`}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => handleOptionChange(item, productOption)}
+                                className={`relative p-2 rounded-xl text-left transition-all duration-200 ${isOptionSelected(item)
+                                  ? "bg-orange-200 border-2 border-orange-400"
+                                  : "bg-gray-100 border-2 border-gray-100"
+                                  }`}
+                                aria-pressed={isOptionSelected(item)}
+                              >
+                                <div className="flex justify-between px-2">
+                                  <div className="w-40 flex items-center gap-2">
+                                    {!productOption.selectMany && (
+                                      <div
+                                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isOptionSelected(item) ? "border-orange-500 bg-orange-100" : "border-gray-300"
+                                          }`}
+                                      >
+                                        {isOptionSelected(item) && (
+                                          <div className="w-3 h-3 rounded-full bg-orange-500" />
+                                        )}
+                                      </div>
+                                    )}
+                                    {productOption.selectMany && (
+                                      <div
+                                        className={`w-5 h-5 rounded-md border-2 flex items-center justify-center ${isOptionSelected(item) ? "border-orange-500 bg-orange-100" : "border-gray-300"
+                                          }`}
+                                      >
+                                        {isOptionSelected(item) && <Check size={14} className="text-orange-500" />}
+                                      </div>
+                                    )}
 
-                                  <span className="font-medium text-gray-800">{item.name}</span>
+                                    <span className="font-medium text-gray-800">{item.name}</span>
+                                  </div>
+                                  <div className="w-32">
+                                    <h1 className="text-base text-right font-base text-gray-700">
+                                      {item.additionalPrice === 0
+                                        ? "+0đ"
+                                        : `+${convertToVND(item.additionalPrice)}đ`}
+                                    </h1>
+                                  </div>
                                 </div>
-                                <div className="w-32">
-                                  <h1 className="text-base text-right font-base text-gray-700">
-                                    +{convertToVND(item.additionalPrice)}VND
-                                  </h1>
-                                </div>
-                              </div>
-                            </motion.button>
-                          ))}
+                              </motion.button>
+                            ))}
                           <div className="mt-4 border-b border-dashed"></div>
                         </div>
                       </div>
@@ -598,37 +659,29 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
                     <span>Giá cơ bản:</span>
-                    <span>{convertToVND(isCombo ? product.price : currentBasePrice)} VND</span>
+                    <span>{convertToVND(isCombo ? product.price : currentBasePrice)}đ</span>
                   </div>
                   {!isCombo && additionalOptionsPrice > 0 && (
                     <div className="flex justify-between">
                       <span>Phụ thu tùy chọn:</span>
-                      <span>+{convertToVND(additionalOptionsPrice)} VND</span>
+                      <span>
+                        {additionalOptionsPrice === 0 ? "+0đ" : `+${convertToVND(additionalOptionsPrice)}đ`}
+                      </span>
                     </div>
                   )}
-                  {isCombo && Object.values(selectedComboItems).some((item) => item.product.price > 0) && (
+                  {isCombo && Object.values(selectedComboItems).some((item) => item.extraPrice > 0) && (
                     <div className="flex justify-between">
                       <span>Phụ thu combo:</span>
                       <span>
-                        +
-                        {convertToVND(
-                          Object.values(selectedComboItems).reduce((sum, item) => sum + item.product.price, 0),
-                        )}{" "}
-                        VND
+                        {Object.values(selectedComboItems).reduce((sum, item) => sum + item.extraPrice, 0) === 0
+                          ? "+0đ"
+                          : `+${convertToVND(Object.values(selectedComboItems).reduce((sum, item) => sum + item.extraPrice, 0))}đ`}
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between font-medium text-base pt-1 border-t">
                     <span>Tổng cộng:</span>
-                    <span>
-                      {convertToVND(
-                        isCombo
-                          ? product.price +
-                          Object.values(selectedComboItems).reduce((sum, item) => sum + item.product.price, 0)
-                          : finalTotalPrice,
-                      )}{" "}
-                      VND
-                    </span>
+                    <span>{convertToVND(isCombo ? comboTotalPrice * quantity : finalTotalPrice * quantity)}đ</span>
                   </div>
                 </div>
               </div>
@@ -686,37 +739,35 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
           </div>
 
           <div className="bg-white border-t px-4 py-3 mt-auto">
+            {missingComboSelections.length > 0 && isCombo && (
+              <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm flex items-center">
+                <AlertCircle size={16} className="mr-2 flex-shrink-0" />
+                <span>Vui lòng chọn đầy đủ các món cho combo của bạn</span>
+              </div>
+            )}
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleAddToCart}
-              disabled={product.productStatus !== "Available"}
-              className={`px-12 py-3 w-full rounded-md flex justify-center items-center text-white font-semibold ${product.productStatus !== "Available" ? "bg-gray-400 cursor-not-allowed" : "bg-my-color"
+              disabled={product.productStatus !== "Available" || (isCombo && missingComboSelections.length > 0)}
+              className={`px-12 py-3 w-full rounded-md flex justify-center items-center text-white font-semibold ${product.productStatus !== "Available" || (isCombo && missingComboSelections.length > 0)
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-my-color"
                 }`}
             >
               <div className="w-28">
                 {product.productStatus !== "Available"
                   ? "Không khả dụng"
-                  : cartItem
-                    ? "Cập nhật giỏ hàng"
-                    : "Thêm vào giỏ"}
+                  : isCombo && missingComboSelections.length > 0
+                    ? "Chọn đủ món"
+                    : cartItem
+                      ? "Cập nhật giỏ hàng"
+                      : "Thêm vào giỏ"}
               </div>
               <div className="w-20">
-                {convertToVND(
-                  isCombo
-                    ? (product.price +
-                      Object.values(selectedComboItems).reduce((sum, item) => sum + item.product.price, 0)) *
-                    quantity
-                    : finalTotalPrice * quantity,
-                )}{" "}
-                VND
+                {convertToVND(isCombo ? comboTotalPrice * quantity : finalTotalPrice * quantity)}đ
               </div>
             </motion.button>
-            {isCombo && Object.keys(selectedComboItems).length === 0 && (
-              <p className="text-center text-gray-500 text-sm mt-2">
-                Bạn đang chọn combo với giá gốc {convertToVND(product.price)} VND
-              </p>
-            )}
           </div>
         </SheetContent>
       </Sheet>

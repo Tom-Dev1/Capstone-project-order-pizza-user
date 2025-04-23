@@ -195,7 +195,7 @@ const Payment: React.FC = () => {
                                                         <div className="font-medium">{parentItem.name} <span className="text-gray-600 ml-2">x{parentItem.quantity}</span></div>
                                                     </div>
                                                     <div className="font-medium w-32 text-right items-start h-auto">
-                                                        {convertToVND(parentItem.price * parentItem.quantity)} đ
+                                                        {convertToVND(parentItem.price * parentItem.quantity)}đ
                                                     </div>
                                                 </div>
 
@@ -205,7 +205,7 @@ const Payment: React.FC = () => {
                                                         {parentItem.orderItemDetails.map((option, idx) => (
                                                             <div key={option.id || idx} className="flex justify-between">
                                                                 <span>• {option.name}</span>
-                                                                {option.additionalPrice > 0 && <span>+{convertToVND(option.additionalPrice)} đ</span>}
+                                                                {option.additionalPrice > 0 && <span>+{convertToVND(option.additionalPrice)}đ</span>}
                                                             </div>
                                                         ))}
                                                     </div>
@@ -226,7 +226,7 @@ const Payment: React.FC = () => {
                                                         className={`font-bold ${parentItem.orderItemStatus === "Cancelled" ? "line-through text-gray-500" : ""
                                                             }`}
                                                     >
-                                                        {convertToVND(parentItem.totalPrice)} đ
+                                                        {convertToVND(parentItem.totalPrice)}đ
                                                     </span>
                                                 </div>
                                             </div>
@@ -265,7 +265,7 @@ const Payment: React.FC = () => {
 
                                                             </div>
                                                             <div className="font-medium w-24 text-right">
-                                                                {convertToVND(childItem.price * childItem.quantity)} đ
+                                                                {convertToVND(childItem.price * childItem.quantity)}đ
                                                             </div>
                                                         </div>
 
@@ -276,7 +276,7 @@ const Payment: React.FC = () => {
                                                                     <div key={option.id || idx} className="flex justify-between">
                                                                         <div>• {option.name}</div>
                                                                         {option.additionalPrice > 0 && (
-                                                                            <div>+{convertToVND(option.additionalPrice)} đ</div>
+                                                                            <div>+{convertToVND(option.additionalPrice)}đ</div>
                                                                         )}
                                                                     </div>
                                                                 ))}
@@ -323,7 +323,7 @@ const Payment: React.FC = () => {
                                 {orderDetail.additionalFees.map((fee) => (
                                     <div key={fee.id} className="flex justify-between text-sm mb-1">
                                         <span>{fee.name}</span>
-                                        <span>{convertToVND(fee.value)} đ</span>
+                                        <span>{convertToVND(fee.value)}đ</span>
                                     </div>
                                 ))}
                             </div>
@@ -350,7 +350,7 @@ const Payment: React.FC = () => {
                         <div className="p-4 border-t bg-gray-50">
                             <div className="flex justify-between items-center">
                                 <span className="font-bold text-lg">Tổng cộng:</span>
-                                <span className="font-bold text-xl text-my-color">{convertToVND(orderDetail.totalPrice)} đ</span>
+                                <span className="font-bold text-xl text-my-color">{convertToVND(orderDetail.totalPrice)}đ</span>
                             </div>
                         </div>
 
