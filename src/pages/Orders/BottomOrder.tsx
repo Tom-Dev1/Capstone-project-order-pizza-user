@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useState, useEffect, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
@@ -25,6 +23,7 @@ import { CheckoutNotificationModal } from "./CheckoutNotificationModal"
 import TableService from "@/services/table-service"
 import { useQuery } from "@tanstack/react-query"
 import OrderService from "@/services/order-service"
+
 interface BottomOrderProps {
   activeTab: "tab1" | "tab2"
 }
@@ -40,6 +39,9 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
   const [orderId, setOrderId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  // Thêm state mới để lưu trạng thái đơn hàng
+  const [orderStatus, setOrderStatus] = useState<"Paid" | "Unpaid" | "CheckedOut" | null>(null)
+  const [showPaidOrderModal, setShowPaidOrderModal] = useState(false)
 
   const cartItems = useSelector((state: RootState) => state.cart.items)
   const notes = useSelector((state: RootState) => state.notes)
@@ -54,9 +56,15 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
       const orderService = OrderService.getInstance()
       const response = await orderService.getOrderDetailDetailByOrderId(currentOrderId_)
       if (!response.success) throw new Error(response.message || "Không thể tải thông tin đơn hàng")
+
+      // Cập nhật trạng thái đơn hàng
+      if (response.result) {
+        setOrderStatus(response.result.status)
+      }
+
       return response.result
     },
-    enabled: !!currentOrderId_ && activeTab === "tab2",
+    enabled: !!currentOrderId_,
     staleTime: 10000,
   })
 
@@ -74,13 +82,6 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
 
     return { totalCount: count, totalPrice: price }
   }, [orderDetail?.orderItems])
-
-
-
-
-
-
-
 
   // Chuyển đổi cart items thành định dạng orderItems
   const getOrderItems = (): OrderItem[] => {
@@ -145,12 +146,20 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
     }
   }, [currentOrderId_])
 
+  // Cập nhật hàm handleOpenModal để kiểm tra trạng thái đơn hàng
   const handleOpenModal = async () => {
     if (activeTab === "tab1") {
       if (isCartEmpty) {
         console.log("Cart is empty, returning")
         return
       }
+
+      // Kiểm tra trạng thái đơn hàng
+      if (orderStatus === "Paid" || orderStatus === "CheckedOut") {
+        setShowPaidOrderModal(true)
+        return
+      }
+
       if (currentOrderId_ === null) {
         try {
           if (!tableId_gbId) {
@@ -181,6 +190,11 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
     setShowConfirmModal(false)
     setShowResultModal(false)
     setShowCheckOutModal(false)
+  }
+
+  // Thêm hàm để đóng modal thông báo đơn hàng đã thanh toán
+  const handleClosePaidOrderModal = () => {
+    setShowPaidOrderModal(false)
   }
 
   const validateOrderItems = (items: OrderItem[]): boolean => {
@@ -219,7 +233,9 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
         throw new Error(addFoodResponse?.message || "Failed to add food to the order")
       }
 
+      // Xóa giỏ hàng trong Redux và localStorage
       dispatch(clearCart())
+
       setShowConfirmModal(false)
       setSuccess("Order placed successfully!")
       setShowResultModal(true)
@@ -361,8 +377,29 @@ const BottomOrder: React.FC<BottomOrderProps> = ({ activeTab }) => {
           totalPrice={totalPrice}
         />
       )}
+      {showPaidOrderModal && (
+        <AlertDialog open={showPaidOrderModal} onOpenChange={handleClosePaidOrderModal}>
+          <AlertDialogContent className="max-w-[80%] flex flex-col">
+            <div className="flex items-center mb-4">
+              <XCircle className="text-orange-500 mr-2" size={24} />
+              <h2 className="text-xl font-bold text-gray-800">Đơn hàng đã thanh toán</h2>
+            </div>
+            <AlertDialogDescription className="break-words">
+              Đơn hàng của bạn đã được thanh toán hoặc đã hoàn tất. Vui lòng liên hệ nhân viên để được trợ giúp nếu bạn
+              muốn đặt thêm món.
+            </AlertDialogDescription>
+            <AlertDialogFooter className="justify-center items-center mt-3">
+              <Button
+                className="px-4 w-28 bg-my-color border rounded-sm text-white"
+                onClick={handleClosePaidOrderModal}
+              >
+                Đóng
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </>
   )
 }
-
 export default BottomOrder
