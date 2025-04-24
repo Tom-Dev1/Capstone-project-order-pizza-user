@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useEffect, useState } from "react"
-import { useNavigate, useParams, useSearchParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import LoadingFallBack from "../pages/Layouts/LoadingFallBack"
 import TableService from "@/services/table-service"
 import { setItem } from "@/constants"
@@ -13,10 +13,7 @@ const StatusCheck: React.FC = () => {
     const navigate = useNavigate()
 
     const { id } = useParams<{ id: string }>()
-    const [searchParams] = useSearchParams()
-    const tableCode = searchParams.get("tableCode")
 
-    setItem("tableCode", tableCode)
     setItem("tableId", id)
 
     useEffect(() => {
@@ -24,6 +21,9 @@ const StatusCheck: React.FC = () => {
             try {
                 const tableService = TableService.getInstance()
                 const response = await tableService.checkStatusTable(`${id}`)
+                const tableCode = response.result.code
+                setItem("tableCode", tableCode)
+                console.log("Table code set in local storage:", tableCode);
 
                 if (!response.success) {
                     setError(response.message)

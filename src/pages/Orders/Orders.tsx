@@ -1,3 +1,5 @@
+"use client"
+
 import { useMemo } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { removeFromCart, selectCartItems, selectCartTotal } from "@/redux/slices/cartSlice"
@@ -13,16 +15,17 @@ export default function Orders() {
   const cartItems = useSelector(selectCartItems)
   const totalPrice = useSelector(selectCartTotal)
 
-  const productCategoryNotes = useSelector((state: RootState) => {
+  const reduxState = useSelector((state: RootState) => state)
+  const productCategoryNotes = useMemo(() => {
     const notes: { [key: string]: string[] } = {}
     cartItems.forEach((item) => {
-      const categoryNotes = selectProductCategoryNotes(state, item.categoryId, item.id, item.selectedOptions)
+      const categoryNotes = selectProductCategoryNotes(reduxState, item.categoryId, item.id, item.selectedOptions)
       if (categoryNotes.length > 0) {
         notes[`${item.categoryId}-${item.id}-${item.optionsHash}`] = categoryNotes
       }
     })
     return notes
-  })
+  }, [cartItems, reduxState])
 
   const handleRemove = (productId: string, categoryId: string, index: number, optionsHash: string) => {
     dispatch(removeFromCart({ productId, categoryId, index, optionsHash }))
@@ -65,10 +68,13 @@ export default function Orders() {
           </div>
         ) : (
           <>
-            <motion.div variants={containerVariants} initial="hidden" animate="visible"
-              className="border border-gray-200 rounded-lg pb-4">
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="border border-gray-200 rounded-lg pb-4"
+            >
               {orderItems.map((item) => (
-
                 <OrderItem
                   key={`${item.id}-${item.categoryId}-${item.optionsHash}`}
                   item={item}
@@ -83,11 +89,9 @@ export default function Orders() {
                 </div>
               </div>
             </motion.div>
-
           </>
         )}
       </div>
     </div>
   )
 }
-

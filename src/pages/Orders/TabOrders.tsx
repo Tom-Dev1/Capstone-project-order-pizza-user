@@ -75,7 +75,7 @@ export default function SwitchTabs() {
             </div>
 
             <div className="mt-4 mx-2">
-                {activeTab === "tab1" ? <Orders /> : <BookedOrders initialData={bookedOrdersData} />}
+                {activeTab === "tab1" ? <Orders /> : <BookedOrders />}
             </div>
 
             <div className="fixed bottom-0 left-0 right-0 z-9">

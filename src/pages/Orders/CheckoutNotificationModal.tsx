@@ -10,16 +10,15 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { ShoppingBag, CreditCard } from "lucide-react"
-import { useSelector } from "react-redux"
 import { convertToVND } from "@/utils/convertToVND"
-import { selectTotalCount } from '@/redux/slices/totalCountSlide'
-import { selectTotalPrice } from "@/redux/slices/totalPriceSlice"
 
 interface CheckoutNotificationModalProps {
     isOpen: boolean
     onClose: () => void
     onConfirm: () => void
     tableCode: string
+    totalCount: number
+    totalPrice: number
 }
 
 export function CheckoutNotificationModal({
@@ -27,15 +26,9 @@ export function CheckoutNotificationModal({
     onClose,
     onConfirm,
     tableCode,
+    totalCount,
+    totalPrice,
 }: CheckoutNotificationModalProps) {
-
-
-    const totalCount = useSelector(selectTotalCount)
-    const totalPrice = useSelector(selectTotalPrice)
-
-
-    const total = totalPrice
-
     return (
         <AlertDialog open={isOpen} onOpenChange={onClose}>
             <AlertDialogContent className="max-w-[90%] flex flex-col">
@@ -62,26 +55,25 @@ export function CheckoutNotificationModal({
                     <div className="text-sm space-y-1 mt-3">
                         <div className="flex justify-between items-center text-gray-600">
                             <span>Giá chưa thuế</span>
-                            <span className="font-medium">{convertToVND(totalPrice)}VND</span>
+                            <span className="font-medium">{convertToVND(totalPrice)}đ</span>
                         </div>
 
                         <div className="flex justify-between items-center pt-2 text-gray-900 border-t mt-2">
                             <span className="font-medium">Tổng cộng</span>
-                            <span className="font-medium text-base">{convertToVND(total)}đ</span>
+                            <span className="font-medium text-base">{convertToVND(totalPrice)}đ</span>
                         </div>
                     </div>
                 </div>
 
                 <p className="text-sm text-center text-gray-600 ">Bạn có muốn thanh toán hóa đơn này?</p>
-                <p className="text-sm text-center text-gray-600 ">Chúng tôi sẽ cho nhân viên tới thanh toán đơn hàng của bạn.</p>
+                <p className="text-sm text-center text-gray-600 ">
+                    Chúng tôi sẽ cho nhân viên tới thanh toán đơn hàng của bạn.
+                </p>
                 <AlertDialogFooter className="flex flex-row justify-between items-center mt-3">
-                    <Button variant={"outline"} className="px-4 w-28" onClick={onClose} >
+                    <Button variant={"outline"} className="px-4 w-28" onClick={onClose}>
                         Hủy
                     </Button>
-                    <Button
-                        className="px-4 w-28 bg-my-color border rounded-sm text-white"
-                        onClick={onConfirm}
-                    >
+                    <Button className="px-4 w-28 bg-my-color border rounded-sm text-white" onClick={onConfirm}>
                         Xác nhận
                     </Button>
                 </AlertDialogFooter>
@@ -89,4 +81,3 @@ export function CheckoutNotificationModal({
         </AlertDialog>
     )
 }
-

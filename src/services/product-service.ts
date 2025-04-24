@@ -1,5 +1,5 @@
 import ApiResponse, { get } from "@/apis/apiUtils"
-import { ProductsResult } from "@/types/product"
+import { ProductModel, ProductsResult } from "@/types/product"
 
 class ProductService {
     private static instance: ProductService
@@ -12,17 +12,10 @@ class ProductService {
         }
         return ProductService.instance
     }
-    public async getAllProductFood(): Promise<ApiResponse<ProductsResult>> {
+
+    public async getProductById(id: string): Promise<ApiResponse<ProductModel>> {
         try {
-            return await get<ProductsResult>(`/products`)
-        } catch (error) {
-            console.error("Error fetching all food products:", error)
-            throw error
-        }
-    }
-    public async getProductById(id: string): Promise<ApiResponse<ProductsResult>> {
-        try {
-            return await get<ProductsResult>(`/products/${id}`)
+            return await get<ProductModel>(`products/${id}?includeProperties=Category%2CProductOptions.Option.OptionItems%2CProductComboSlots%2CRecipes.Ingredient%2CProductComboSlots.ProductComboSlotItems.Product%2CChildProducts`)
         } catch (error) {
             console.error(`Error fetching product with id ${id}:`, error)
             throw error
@@ -30,7 +23,7 @@ class ProductService {
     }
     public async getProductsByCategory(categoryId: string): Promise<ApiResponse<ProductsResult>> {
         try {
-            return await get<ProductsResult>(`/products?categoryId=${categoryId}`)
+            return await get<ProductsResult>(`/products?TakeCount=1000&categoryId=${categoryId}`)
         } catch (error) {
             console.error(`Error fetching products for category ${categoryId}:`, error)
             throw error
@@ -39,7 +32,7 @@ class ProductService {
     public async getAllProducts(): Promise<ApiResponse<ProductsResult>> {
         try {
             return await get<ProductsResult>(
-                `/products?TakeCount=1000&IncludeProperties=Options.OptionItems`,
+                `/products?TakeCount=1000`,
             )
         } catch (error) {
             console.error("Error fetching all products:", error)

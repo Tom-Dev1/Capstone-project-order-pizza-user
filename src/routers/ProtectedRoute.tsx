@@ -61,7 +61,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
                 const tableService = TableService.getInstance()
                 const response = await tableService.checkStatusTable(tableId)
-
+                const tableCode = response.result.code
+                setItem("tableCode", tableCode)
                 if (response.success && response.result) {
                     // Handle different table statuses exactly like StatusCheck component
                     switch (response.result.status) {

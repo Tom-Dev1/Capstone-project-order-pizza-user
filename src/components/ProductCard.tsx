@@ -39,23 +39,32 @@ const ProductItem: React.FC<ProductItemProps> = React.memo(({ product, categoryI
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cartItem = useSelector<RootState, any>((state: RootState) => selectCartItem(state, product.id, categoryId))
 
-  const handleOpenModal = useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setIsModalOpen(true)
-    setIsClicked(true)
-    setTimeout(() => setIsClicked(false), 200)
-  }, [])
+  const handleOpenModal = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      // Only open modal if product is available
+      if (product.productStatus !== "OutOfIngredient") {
+        setIsModalOpen(true)
+        setIsClicked(true)
+        setTimeout(() => setIsClicked(false), 200)
+      }
+    },
+    [product.productStatus],
+  )
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false)
   }, [])
 
+  // Check if product is out of stock
+  const isOutOfStock = product.productStatus === "OutOfIngredient"
+
   return (
     <>
       <motion.div
-        className="w-44 relative bg-white rounded-lg border-gray-100 border  overflow-hidden "
-        whileHover={{ y: -5 }}
+        className={`w-44 relative bg-white rounded-lg border-gray-100 border overflow-hidden ${isOutOfStock ? "opacity-75" : ""}`}
+        whileHover={{ y: isOutOfStock ? 0 : -5 }}
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
       >
@@ -64,8 +73,8 @@ const ProductItem: React.FC<ProductItemProps> = React.memo(({ product, categoryI
           <motion.img
             src={product.imageUrl || "https://pizza4ps.com/wp-content/uploads/2023/07/20200001_2.jpg"}
             alt={product.name}
-            className="w-44 h-44 md:h-44 md:w-56 object-cover rounded-sm "
-            animate={{ scale: isHovered ? 1.05 : 1 }}
+            className={`w-44 h-44 md:h-44 md:w-56 object-cover rounded-sm ${isOutOfStock ? "grayscale" : ""}`}
+            animate={{ scale: isHovered && !isOutOfStock ? 1.05 : 1 }}
             transition={{ duration: 0.3 }}
             onClick={handleOpenModal}
           />
@@ -76,6 +85,15 @@ const ProductItem: React.FC<ProductItemProps> = React.memo(({ product, categoryI
               <ShoppingCart size={16} />
             </div>
           )}
+
+          {/* Out of stock indicator */}
+          {isOutOfStock && (
+            <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+              <div className="bg-orange-500 text-white px-3 py-1 rounded-md font-medium text-sm transform -rotate-12">
+                Hết nguyên liệu
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Content */}
@@ -84,32 +102,33 @@ const ProductItem: React.FC<ProductItemProps> = React.memo(({ product, categoryI
             <div className="text-sm font-medium text-center text-my-color truncate">{product.name}</div>
           </div>
           <motion.button
-            className={`w-[155px] mt-2 py-1 mb-2 rounded-sm font-medium transition-colors flex items-center justify-center  ${cartItem
-              ? "border rounded-md border-my-color bg-my-color text-white "
-              : "  border rounded-md border-my-color text-my-color"
+            className={`w-[155px] mt-2 py-1 mb-2 rounded-sm font-medium transition-colors flex items-center justify-center ${isOutOfStock
+              ? "border rounded-md border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed"
+              : cartItem
+                ? "border rounded-md border-my-color bg-my-color text-white"
+                : "border rounded-md border-my-color text-my-color"
               }`}
             animate={{ scale: isClicked ? 0.95 : 1 }}
             transition={{ type: "spring", stiffness: 500, damping: 30 }}
             onClick={handleOpenModal}
+            disabled={isOutOfStock}
           >
-            {cartItem ? (
-              <>
-                <span>{convertToVND(product.price)} VND</span>
-              </>
+            {isOutOfStock ? (
+              <span>Hết nguyên liệu</span>
+            ) : cartItem ? (
+              <span>{convertToVND(product.price)} đ</span>
             ) : (
-              <>
-                <span>{convertToVND(product.price)} VND</span>
-              </>
+              <span>{convertToVND(product.price)} đ</span>
             )}
           </motion.button>
         </div>
       </motion.div>
 
-      <ProductModal product={product} categoryId={categoryId} isOpen={isModalOpen} onClose={handleCloseModal} />
+      {/* Pass productId instead of the full product object */}
+      <ProductModal productId={product.id} categoryId={categoryId} isOpen={isModalOpen} onClose={handleCloseModal} />
     </>
   )
 })
 ProductItem.displayName = "ProductItem"
 
 export default ProductCard
-
