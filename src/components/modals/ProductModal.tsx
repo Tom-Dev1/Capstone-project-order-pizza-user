@@ -458,6 +458,8 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
 
             {/* Product Details */}
             <div className="px-6 py-4">
+              <div className="text-base font-bold text-gray-800">{product.name}</div>
+
               <SheetDescription className="text-gray-600 text-sm italic leading-relaxed">
                 "{product.description}"
               </SheetDescription>
@@ -598,53 +600,74 @@ export default function ProductModal({ productId, categoryId, isOpen, onClose }:
                         </div>
                         <div className="grid grid-cols-1 gap-2">
                           {productOption.optionItems
-                            .slice() // Tạo bản sao để tránh thay đổi mảng gốc
-                            .sort((a, b) => a.additionalPrice - b.additionalPrice) // Sắp xếp theo additionalPrice từ thấp đến cao
-                            .map((item) => (
-                              <motion.button
-                                key={`${productOption.id}-${item.id}`}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={() => handleOptionChange(item, productOption)}
-                                className={`relative p-2 rounded-xl text-left transition-all duration-200 ${isOptionSelected(item)
-                                  ? "bg-orange-200 border-2 border-orange-400"
-                                  : "bg-gray-100 border-2 border-gray-100"
-                                  }`}
-                                aria-pressed={isOptionSelected(item)}
-                              >
-                                <div className="flex justify-between px-2">
-                                  <div className="w-40 flex items-center gap-2">
-                                    {!productOption.selectMany && (
-                                      <div
-                                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isOptionSelected(item) ? "border-orange-500 bg-orange-100" : "border-gray-300"
-                                          }`}
-                                      >
-                                        {isOptionSelected(item) && (
-                                          <div className="w-3 h-3 rounded-full bg-orange-500" />
-                                        )}
-                                      </div>
-                                    )}
-                                    {productOption.selectMany && (
-                                      <div
-                                        className={`w-5 h-5 rounded-md border-2 flex items-center justify-center ${isOptionSelected(item) ? "border-orange-500 bg-orange-100" : "border-gray-300"
-                                          }`}
-                                      >
-                                        {isOptionSelected(item) && <Check size={14} className="text-orange-500" />}
-                                      </div>
-                                    )}
+                            .filter(item => item.optionItemStatus !== "Locked")
+                            .sort((a, b) => {
+                              // Available lên trước OutOfIngredient
+                              if (a.optionItemStatus === "Available" && b.optionItemStatus !== "Available") return -1;
+                              if (a.optionItemStatus !== "Available" && b.optionItemStatus === "Available") return 1;
+                              // Nếu cùng trạng thái, sort theo additionalPrice tăng dần
+                              return a.additionalPrice - b.additionalPrice;
+                            })
+                            .map((item) => {
+                              const isAvailable = item.optionItemStatus === "Available";
+                              const isOutOfIngredient = item.optionItemStatus === "OutOfIngredient";
+                              return (
+                                <motion.button
+                                  key={`${productOption.id}-${item.id}`}
+                                  whileHover={isAvailable ? { scale: 1.02 } : {}}
+                                  whileTap={isAvailable ? { scale: 0.98 } : {}}
+                                  onClick={isAvailable ? () => handleOptionChange(item, productOption) : undefined}
+                                  disabled={!isAvailable}
+                                  className={`relative p-2 rounded-xl text-left transition-all duration-200
+                                    ${isOptionSelected(item)
+                                      ? "bg-orange-200 border-2 border-orange-400"
+                                      : "bg-gray-100 border-2 border-gray-100"}
+                                    ${isOutOfIngredient ? " cursor-not-allowed " : ""}
+                                  `}
+                                  aria-pressed={isOptionSelected(item)}
+                                >
+                                  <div className="flex justify-between px-2 items-center">
+                                    <div className="w-40 flex items-center gap-2 relative">
+                                      {!productOption.selectMany && (
+                                        <div
+                                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isOptionSelected(item) ? "border-orange-500 bg-orange-100" : "border-gray-300"
+                                            }`}
+                                        >
+                                          {isOptionSelected(item) && (
+                                            <div className="w-3 h-3 rounded-full bg-orange-500" />
+                                          )}
+                                        </div>
+                                      )}
+                                      {productOption.selectMany && (
+                                        <div
+                                          className={`w-5 h-5 rounded-md border-2 flex items-center justify-center ${isOptionSelected(item) ? "border-orange-500 bg-orange-100" : "border-gray-300"
+                                            }`}
+                                        >
+                                          {isOptionSelected(item) && <Check size={14} className="text-orange-500" />}
+                                        </div>
+                                      )}
+                                      <span className={`font-medium text-gray-800  ${isOutOfIngredient ? "line-through opacity-60" : ""}`}>{item.name}</span>
 
-                                    <span className="font-medium text-gray-800">{item.name}</span>
+                                    </div>
+                                    <div className="w-32">
+
+                                      <h1 className={`text-base text-right font-base text-gray-700  ${isOutOfIngredient ? "line-through opacity-60" : ""}  `}>
+                                        {item.additionalPrice === 0
+                                          ? "+0đ"
+                                          : `+${convertToVND(item.additionalPrice)}đ`}
+                                      </h1>
+                                      {isOutOfIngredient && (
+                                        <div
+                                          className="bg-red-500 text-white text-xs px-2 text-center  py-0.5 rounded w-32"
+                                        >
+                                          <h1 className="text-center  ">Hết nguyên liệu</h1>
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
-                                  <div className="w-32">
-                                    <h1 className="text-base text-right font-base text-gray-700">
-                                      {item.additionalPrice === 0
-                                        ? "+0đ"
-                                        : `+${convertToVND(item.additionalPrice)}đ`}
-                                    </h1>
-                                  </div>
-                                </div>
-                              </motion.button>
-                            ))}
+                                </motion.button>
+                              );
+                            })}
                           <div className="mt-4 border-b border-dashed"></div>
                         </div>
                       </div>

@@ -50,8 +50,9 @@ export interface OrderItemOption {
     name: string
     additionalPrice: number
     orderItemId: string
+    optionItemStatus: OPTIONITEM_STATUS
 }
-
+export type OPTIONITEM_STATUS = "Available" | "OutOfIngredient" | "Locked"
 export interface OrderVoucher {
     id: string
     orderId: string
